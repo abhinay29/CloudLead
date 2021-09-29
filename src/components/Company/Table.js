@@ -41,7 +41,7 @@ const Table = (props) => {
     let parsedData = await data.json()
     if (parsedData.status === 'success') {
       if (parsedData.totalResults === 0) {
-        alert('No result found');
+        alert('No result found.');
         return
       }
       getCompanies(parsedData)
