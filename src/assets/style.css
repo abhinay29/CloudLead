@@ -1,0 +1,323 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700&display=swap");
+:root {
+  --color-text-primary: #262626;
+  --color-bg-canvas: #ebeffa;
+  --card-bg: #ffffff;
+}
+
+.dark-theme {
+  --color-text-primary: #f0f6fc;
+  --color-bg-canvas: #0d1117;
+  --card-bg: #39434d;
+}
+
+body {
+  background-color: #fff;
+  font-size: 1rem;
+  font-family: "Nunito", sans-serif;
+  color: var(--color-text-primary);
+}
+
+.card,
+.modal-content {
+  color: var(--color-text-primary);
+  background: var(--card-bg);
+  -webkit-box-shadow: 0 1px 20px 0 black;
+          box-shadow: 0 1px 20px 0 black;
+}
+
+table td,
+table th {
+  color: var(--color-text-primary);
+}
+
+table th {
+  background: var(--card-bg) !important;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+  background-color: #f5f5f5;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar {
+  height: 5px;
+  width: 5px;
+  background-color: #f5f5f5;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #4052f7;
+  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
+}
+
+.table_social_link a {
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.table_social_link a:hover i {
+  -webkit-transform: translateY(-5px);
+          transform: translateY(-5px);
+}
+
+.table_social_link a i {
+  color: #fff;
+  border-radius: 50%;
+  margin-right: 3px;
+  width: 22px;
+  height: 22px;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.table_social_link a i.fa-linkedin-in {
+  background: #0085ae;
+}
+
+.table_social_link a i.fa-twitter {
+  background: #32ccfe;
+}
+
+.table_social_link a i.fa-facebook-f {
+  background: #3c599f;
+}
+
+.table_social_link a i.fa-globe {
+  background: var(--bs-primary);
+}
+
+.dropdown-toggle.rounded-circle {
+  padding: 0 !important;
+}
+
+.dropdown-toggle.rounded-circle span {
+  width: 36px;
+  height: 36px;
+  font-weight: 700;
+  font-size: 1rem;
+  display: -ms-grid;
+  display: grid;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  background: rgba(0, 0, 0, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+  border-radius: 2rem;
+}
+
+.dropdown-toggle.rounded-circle::after {
+  display: none;
+}
+
+#navbarNav .dropdown-menu {
+  left: unset;
+  right: 0;
+}
+
+.table {
+  position: relative;
+  font-size: 15px;
+}
+
+.table tr th,
+.table tr td {
+  vertical-align: middle;
+  border: 0;
+}
+
+.table thead {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+}
+
+.table .name_of_contact {
+  min-width: 220px;
+}
+
+.table .actions {
+  min-width: 100px;
+  white-space: nowrap;
+}
+
+.table .title {
+  min-width: 200px;
+}
+
+.table .name_of_company {
+  min-width: 320px;
+}
+
+.table .industry {
+  min-width: 180px;
+}
+
+.table .head-count {
+  min-width: 100px;
+}
+
+.table .email {
+  min-width: 140px;
+}
+
+.tableFixHead thead th {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  -webkit-box-shadow: 1px 1px 0px 1px rgba(0, 0, 0, 0.15);
+          box-shadow: 1px 1px 0px 1px rgba(0, 0, 0, 0.15);
+}
+
+.click-to-copy:hover {
+  color: var(--bs-blue);
+}
+
+.top-nav .nav-link {
+  color: #eee !important;
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+  border-radius: 5px;
+}
+
+.top-nav .nav-link:hover {
+  color: #fff !important;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.top-nav .nav-link.active {
+  color: #fff !important;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.top-nav .nav-link i {
+  color: #fff;
+  margin-right: 5px;
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.top-nav .nav-link.nav-btn {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.top-nav .nav-link.nav-btn:hover {
+  background-color: transparent;
+}
+
+.top-nav .nav-link.nav-btn span {
+  background-color: #303f9f;
+  padding: 0.25rem 1rem;
+  border-radius: 5px;
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.top-nav .nav-link.nav-btn span:hover {
+  background-color: #26317b;
+}
+
+.btn-group .bi-tooltip {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.btn-group .bi-tooltip:hover {
+  color: #fff !important;
+}
+
+.dropdown.bi-tooltip {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+#peopleTable tbody tr,
+#compTable tbody tr {
+  -webkit-box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.15);
+          box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.15);
+  height: 80px;
+}
+
+#peopleTable.table,
+#compTable.table {
+  border-collapse: separate;
+  border-spacing: 0 1em;
+}
+
+.has-options {
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+}
+
+.clear-btn {
+  position: absolute;
+  right: 12px;
+  top: -22px;
+}
+
+.clear-btn a {
+  font-size: 12px;
+  text-decoration: none;
+}
+
+@media (max-width: 1400px) {
+  body {
+    font-size: 0.875rem;
+  }
+}
+
+/* ============ desktop view ============ */
+@media all and (min-width: 992px) {
+  .dropdown-menu li {
+    position: relative;
+  }
+  .nav-item .submenu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: -7px;
+  }
+  .nav-item .submenu-left {
+    right: 100% !important;
+    left: auto !important;
+  }
+  .dropdown-menu > li:hover {
+    background-color: #f1f1f1;
+  }
+  .dropdown-menu > li:hover > .submenu {
+    display: block;
+  }
+}
+
+/* ============ desktop view .end// ============ */
+/* ============ small devices ============ */
+@media (max-width: 991px) {
+  .dropdown-menu .dropdown-menu {
+    margin-left: 0.7rem;
+    margin-right: 0.7rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* ============ small devices .end// ============ */
+/*# sourceMappingURL=style.css.map */
