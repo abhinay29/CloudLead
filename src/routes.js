@@ -6,7 +6,8 @@ export const Routes = {
   Signup: { path: "/signup" },
   PeopleSearch: { path: "/radar/people" },
   PeopleWatchlist: { path: "/radar/people/watchlist" },
-  CompanySearch: { path: "/radar/company" }
+  CompanySearch: { path: "/radar/company" },
+  CompanyWatchlist: { path: "/radar/company/watchlist" },
   // DashboardOverview: { path: "/dashboard/overview" },
   // Transactions: { path: "/transactions" },
   // Settings: { path: "/settings" },

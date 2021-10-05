@@ -1,13 +1,17 @@
 import React, { useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
+import { NotificationManager } from 'react-notifications';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const Login = (props) => {
+
+	const [disabled, setDisabled] = useState(false)
 	const [credentials, setCredentials] = useState({ email: "", password: "" })
 	let history = useHistory();
 
 	const handleSubmit = async (e) => {
+		setDisabled(true)
 		e.preventDefault();
 		const response = await fetch(`${API_URL}/api/auth/login`, {
 			method: 'POST',
@@ -17,16 +21,17 @@ const Login = (props) => {
 			body: JSON.stringify({ email: credentials.email, password: credentials.password })
 		});
 		const json = await response.json()
-		console.log(json);
 		if (json.success) {
 			// Save the auth token and redirect
 			localStorage.setItem('token', json.authtoken);
 			localStorage.setItem('uname', json.uname);
 			localStorage.setItem('uemail', json.uemail);
+			NotificationManager.success("Welcome back!!!")
 			history.push("/");
 		}
 		else {
-			alert("Invalid credentials");
+			NotificationManager.error("Incorrect email or	 password", "Error!")
+			setDisabled(false);
 		}
 	}
 
@@ -59,12 +64,12 @@ const Login = (props) => {
 									<span className="me-auto">
 										<Link to="/signup" className="text-decoration-none">Need an Account?</Link>
 									</span>
-									<span className="ms-auto"><a href="#" className="forgot-pass text-decoration-none">Forgot Password?</a></span>
+									<span className="ms-auto"><a href="/" className="forgot-pass text-decoration-none">Forgot Password?</a></span>
 								</div>
-								<input type="submit" value="Log In" className="btn py-3 btn-block w-100 btn-primary" />
+								<input type="submit" value="Log In" disabled={disabled} className="btn py-3 btn-block w-100 btn-primary" />
 								<span className="d-block text-center my-4 text-muted">— or —</span>
 								<div className="social-login">
-									<a href="#" className="btn btn-danger py-3 w-100 d-flex justify-content-center align-items-center" onClick={() => { alert('This would be work soon.'); }}>
+									<a href="/" className="btn btn-danger py-3 w-100 d-flex justify-content-center align-items-center" onClick={() => { alert('This would be work soon.'); }}>
 										<i className="fab fa-google me-2"></i> Login with Google
 									</a>
 								</div>

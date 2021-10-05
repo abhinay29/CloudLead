@@ -63,7 +63,11 @@ const ContactSchema = new Schema({
   },
   product_services: {
     type: String,
+  },
+  primary_mai_confidence: {
+    type: String,
   }
+
 });
 
 module.exports = mongoose.model('contacts', ContactSchema);

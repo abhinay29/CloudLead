@@ -1,48 +1,34 @@
-import React, { useContext, useState } from 'react'
-import CompanyContext from '../Context/Company/CompanyContext';
+import React, { useEffect, useState } from 'react'
 import Pagination from "react-js-pagination";
-import TableRow from './TableRow'
+import WatchListTableRow from './WatchListTableRow'
 import { NotificationManager } from 'react-notifications';
 import { useDispatch } from 'react-redux';
 import { progressLoading } from '../../states/action-creator';
-import { Link } from 'react-router-dom';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const Table = (props) => {
+const Watchlist = () => {
 
   const dispatch = useDispatch()
 
-  const context = useContext(CompanyContext);
-  const { companies, getCompanies, totalComapany, setTotalComp } = context;
+  const [watchList, setWatchList] = useState([])
   const [page, setPage] = useState(1);
-  const [disSaveBtn, setDisSaveBtn] = useState(false);
-  const { setShowFilter, setShowTable } = props
-
-  const backToSearch = () => {
-    dispatch(progressLoading(40))
-    getCompanies([]);
-    setShowFilter(true)
-    setShowTable(false)
-    setTotalComp(0)
-    dispatch(progressLoading(100))
-  }
+  const [companies, setCompanies] = useState(0)
+  const [selectAll, setSelectAll] = useState(false);
+  // eslint-disable-next-line
 
   const handlePageChange = (pageNumber) => {
-    if (page !== pageNumber) {
-      searchCompany(pageNumber)
+    if (pageNumber !== page) {
+      dispatch(progressLoading(50))
+      getWatchlist(pageNumber)
+      dispatch(progressLoading(100))
     }
   }
 
-  const searchCompany = async (pageNumber) => {
+  const getWatchlist = async (pageNumber = 1, query = '') => {
     setPage(pageNumber);
-    let query = localStorage.getItem('companySearchQuery') + `&page=${pageNumber}`;
-
-    if (query.length === 0) {
-      return
-    }
-    dispatch(progressLoading(40))
-    const url = `${API_URL}/api/companies?${query}`;
+    dispatch(progressLoading(30))
+    const url = `${API_URL}/api/companies/w/watchlist?page=${pageNumber}${query}`;
     let data = await fetch(url, {
       method: 'GET',
       headers: {
@@ -53,28 +39,39 @@ const Table = (props) => {
     dispatch(progressLoading(60))
     let parsedData = await data.json()
     if (parsedData.status === 'success') {
-      if (parsedData.totalResults === 0) {
-        alert('No result found.');
-        return
+      if (parsedData.totalResults !== 0) {
+        setCompanies(parsedData.totalResults)
+        setWatchList(parsedData)
+      } else {
+        setCompanies(0)
+        setWatchList([])
       }
-      getCompanies(parsedData)
     }
     dispatch(progressLoading(100))
   }
 
+  useEffect(() => {
+    getWatchlist();
+  }, [])
+
   const [company_info, setCompInfo] = useState({})
 
-
   const getCompanyInfo = async (comp_name) => {
-    dispatch(progressLoading(40))
+
+    dispatch(progressLoading(30))
+
     const data = await fetch(`${API_URL}/api/companies/${comp_name}`)
+
+    dispatch(progressLoading(60))
+
     const CompData = await data.json()
+
+    dispatch(progressLoading(100))
 
     if (CompData.status === 'success') {
       setCompInfo(CompData.comp_data)
       openModal('showCompany');
     }
-    dispatch(progressLoading(100))
 
   }
 
@@ -99,47 +96,41 @@ const Table = (props) => {
     modalBackdrop.style.display = "none";
   }
 
-  const saveCompanySearchQuery = async (e) => {
-    e.preventDefault();
-    setDisSaveBtn(true);
+  const deleteContact = async () => {
+
+    let selectedId = []
+    var checkboxes = document.getElementsByClassName('selectContacts')
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+      if (checkboxes[i].checked)
+        selectedId.push(checkboxes[i].value);
+    }
+    if (selectedId.length === 0) {
+      NotificationManager.error("Please select people to delete from watchlist");
+      return false;
+    }
     dispatch(progressLoading(30))
-    let input = document.getElementById('saveSearchName');
-    const responce = await fetch(`${API_URL}/api/user/savecompanysearch`, {
-      method: 'POST',
+    const bulkDelete = await fetch(`${API_URL}/api/contacts/deletewatchlist`, {
+      method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
         'auth-token': localStorage.getItem('token')
       },
       body: JSON.stringify({
-        name: input.value,
-        query: JSON.parse(localStorage.getItem('currentCompanyQuery'))
+        ids: selectedId
       })
     })
-    dispatch(progressLoading(50))
-    const json = await responce.json()
-    if (json.status === 'success') {
-      NotificationManager.success('Search saved successfully');
-      input.value = '';
-    } else {
-      NotificationManager.error("Something went wrong please try again later.");
-    }
-    setDisSaveBtn(false);
-    dispatch(progressLoading(100))
-  }
+    if (!bulkDelete) { dispatch(progressLoading(100)); return false }
+    dispatch(progressLoading(60))
+    const res = await bulkDelete.json();
 
-  const saveCompany = async (id) => {
-    const watchList = await fetch(`${API_URL}/api/companies/addtowatchlist`, {
-      method: 'POST',
-      headers: {
-        'auth-token': localStorage.getItem('token'),
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ cid: id })
-    })
-    const res = await watchList.json();
     if (res.status === 'success') {
-      NotificationManager.success('Company added to watchlist', "Success!", 2000);
+      getWatchlist()
+      NotificationManager.success(`${res.deletedCount} contacts deleted from watchlist`, "Success!", 3000);
+    } else {
+      NotificationManager.error('Something went wrong, please try again later.');
     }
+    dispatch(progressLoading(100))
+    return true;
   }
 
   return (
@@ -147,11 +138,11 @@ const Table = (props) => {
       <div className="card-body" id="result_body">
         <div className="mb-2 d-flex">
           <div className="me-auto">
-            <span className="small fw-bold text-primary">UNIQUE COMPANIES (<span>{totalComapany}</span>)</span>
+            <span className="small fw-bold text-primary">UNIQUE COMPANIES (<span>{companies}</span>)</span>
           </div>
           <div id="no_selected_contact"></div>
         </div>
-        <div className="mb-1">
+        <div className="mb-1 d-flex">
           <div className="btn-group me-2" role="group" aria-label="Menu">
             <span className="dropdown bi-tooltip" data-bs-placement="top" title="Select">
               <button className="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="selectDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -160,45 +151,35 @@ const Table = (props) => {
               <ul className="dropdown-menu" aria-labelledby="selectDropdown">
                 <li><a className="dropdown-item select_contact" data-select="50" href="/">Select 50</a></li>
                 <li><a className="dropdown-item select_contact" data-select="100" href="/">Select 100</a></li>
+                <li><a className="dropdown-item select_contact" data-select="2000" href="/">Select 2000</a></li>
+                <li><a className="dropdown-item select_contact" data-select="5000" href="/">Select 5000</a></li>
+                <li><a className="dropdown-item select_contact" data-select="10000" href="/">Select 10000</a></li>
                 <li><a className="dropdown-item select_contact" data-select="0" href="/">Clear Selection</a></li>
               </ul>
             </span>
-            <span className="dropdown bi-tooltip">
-              <button className=" btn btn-sm btn-outline-primary bi-tooltip" type="button" id="saveSearch" data-bs-toggle="dropdown" aria-expanded="false">
-                <i className="far fa-save"></i>
-              </button>
-              <div className="dropdown-menu shadow p-3" aria-labelledby="saveSearch">
-                <form action="" onSubmit={saveCompanySearchQuery}>
-                  <div className="mb-3">
-                    <label htmlFor="" className="form-label small">Save Search</label>
-                    <input type="text" id="saveSearchName" className="form-control" style={{ "width": "200px" }} />
-                    <p className="small text-muted">Provide name for this search</p>
-                  </div>
-                  <button type="submit" className="btn btn-primary w-100" disabled={disSaveBtn && "disabled"}>Save Search</button>
-                </form>
-              </div>
-            </span>
-            <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip" title="Refresh" ><i className="fas fa-sync-alt"></i></button>
+            {/* <button type="button" className="btn btn-sm btn-outline-primary text-success bi-tooltip" id="export_csv" data-bs-placement="top" title="Export CSV"><i className="fas fa-download"></i></button> */}
+            <button type="button" className="btn btn-sm btn-outline-primary text-danger bi-tooltip" data-bs-placement="top" title="Delete Contact(s)" onClick={() => { deleteContact() }}><i className="far fa-trash-alt"></i></button>
+            <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip" title="Refresh" onClick={() => { window.location.reload() }}><i className="fas fa-sync-alt"></i></button>
           </div>
-          <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" title="Back to Search" onClick={backToSearch}><i className="fas fa-search"></i> Back to Search</button>
-          <Link to="/radar/company/watchlist" className="btn btn-sm btn-outline-primary me-2"><i className="fas fa-bookmark"></i> My Watchlist</Link>
-        </div>
+          <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" onClick={() => window.history.back()}><i className="fas fa-reply"></i> Back</button>
+          {/* <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" title="Search" data-bs-toggle="modal" data-bs-target="#search_modal"><i className="fas fa-search"></i> Search</button> */}
 
+        </div>
         <div className="table-responsive border-bottom" style={{ "height": "calc(100vh - 210px)", "overflowY": "scroll", "padding": "0 10px", "margin": "0 -10px" }}>
           <table className="table table-borderless tableFixHead mb-0" id="peopleTable">
             <thead>
               <tr>
                 <th>Name of Company</th>
+                <th>Action</th>
                 <th>Industry</th>
                 <th>Employee Head Count</th>
                 <th>Company Location</th>
               </tr>
             </thead>
             <tbody id="contactTable">
-              {companies.length !== 0 &&
-                companies.data.companies.map((data) => {
-                  return <TableRow key={data._id} data={data} showCompanyInfo={getCompanyInfo} saveCompany={saveCompany} />
-                })
+              {watchList.length !== 0 ?
+                <WatchListTableRow TableData={watchList.companies} showCompanyInfo={getCompanyInfo} selectAll={selectAll} />
+                : <tr><td colSpan="11" className="text-center py-2" ><h5 className="mb-0">No record found</h5></td></tr>
               }
             </tbody>
           </table>
@@ -214,7 +195,7 @@ const Table = (props) => {
             <Pagination
               activePage={page}
               itemsCountPerPage={50}
-              totalItemsCount={totalComapany}
+              totalItemsCount={companies}
               pageRangeDisplayed={7}
               onChange={handlePageChange}
               activeClass="active"
@@ -279,4 +260,4 @@ const Table = (props) => {
   )
 }
 
-export default Table
+export default Watchlist

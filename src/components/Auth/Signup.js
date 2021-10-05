@@ -33,7 +33,7 @@ const Signup = (props) => {
 			})
 		});
 		const json = await response.json()
-		console.log(json);
+		// console.log(json);
 		if (json.status === 'success') {
 			alert('Thank you for create account, please login to continue');
 			history.push("/login");
@@ -78,7 +78,7 @@ const Signup = (props) => {
 								<input type="submit" value="Signup" className="btn py-3 btn-block w-100 btn-primary" />
 								<span className="d-block text-center my-4 text-muted">— or —</span>
 								<div className="social-login">
-									<a href="#" className="btn btn-danger py-3 w-100 d-flex justify-content-center align-items-center" onClick={() => { alert('This would be work soon.'); }}>
+									<a href="/" className="btn btn-danger py-3 w-100 d-flex justify-content-center align-items-center" onClick={() => { alert('This would be work soon.'); }}>
 										<i className="fab fa-google me-2"></i> Signup with Google
 									</a>
 								</div>

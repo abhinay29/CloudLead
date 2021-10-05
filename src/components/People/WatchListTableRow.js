@@ -1,9 +1,27 @@
 import React from 'react'
-import { NotificationManager } from 'react-notifications';
+// import { NotificationManager } from 'react-notifications';
 
-const API_URL = process.env.REACT_APP_API_URL;
+const Badge = (props) => {
+  const { confidence } = props
+  let badge = '';
+  if (confidence === 'High' || confidence === 'Verified') {
+    badge = 'high';
+  } else if (confidence === 'Low' || confidence === 'Catchall/Accept_all') {
+    badge = 'low';
+  } else if (confidence === 'Guessed' || confidence === 'Guessed/Recommended') {
+    badge = 'guessed';
+  }
 
-const TableRow = (props) => {
+  return (
+    <>
+      {(badge === 'high') && <span className="badge text-white bg-success small"><i className="fas fa-check-circle me-1" title="Verified"></i> Verified</span>}
+      {(badge === 'low') && <span className="badge bg-secondary">Catch all / Accept all</span>}
+      {(badge === 'guessed') && <span className="badge" style={{ "background": "#f57c00" }}> Guessed / Recommended</span>}
+    </>
+  )
+}
+
+const WatchListTableRow = (props) => {
 
   const { TableData, showCompanyInfo, selectAll } = props;
 
@@ -16,42 +34,11 @@ const TableRow = (props) => {
 
   toogleSelectAll(selectAll)
 
-  // const showContact = (res, unlockID) => {
-
-
-  // }
-
-  const addToWatchList = async (personId) => {
-    const watchList = await fetch(`${API_URL}/api/contacts/unlock`, {
-      method: 'POST',
-      headers: {
-        'auth-token': localStorage.getItem('token'),
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ cid: personId })
-    })
-    const res = await watchList.json();
-    if (res.status === 'success') {
-      let badge = '';
-      if (res.data.primary_mai_confidence === 'High' || res.data.primary_mai_confidence === 'Verified') {
-        badge = '<span class="badge text-white bg-success small"><i class="fas fa-check-circle me-1" title="Verified"></i> Verified</span>';
-      } else if (res.data.primary_mai_confidence === 'Low' || res.data.primary_mai_confidence === 'Catchall/Accept_all') {
-        badge = '<span class="badge bg-secondary">Catch all / Accept all</span>';
-      } else if (res.data.primary_mai_confidence === 'Guessed' || res.data.primary_mai_confidence === 'Guessed/Recommended') {
-        badge = '<span class="badge" style="background: #f57c00"> Guessed / Recommended</span>';
-      }
-
-      let unlockContainer = document.getElementById('unlock_' + personId);
-      unlockContainer.innerHTML = `${res.data.primary_email} <br>${badge} <span class="ms-2" style="cursor: pointer"><i class="far fa-copy"></i></span>`;
-      NotificationManager.success('Contact added to watchlist', "Success!", 2000);
-    }
-  }
-
   return (
     <>
       {TableData.map(data => {
         return (
-          <tr key={data._id}>
+          <tr key={data._id} id={`wlrow_${data._id}`}>
             <td className="name_of_contact align-middle">
               <div className="d-flex align-items-center">
                 <span className="me-3">
@@ -71,15 +58,14 @@ const TableRow = (props) => {
               <div className="table_social_link mt-1">
                 <a href={data.website} data-bs-toggle="tooltip" data-bs-placement="top" title="Website" target="_blank" rel="noreferrer"><i className="fas fa-globe"></i></a>
                 <a href={data.linkedin_link} data-bs-toggle="tooltip" data-bs-placement="top" title="Linkedin Link" target="_blank" rel="noreferrer"><i className="fab fa-linkedin-in"></i></a>
-                <button type="button" className="btn btn-sm btn-outline-secondary ms-1 px-1 py-0" onClick={() => { showCompanyInfo(data.company_name) }} title="View Company Profile"><i className="fas fa-eye small"></i> View</button>
               </div>
             </td>
             <td className="industry align-middle">{data.industry}</td>
-            <td className="head-count align-middle">{data.company_size_range}</td>
-            <td className="align-middle email" id={`unlock_${data._id}`} nowrap="true">
-              <span className="btn btn-sm btn-primary" onClick={() => { addToWatchList(data._id) }}>
-                <i className="fas fa-envelope"></i> Get Contact
-              </span>
+            <td className="head-count align-middle" nowrap="true">{data.company_size_range}</td>
+            <td className="align-middle" id={`unlock_${data._id}`} nowrap="true">
+              {data.primary_email} <br />
+              <Badge confidence={data.primary_mai_confidence} />
+              <span className="ms-2" style={{ "cursor": "pointer" }}><i className="far fa-copy"></i></span>
             </td>
             <td className="align-middle"><div style={{ "height": "40px", "overflow": "hidden" }}>{data.boardline_numbers}</div></td>
             <td className="align-middle"><span className="badge bg-primary">Contact Us</span></td>
@@ -92,4 +78,4 @@ const TableRow = (props) => {
   )
 }
 
-export default TableRow
+export default WatchListTableRow

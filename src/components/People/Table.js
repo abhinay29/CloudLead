@@ -1,39 +1,55 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import PeopleContext from '../Context/People/PeopleContext';
 import { Link } from 'react-router-dom'
 import Pagination from "react-js-pagination";
 import TableRow from './TableRow'
+import { NotificationManager } from 'react-notifications';
+import { useDispatch } from 'react-redux';
+import { progressLoading } from '../../states/action-creator';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const Table = (props) => {
+
+  const dispatch = useDispatch()
+
   const context = useContext(PeopleContext);
   const { peoples, getPeoples, totalPeople, setTotalPeople, uniqueComp } = context;
   const [page, setPage] = useState(1);
+  const [selectAll, setSelectAll] = useState(false);
+  const [disSaveBtn, setDisSaveBtn] = useState(false);
   const { setShowFilter, setShowTable } = props
+  const [limit, setLimit] = useState(50);
 
   const backToSearch = () => {
+    dispatch(progressLoading(30))
     getPeoples([]);
     setTotalPeople(0)
     setShowFilter(true)
     setShowTable(false)
     setPage(1);
+    setDisSaveBtn(false)
+    setSelectAll(false)
+    dispatch(progressLoading(100))
+    let input = document.getElementById('allSelector');
+    input.checked = false;
     // props.setResetRole(true);
   }
 
   const handlePageChange = (pageNumber) => {
-    searchPeople(pageNumber)
+    if (pageNumber !== page)
+      searchPeople(pageNumber)
   }
 
-  const searchPeople = async (pageNumber) => {
+  const searchPeople = async (pageNumber = 1) => {
     setPage(pageNumber);
     let query = localStorage.getItem('searchQuery') + `&page=${pageNumber}`;
 
     if (query.length === 0) {
       return
     }
-
-    const url = `${API_URL}/api/contacts?${query}`;
+    dispatch(progressLoading(30))
+    const url = `${API_URL}/api/contacts?${query}&limit=${limit}`;
     let data = await fetch(url, {
       method: 'GET',
       headers: {
@@ -41,6 +57,7 @@ const Table = (props) => {
         'Content-Type': 'application/json'
       }
     });
+    dispatch(progressLoading(50))
     let parsedData = await data.json()
     if (parsedData.status === 'success') {
       if (parsedData.totalResults === 0) {
@@ -49,19 +66,21 @@ const Table = (props) => {
       }
       getPeoples(parsedData)
     }
+    dispatch(progressLoading(100))
   }
 
   const [company_info, setCompInfo] = useState({})
 
-
   const getCompanyInfo = async (comp_name) => {
+    dispatch(progressLoading(30))
     const data = await fetch(`${API_URL}/api/companies/${comp_name}`)
+    dispatch(progressLoading(50))
     const CompData = await data.json()
-
     if (CompData.status === 'success') {
       setCompInfo(CompData.comp_data)
       openModal('showCompany');
     }
+    dispatch(progressLoading(100))
 
   }
 
@@ -86,6 +105,103 @@ const Table = (props) => {
     modalBackdrop.style.display = "none";
   }
 
+  const saveSearchQuery = async (e) => {
+    e.preventDefault();
+    setDisSaveBtn(true);
+    dispatch(progressLoading(30))
+    let input = document.getElementById('saveSearchName');
+    const responce = await fetch(`${API_URL}/api/user/savesearch`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'auth-token': localStorage.getItem('token')
+      },
+      body: JSON.stringify({
+        name: input.value,
+        query: JSON.parse(localStorage.getItem('currentQuery'))
+      })
+    })
+    dispatch(progressLoading(50))
+    const json = await responce.json()
+    if (json.status === 'success') {
+      NotificationManager.success('Search saved successfully');
+      input.value = '';
+    } else {
+      NotificationManager.error("Something went wrong please try again later.");
+    }
+    setDisSaveBtn(false);
+    dispatch(progressLoading(100))
+  }
+
+  const addToWatchList = async (ids) => {
+    const bulkUnlock = await fetch(`${API_URL}/api/contacts/unlockbulk`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'auth-token': localStorage.getItem('token')
+      },
+      body: JSON.stringify({
+        ids: ids
+      })
+    })
+    if (!bulkUnlock) { return false }
+
+    const res = await bulkUnlock.json();
+
+    if (res.status === 'success') {
+      if (res.data.length !== 0) {
+        res.data.map(data => {
+          var badge = '';
+          if (data.primary_mai_confidence === 'High' || data.primary_mai_confidence === 'Verified') {
+            badge = '<span class="badge text-white bg-success small"><i class="fas fa-check-circle me-1" title="Verified"></i> Verified</span>';
+          } else if (data.primary_mai_confidence === 'Low' || data.primary_mai_confidence === 'Catchall/Accept_all') {
+            badge = '<span class="badge bg-secondary">Catch all / Accept all</span>';
+          } else if (data.primary_mai_confidence === 'Guessed' || data.primary_mai_confidence === 'Guessed/Recommended') {
+            badge = `<span class="badge" style="background: #f57c00"> Guessed / Recommended</span>`;
+          }
+          var unlockContainer = document.getElementById('unlock_' + data._id);
+          unlockContainer.innerHTML = `${data.primary_email} <br>${badge} <span class="ms-2" style="cursor: pointer"><i class="far fa-copy"></i></span>`;
+          return true;
+        })
+      }
+      NotificationManager.success(`${res.unlocked} contacts added to watchlist`, "Success!", 3000);
+    }
+  }
+
+  const getContacts = () => {
+    let selectedId = []
+    var checkboxes = document.getElementsByClassName('selectContacts')
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+      if (checkboxes[i].checked)
+        selectedId.push(checkboxes[i].value);
+    }
+    if (selectedId.length === 0) {
+      NotificationManager.error("Please select people to add in watchlist");
+      return false;
+    }
+
+    addToWatchList(selectedId)
+    return true;
+  }
+
+  const changeViewLimit = (e) => {
+    setLimit(e.target.value)
+  }
+
+  useEffect(() => {
+    searchPeople()
+  }, [limit])
+
+  useEffect(() => {
+    var no_selected_contact = document.getElementById('no_selected_contact');
+
+    if (!selectAll) { no_selected_contact.innerHTML = ""; return false }
+
+    var selectedCheckbox = document.getElementsByClassName('selectContacts')
+    no_selected_contact.innerHTML = `${selectedCheckbox.length} contact selected`;
+
+  }, [selectAll])
+
   return (
     <div>
       <div className="card-body" id="result_body">
@@ -94,7 +210,7 @@ const Table = (props) => {
             <span className="small fw-bold text-primary me-2">CONTACTS (<span>{totalPeople}</span>)</span>
             <span className="small fw-bold text-primary">UNIQUE COMPANIES (<span>{uniqueComp}</span>)</span>
           </div>
-          <div id="no_selected_contact"></div>
+          <div id="no_selected_contact" className="text-primary"></div>
         </div>
         <div className="mb-1">
           <div className="btn-group me-2" role="group" aria-label="Menu">
@@ -109,12 +225,26 @@ const Table = (props) => {
               </ul>
             </span>
             {/* <button type="button" className="btn btn-sm btn-outline-primary"><i className="fas fa-plus small"></i></button> */}
-            <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip" data-bs-toggle="modal" data-bs-target="#saveSearchModal" title="Save Search Query"><i className="far fa-save"></i></button>
+            <span className="dropdown bi-tooltip">
+              <button className=" btn btn-sm btn-outline-primary bi-tooltip" type="button" id="saveSearch" data-bs-toggle="dropdown" aria-expanded="false">
+                <i className="far fa-save"></i>
+              </button>
+              <div className="dropdown-menu shadow p-3" aria-labelledby="saveSearch">
+                <form action="" onSubmit={saveSearchQuery}>
+                  <div className="mb-3">
+                    <label htmlFor="" className="form-label small">Save Search</label>
+                    <input type="text" id="saveSearchName" className="form-control" style={{ "width": "200px" }} />
+                    <p className="small text-muted">Provide name for this search</p>
+                  </div>
+                  <button type="submit" className="btn btn-primary w-100" disabled={disSaveBtn && "disabled"}>Save Search</button>
+                </form>
+              </div>
+            </span>
             <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip" title="Add to list"><i className="fas fa-plus"></i></button>
-            <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip" title="Refresh"><i className="fas fa-sync-alt"></i></button>
+            <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip" onClick={() => window.location.reload()} title="Refresh"><i className="fas fa-sync-alt"></i></button>
           </div>
           <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" title="Back to Search" onClick={backToSearch}><i className="fas fa-search"></i> Back to Search</button>
-          <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" id="unlock_selected" title="Get Contacts"><i className="fas fa-envelope"></i> Get Contacts</button>
+          <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" onClick={() => { getContacts() }} title="Get Contacts"><i className="fas fa-envelope"></i> Get Contacts</button>
           <Link to="/radar/people/watchlist" className="btn btn-sm btn-outline-primary me-2"><i className="fas fa-bookmark"></i> My Watchlist</Link>
         </div>
 
@@ -124,7 +254,7 @@ const Table = (props) => {
               <tr>
                 <th>
                   <div className="d-flex align-items-center">
-                    <input type="checkbox" id="selectall" className="form-check-input mt-0 me-3" />
+                    <input type="checkbox" id="allSelector" onClick={(e) => { setSelectAll(e.target.checked) }} className="form-check-input mt-0 me-3" />
                     <span>Person's Name</span>
                   </div>
                 </th>
@@ -141,24 +271,22 @@ const Table = (props) => {
             </thead>
             <tbody id="contactTable">
               {peoples.length !== 0 &&
-                peoples.data.contacts.map((data) => {
-                  return <TableRow key={data._id} data={data} showCompanyInfo={getCompanyInfo} />
-                })
+                <TableRow TableData={peoples.data.contacts} showCompanyInfo={getCompanyInfo} selectAll={selectAll} />
               }
             </tbody>
           </table>
         </div>
         <div className="mt-3 d-flex align-items-center">
           <div>
-            <select name="no_of_contact" id="no_of_contact" className="form-select form-control-sm">
-              <option value="50">50 Contact</option>
-              <option value="100">100 Contact</option>
+            <select name="no_of_contact" id="no_of_contact" onChange={(e) => changeViewLimit(e)} className="form-select form-control-sm">
+              <option value="50" selected={limit === 50 ? true : false}>50 Contact</option>
+              <option value="100" selected={limit === 100 ? true : false}>100 Contact</option>
             </select>
           </div>
           <nav className="ms-auto d-flex align-items-center">
             <Pagination
               activePage={page}
-              itemsCountPerPage={50}
+              itemsCountPerPage={limit}
               totalItemsCount={totalPeople}
               pageRangeDisplayed={7}
               onChange={handlePageChange}

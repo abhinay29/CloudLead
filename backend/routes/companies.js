@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const fetchuser = require('../middleware/fetchuser');
 const Company = require('../models/Companies');
+const Watchlist = require('../models/CompanyWatchlist');
 const { body, validationResult } = require('express-validator');
 
 class ConvertStringRegex {
@@ -293,7 +294,6 @@ router.get('/:name', async (req, res) => {
       'founded',
       'description',
       'revenue_range'])
-
     res.status(200).json({
       status: 'success',
       comp_data
@@ -302,6 +302,93 @@ router.get('/:name', async (req, res) => {
   } catch (error) {
     console.error(error.message);
     res.status(404).send("Company not found");
+  }
+
+})
+
+router.post('/addtowatchlist', fetchuser, async (req, res) => {
+  try {
+    const { cid } = req.body;
+
+    // If there are errors, return Bad request and the errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const watchlist = new Watchlist({
+      user: req.user.id, contact_id: cid
+    })
+
+    const savedWatchlist = await watchlist.save();
+
+    res.status(200).json({
+      status: 'success',
+    });
+
+  } catch (error) {
+    console.error(error.message);
+    res.status(200).send(error.message);
+  }
+})
+
+router.get('/w/watchlist', fetchuser, async (req, res) => {
+
+  let query = {}
+  let page = 1
+  if (req.query.page) {
+    page = parseInt(req.query.page)
+  }
+
+  let newLimit = 50;
+  if (req.query.limit) {
+    newLimit = parseInt(req.query.limit)
+  }
+  const skip = (page - 1) * newLimit;
+
+  try {
+    // const watchlist = await Watchlist.find({ user: req.user.id }).skip(skip).limit(newLimit);
+    const watchlist = await Watchlist.find({ user: req.user.id });
+
+    let search = {}
+    search._id = { $in: watchlist.map(cid => { return cid.contact_id }) }
+    search.page = page;
+
+    try {
+      const wlcompany = new APIfeatures(Company.find().select(['_id',
+        'company_name',
+        'website',
+        'linkedin_link',
+        'position',
+        'industry',
+        'company_size_range',
+        'boardline_numbers',
+        'person_country',
+        'person_city',
+        'company_country',
+        'company_city',
+        'product_services']), search)
+        .filtering()
+        .paginating();
+
+      const companies = await wlcompany.query;
+      const totalResults = await Company.count(search);
+
+      res.status(200).json({
+        status: 'success',
+        totalResults: totalResults,
+        limit: companies.length ? companies.length : 0,
+        page: req.query.page,
+        companies
+      });
+
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).send("Internal Server Error");
+    }
+
+  } catch (error) {
+    console.error(error.message);
+    res.status(404).send("Not Found");
   }
 
 })

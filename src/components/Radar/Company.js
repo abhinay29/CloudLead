@@ -11,7 +11,7 @@ const Company = () => {
   return (
     <CompanyState>
       <div className={`${showFilter === true ? 'd-block' : 'd-none'}`}>
-        <Filter setShowTable={setShowTable} setShowFilter={setShowFilter} />
+        <Filter setShowTable={setShowTable} setShowFilter={setShowFilter} showFilter={showFilter} />
       </div>
       <div className={`${showTable === true ? 'd-block' : 'd-none'}`}>
         <Table setShowFilter={setShowFilter} setShowTable={setShowTable} />

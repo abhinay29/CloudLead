@@ -1,19 +1,37 @@
 import React from 'react'
 import { Link, useLocation, useHistory } from "react-router-dom";
-
+import LoadingBar from 'react-top-loading-bar'
+import { useSelector, useDispatch } from 'react-redux';
+import { progressLoading } from '../states/action-creator';
 
 const Navbar = () => {
+
+	const loadingState = useSelector(state => state.setLoadingProgress)
+	const dispatch = useDispatch()
+
 	let history = useHistory();
-	// eslint-disable-next-line
 	const handleLogout = () => {
 		localStorage.removeItem('token');
 		history.push("/login");
 	}
-	// eslint-disable-next-line
 	let location = useLocation();
+
+	const linkClick = () => {
+		dispatch(progressLoading(30))
+		setTimeout(() => {
+			dispatch(progressLoading(100))
+		}, 400);
+	}
+
+
 	return (
 		<>
-			{/* <Link className="navbar-brand" to="/">B2B App</Link> */}
+			<LoadingBar
+				color='#f11946'
+				height={3}
+				progress={loadingState}
+				onLoaderFinished={() => dispatch(progressLoading(0))}
+			/>
 			<nav className="navbar top-nav navbar-expand-lg navbar-dark bg-primary">
 				<div className="container-fluid">
 					<Link className="navbar-brand me-4 p-0" to="/" style={{ "width": "40px", "height": "40px" }}>
@@ -25,16 +43,16 @@ const Navbar = () => {
 					<div className="collapse navbar-collapse" id="navbarNav">
 						<ul className="navbar-nav me-auto mb-2 mb-lg-0">
 							<li className="nav-item">
-								<Link className={`nav-link ${location.pathname === '/' ? "active" : ""}`} aria-current="page" to="/"><i className="far fa-chart-bar"></i> Cockpit</Link>
+								<Link className={`nav-link ${location.pathname === '/' ? "active" : ""}`} aria-current="page" to="/" onClick={() => linkClick()}><i className="far fa-chart-bar"></i> Cockpit</Link>
 							</li>
 							<li className="nav-item">
-								<Link className={`nav-link ${location.pathname === '/radar/people' ? "active" : ""}`} to="/radar/people"><i className="fas fa-user-friends"></i> People</Link>
+								<Link className={`nav-link ${location.pathname === '/radar/people' ? "active" : ""}`} to="/radar/people" onClick={() => linkClick()}><i className="fas fa-user-friends"></i> People</Link>
 							</li>
 							<li className="nav-item">
 								<Link className={`nav-link ${location.pathname === '/radar/company' ? "active" : ""}`} to="/radar/company"><i className="far fa-building"></i> Companies</Link>
 							</li>
 							<li className="nav-item">
-								<Link className={`nav-link ${location.pathname === '/radar/people/watchlist' ? "active" : ""}`} to="/radar/people/watchlist"><i className="far fa-bookmark"></i>My Watchlist</Link>
+								<Link className={`nav-link ${location.pathname === '/radar/people/watchlist' ? "active" : ""}`} to="/radar/people/watchlist" onClick={() => linkClick()}><i className="far fa-bookmark"></i>My Watchlist</Link>
 							</li>
 							<li className="nav-item dropdown">
 								<Link className="nav-link dropdown-toggle" to="lists"><i className="far fa-list-alt"></i> Sequences</Link>
