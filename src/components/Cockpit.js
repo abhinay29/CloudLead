@@ -4,7 +4,6 @@ import { useHistory } from 'react-router';
 
 const Cockpit = () => {
 
-	// eslint-disable-next-line
 	let history = useHistory();
 
 	useEffect(() => {
@@ -15,8 +14,99 @@ const Cockpit = () => {
 	}, [])
 
 	return (
-		<div>
-			<h2>Cockpit</h2>
+		<div className="container mt-4">
+			<div className="row">
+				<div className="col-md-4">
+					<div className="card shadow border-0 rounded-3 mb-4">
+						<div className="card-body">
+							<div style={{ "height": "120px" }} class="d-flex justify-content-between">
+								<h3 className="text-dark-50">Some text</h3>
+								<h1 className="text-dark">100</h1>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="col-md-4">
+					<div className="card shadow border-0 rounded-3 mb-4">
+						<div className="card-body">
+							<div style={{ "height": "120px" }} class="d-flex justify-content-between">
+								<h3 className="text-dark-50">Some text</h3>
+								<h1 className="text-dark">100</h1>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="col-md-4">
+					<div className="card shadow border-0 rounded-3 mb-4">
+						<div className="card-body">
+							<div style={{ "height": "120px" }} class="d-flex justify-content-between">
+								<h3 className="text-dark-50">Some text</h3>
+								<h1 className="text-dark">100</h1>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="col-md-4">
+					<div className="card shadow border-0 rounded-3 mb-4">
+						<div className="card-body">
+							<div style={{ "height": "120px" }} class="d-flex justify-content-between">
+								<h3 className="text-dark-50">Some text</h3>
+								<h1 className="text-dark">100</h1>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="col-md-4">
+					<div className="card shadow border-0 rounded-3 mb-4">
+						<div className="card-body">
+							<div style={{ "height": "120px" }} class="d-flex justify-content-between">
+								<h3 className="text-dark-50">Some text</h3>
+								<h1 className="text-dark">100</h1>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="col-md-4">
+					<div className="card shadow border-0 rounded-3 mb-4">
+						<div className="card-body">
+							<div style={{ "height": "120px" }} class="d-flex justify-content-between">
+								<h3 className="text-dark-50">Some text</h3>
+								<h1 className="text-dark">100</h1>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="col-md-4">
+					<div className="card shadow border-0 rounded-3 mb-4">
+						<div className="card-body">
+							<div style={{ "height": "120px" }} class="d-flex justify-content-between">
+								<h3 className="text-dark-50">Some text</h3>
+								<h1 className="text-dark">100</h1>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="col-md-4">
+					<div className="card shadow border-0 rounded-3 mb-4">
+						<div className="card-body">
+							<div style={{ "height": "120px" }} class="d-flex justify-content-between">
+								<h3 className="text-dark-50">Some text</h3>
+								<h1 className="text-dark">100</h1>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="col-md-4">
+					<div className="card shadow border-0 rounded-3 mb-4">
+						<div className="card-body">
+							<div style={{ "height": "120px" }} class="d-flex justify-content-between">
+								<h3 className="text-dark-50">Some text</h3>
+								<h1 className="text-dark">100</h1>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	)
 }

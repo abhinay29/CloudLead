@@ -12,7 +12,7 @@
 }
 
 body {
-  background-color: #fff;
+  background-color: #f6fbff;
   font-size: 1rem;
   font-family: "Nunito", sans-serif;
   color: var(--color-text-primary);
@@ -29,9 +29,6 @@ body {
 table td,
 table th {
   color: var(--color-text-primary);
-}
-
-table th {
   background: var(--card-bg) !important;
 }
 

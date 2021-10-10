@@ -8,13 +8,12 @@
 
 .dark-theme {
   --color-text-primary: #f0f6fc;
-  --color-bg-canvas: #0d1117;
-  --card-bg: #39434d;
+  --color-bg-canvas: #0d1117;--card-bg: #39434d;
 }
 
 body {
   // background-color: var(--color-bg-canvas);
-  background-color: #fff;
+  background-color: #f6fbff;
   font-size: 1rem;
   font-family: "Nunito", sans-serif;
   color: var(--color-text-primary);
@@ -30,9 +29,6 @@ body {
 table td,
 table th {
   color: var(--color-text-primary);
-}
-
-table th {
   background: var(--card-bg) !important;
 }
 
