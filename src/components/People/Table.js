@@ -61,7 +61,7 @@ const Table = (props) => {
     let parsedData = await data.json()
     if (parsedData.status === 'success') {
       if (parsedData.totalResults === 0) {
-        alert('No result found');
+        NotificationManager.error('No result found');
         return
       }
       getPeoples(parsedData)

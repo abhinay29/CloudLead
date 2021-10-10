@@ -2,6 +2,8 @@ import React, { useContext, useState } from 'react'
 import CompanyContext from '../Context/Company/CompanyContext';
 import Pagination from "react-js-pagination";
 import TableRow from './TableRow'
+import ContactTableRow from '../People/TableRow'
+
 import { NotificationManager } from 'react-notifications';
 import { useDispatch } from 'react-redux';
 import { progressLoading } from '../../states/action-creator';
@@ -10,14 +12,16 @@ import { Link } from 'react-router-dom';
 const API_URL = process.env.REACT_APP_API_URL;
 
 const Table = (props) => {
-
   const dispatch = useDispatch()
-
   const context = useContext(CompanyContext);
+  const [peoples, getPeoples] = useState([]);
   const { companies, getCompanies, totalComapany, setTotalComp } = context;
   const [page, setPage] = useState(1);
+  const [pageContact, setPageContact] = useState(1);
   const [disSaveBtn, setDisSaveBtn] = useState(false);
+  const [limit, setLimit] = useState(50);
   const { setShowFilter, setShowTable } = props
+  const [companyName, setCompanyName] = useState("");
 
   const backToSearch = () => {
     dispatch(progressLoading(40))
@@ -31,6 +35,12 @@ const Table = (props) => {
   const handlePageChange = (pageNumber) => {
     if (page !== pageNumber) {
       searchCompany(pageNumber)
+    }
+  }
+
+  const handleContactPageChange = (pageNumber) => {
+    if (pageContact !== pageNumber) {
+      showContacts(companyName, pageNumber)
     }
   }
 
@@ -142,6 +152,36 @@ const Table = (props) => {
     }
   }
 
+  const [totalContacts, setTotalContacts] = useState(0);
+
+  const showContacts = async (company_name, pageNumber = 1) => {
+    setPageContact(pageNumber);
+    dispatch(progressLoading(10))
+    let query;
+    query = 'company_name=' + company_name
+    const url = `${API_URL}/api/contacts?${query}&page=${pageNumber}`;
+    const watchList = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'auth-token': localStorage.getItem('token'),
+        'Content-Type': 'application/json'
+      },
+    })
+    dispatch(progressLoading(50))
+    const res = await watchList.json();
+    if (res.status === 'success') {
+      if (res.totalResults === 0) {
+        NotificationManager.error('No result found');
+        return
+      }
+      setTotalContacts(res.totalResults);
+      getPeoples(res.data.contacts)
+      setCompanyName(company_name);
+      openModal('showContactModal');
+    }
+    dispatch(progressLoading(100))
+  }
+
   return (
     <div>
       <div className="card-body" id="result_body">
@@ -197,7 +237,7 @@ const Table = (props) => {
             <tbody id="contactTable">
               {companies.length !== 0 &&
                 companies.data.companies.map((data) => {
-                  return <TableRow key={data._id} data={data} showCompanyInfo={getCompanyInfo} saveCompany={saveCompany} />
+                  return <TableRow key={data._id} data={data} showCompanyInfo={getCompanyInfo} saveCompany={saveCompany} showContacts={showContacts} />
                 })
               }
             </tbody>
@@ -273,6 +313,77 @@ const Table = (props) => {
           </div>
         </div>
       </div>
+
+      <div className="modal" id="showContactModal" tabIndex="-1">
+        <div className="modal-dialog modal-fullscreen">
+          <div className="modal-content">
+            <div className="modal-header">
+              <p className="text-primary position-absolute">Total Contacts: {totalContacts}</p>
+              <h5 className="modal-title w-100 text-center">{companyName}</h5>
+              <button type="button" className="btn-close" onClick={() => closeModal('showContactModal')} aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              <div className="table-responsive border-bottom"
+                style={{ "height": "calc(100vh - 150px)", "overflowY": "scroll", "padding": "0 10px", "margin": "0 -10px" }}
+              >
+                <table className="table table-borderless tableFixHead mb-0" id="peopleTable">
+                  <thead>
+                    <tr>
+                      <th>
+                        <div className="d-flex align-items-center">
+                          <input type="checkbox" id="allSelector" onClick={(e) => { return false; }} className="form-check-input mt-0 me-3" />
+                          <span>Person's Name</span>
+                        </div>
+                      </th>
+                      <th>Title</th>
+                      <th>Company</th>
+                      <th>Industry</th>
+                      <th>Head Count</th>
+                      <th>Email</th>
+                      <th>Boardline Numbers</th>
+                      <th>Direct Dial</th>
+                      <th>Contact Location</th>
+                      <th>Company Location</th>
+                    </tr>
+                  </thead>
+                  <tbody id="contactTable">
+                    {peoples.length !== 0 &&
+                      <ContactTableRow
+                        TableData={peoples}
+                        closeModal={closeModal}
+                        showCompanyInfo={() => { return false }}
+                        selectAll={false}
+                      />
+                    }
+                  </tbody>
+                </table>
+              </div>
+              <div className="mt-3 d-flex align-items-end">
+                <nav className="ms-auto d-flex align-items-center">
+                  <Pagination
+                    activePage={pageContact}
+                    itemsCountPerPage={50}
+                    totalItemsCount={totalContacts}
+                    pageRangeDisplayed={7}
+                    onChange={handleContactPageChange}
+                    activeClass="active"
+                    itemClass="page-item"
+                    innerClass="pagination mb-0"
+                    linkClass="page-link"
+                    firstPageText="First"
+                    lastPageText="Last"
+                    prevPageText="Previous"
+                    nextPageText="Next"
+                    disabledClass="disabled"
+                    activeLinkClass="disabled"
+                  />
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="modal-backdrop" id="modal-backdrop" style={{ "display": "none", "opacity": ".5" }}></div>
 
     </div >
