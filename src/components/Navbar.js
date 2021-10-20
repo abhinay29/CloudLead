@@ -32,10 +32,11 @@ const Navbar = () => {
 				progress={loadingState}
 				onLoaderFinished={() => dispatch(progressLoading(0))}
 			/>
-			<nav className="navbar top-nav navbar-expand-lg navbar-dark bg-primary">
+			<nav className="navbar top-nav navbar-expand-lg bg-primary">
 				<div className="container-fluid">
 					<Link className="navbar-brand me-4 p-0" to="/" style={{ "width": "40px", "height": "40px" }}>
-						<div className="rounded-circle bg-dark d-flex justify-content-center align-items-center" style={{ "width": "40px", "height": "40px" }}>C</div>
+						{/* <div className="rounded-circle bg-dark d-flex justify-content-center align-items-center" style={{ "width": "40px", "height": "40px" }}>C</div> */}
+						<img src="/logo.png" alt="Logo" style={{ "width": "40px", "height": "40px" }} />
 					</Link>
 					<button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 						<span className="navbar-toggler-icon"></span>
@@ -54,24 +55,16 @@ const Navbar = () => {
 							<li className="nav-item">
 								<Link className={`nav-link ${location.pathname === '/radar/people/watchlist' ? "active" : ""}`} to="/radar/people/watchlist" onClick={() => linkClick()}><i className="far fa-bookmark"></i>My Watchlist</Link>
 							</li>
-							<li className="nav-item dropdown">
-								<Link className="nav-link dropdown-toggle" to="lists"><i className="far fa-list-alt"></i> Sequences</Link>
-								<ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-									<li><Link className="dropdown-item" to="/">Product One</Link></li>
-									<li><Link className="dropdown-item" to="/">Product Two</Link></li>
-									<li><Link className="dropdown-item" to="/">Product Three</Link></li>
-									<li><Link className="dropdown-item" to="/">Product Four</Link></li>
-									<li><Link className="dropdown-item" to="/">Product Five</Link></li>
-									<li><Link className="dropdown-item" to="/">Product Six</Link></li>
-									<li><Link className="dropdown-item" to="/">Product Seven</Link></li>
-								</ul>
+							<li className="nav-item">
+								<Link className="nav-link" to="lists"><i className="far fa-list-alt"></i> Sequences</Link>
 							</li>
 						</ul>
 						<ul className="navbar-nav ms-auto">
-							<li className="nav-item me-3">
-								<Link className="nav-link nav-btn" to="/">
+							<li className="nav-item me-3 d-flex align-items-center">
+								{/* <Link className="nav-link nav-btn" to="/">
 									<span>Get Chrome Extension</span>
-								</Link>
+								</Link> */}
+								<button type="button" class="btn btn-sm btn-warning fw-bold px-3">Get Chrome Extension</button>
 							</li>
 							<li className="nav-item dropdown">
 								<Link className="nav-link dropdown-toggle" to="/" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"> Products </Link>

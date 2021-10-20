@@ -1,8 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700&display=swap");
 :root {
-  --color-text-primary: #262626;
+  --color-text-primary: #212529;
   --color-bg-canvas: #ebeffa;
   --card-bg: #ffffff;
+  --bs-primary: #1171ef;
 }
 
 .dark-theme {
@@ -47,8 +48,17 @@ table th {
 
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background-color: #4052f7;
-  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
+  background-color: #7367f0;
+}
+
+::-moz-selection {
+  background-color: #7367f0;
+  color: #fff;
+}
+
+::selection {
+  background-color: #7367f0;
+  color: #fff;
 }
 
 .table_social_link a {
@@ -220,7 +230,8 @@ table th {
 }
 
 .top-nav .nav-link.nav-btn span {
-  background-color: #303f9f;
+  background-color: #324cdd;
+  border-color: #324cdd;
   padding: 0.25rem 1rem;
   border-radius: 5px;
   -webkit-transition: all 0.2s ease;
@@ -317,4 +328,44 @@ table th {
 }
 
 /* ============ small devices .end// ============ */
+.btn-primary {
+  border: none;
+  background: #7367f0 !important;
+}
+
+.btn-outline-primary {
+  color: #7367f0;
+  border-color: #7367f0;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+  background-color: #7367f0;
+  color: #fff;
+}
+
+.bg-primary {
+  background-color: #7367f0 !important;
+}
+
+.bg-success {
+  background-color: #2dce89 !important;
+}
+
+.bg-warning {
+  background-color: #fb6340 !important;
+}
+
+.text-primary {
+  color: #7367f0 !important;
+}
+
+.page-link {
+  color: #7367f0;
+}
+
+.page-item.active .page-link {
+  background-color: #7367f0;
+  border-color: #7367f0;
+}
 /*# sourceMappingURL=style.css.map */

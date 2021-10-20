@@ -23,9 +23,13 @@ const Login = (props) => {
 		const json = await response.json()
 		if (json.success) {
 			// Save the auth token and redirect
+			if (localStorage.getItem('searchQuery')) {
+				localStorage.removeItem('searchQuery')
+			}
 			localStorage.setItem('token', json.authtoken);
 			localStorage.setItem('uname', json.uname);
 			localStorage.setItem('uemail', json.uemail);
+			localStorage.removeItem('searchQuery')
 			NotificationManager.success("Welcome back!!!")
 			history.push("/");
 		}

@@ -396,7 +396,7 @@ router.get('/', fetchuser, async (req, res) => {
     }
   }
 
-  console.log(newQuery)
+  // console.log(newQuery)
 
   try {
     const features = new APIfeatures(Contacts.find().select(['_id',
@@ -449,11 +449,36 @@ router.post('/unlock', fetchuser, async (req, res) => {
   try {
     const { cid } = req.body;
 
+    const Plan = { "name": "Free Forever", "download": 50, "unlock_month": 50, "unlock_daily": 10, "select_perpage": 50, "sendto_campaign": "No", "repeat_campaign": 0, "csv_upload": 0, "free_data": 0, "price": 0 };
+
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
+
+    let checkWatchlist = await Watchlist.findOne({ user: req.user.id, contact_id: cid });
+
+    if (checkWatchlist !== null) {
+      res.status(200).json({
+        status: 'exist',
+        msg: 'Contact is already in your watchlist'
+      });
+      return false;
+    }
+
+    let checkWatchlistCount = await Watchlist.count({ user: req.user.id });
+
+    if (Plan.unlock_daily > checkWatchlistCount) {
+
+    } else {
+      res.status(200).json({
+        status: 'limit_reached',
+        msg: 'Your daily unlock limit is reached, upgrade your plan or visit again tomorrow'
+      });
+      return false;
+    }
+
     const watchlist = new Watchlist({
       user: req.user.id, contact_id: cid
     })
@@ -481,6 +506,9 @@ router.post('/unlock', fetchuser, async (req, res) => {
 })
 
 router.post('/unlockbulk', fetchuser, async (req, res) => {
+
+  const Plan = { "name": "Free Forever", "download": 50, "unlock_month": 50, "unlock_daily": 10, "select_perpage": 50, "sendto_campaign": "No", "repeat_campaign": 0, "csv_upload": 0, "free_data": 0, "price": 0 };
+
   try {
     const { ids } = req.body;
 
@@ -490,6 +518,32 @@ router.post('/unlockbulk', fetchuser, async (req, res) => {
         message: 'Invalid access of blank data'
       })
     }
+
+    let checkWatchlistCount = await Watchlist.count({ user: req.user.id });
+
+    if (Plan.unlock_daily > checkWatchlistCount) {
+      if (ids.length > Plan.unlock_daily) {
+        res.status(200).json({
+          status: 'limit_reached',
+          msg: `You can only get contact '${Plan.unlock_daily}' in a day`
+        });
+        return false;
+      }
+    } else {
+      res.status(200).json({
+        status: 'limit_reached',
+        msg: 'Your daily unlock limit is reached, upgrade your plan or visit again tomorrow'
+      });
+      return false;
+    }
+
+    // console.log(checkWatchlistCount);
+
+    // res.status(200).json({
+    //   status: 'success',
+    // });
+
+    // return false;
 
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);

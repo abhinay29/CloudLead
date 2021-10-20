@@ -110,4 +110,60 @@ router.get('/savedcompanysearch', fetchuser, async (req, res) => {
   }
 })
 
+router.post('/add-to-list', fetchuser, async (req, res) => {
+
+  const user_id = req.user.id;
+
+  try {
+
+    try {
+
+      let CheckUser = await savedSearch.findOne({ userId: user_id });
+      let data = {
+        name: req.body.name,
+        query: req.body.query
+      }
+      let updateQuery = CheckUser.data;
+      updateQuery.push(data);
+
+      await savedSearch.findByIdAndUpdate(CheckUser._id, { $set: { data: updateQuery } }, { new: true })
+
+      res.status(200).json({ status: "success" })
+
+    } catch {
+      // console.log("Create")
+      let CreateSearch = await savedSearch.create({
+        userId: user_id,
+        data: [{
+          name: req.body.name,
+          query: req.body.query
+        }]
+      });
+      res.status(200).json({ status: "success" })
+    }
+
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
+})
+
+router.post('/list/create', fetchuser, async (req, res) => {
+
+  const user_id = req.user.id;
+
+  console.log(req.body);
+
+  res.status(200).json({ status: "success" });
+
+  // try {
+
+
+
+  // } catch (error) {
+  //   console.error(error.message);
+  //   res.status(500).send("Internal Server Error");
+  // }
+})
+
 module.exports = router

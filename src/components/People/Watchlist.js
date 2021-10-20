@@ -5,6 +5,8 @@ import { NotificationManager } from 'react-notifications';
 import { useDispatch } from 'react-redux';
 import { progressLoading } from '../../states/action-creator';
 import WatchFilter from './WatchlistFilter';
+import TableSkeleton from '../Skeleton/TableSkeleton';
+import NoRecordFound from './NoRecordFound';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -18,6 +20,8 @@ const Watchlist = () => {
   const [selectAll, setSelectAll] = useState(false);
   // eslint-disable-next-line
   const [uniqueComp, setUniqueComp] = useState(0)
+  const [disAddBtn, setDisAddBtn] = useState(false)
+  const [skeletonLoading, setSkeletonLoading] = useState(true);
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber !== page) {
@@ -56,6 +60,7 @@ const Watchlist = () => {
       }
     }
     dispatch(progressLoading(100))
+    setSkeletonLoading(false);
   }
 
   useEffect(() => {
@@ -152,6 +157,66 @@ const Watchlist = () => {
     return true;
   }
 
+  const [newListName, setNewListName] = useState("");
+  const [selectListName, setSelectListName] = useState("");
+
+  const handlenewListName = (e) => {
+    setNewListName(e.target.value);
+  }
+
+  const handleSelectListName = (e) => {
+    console.log(e.target.value);
+    setSelectListName(e.target.value);
+  }
+
+  const handleAddList = async (e) => {
+    e.preventDefault();
+    let list_name = '';
+    if (newListName !== "") {
+      list_name = newListName;
+    } else {
+      if (selectListName !== "") {
+        list_name = selectListName;
+      } else {
+        NotificationManager.error('Please create or select a list to add people');
+        return false;
+      }
+    }
+
+    let selectedId = []
+    var checkboxes = document.getElementsByClassName('selectContacts')
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+      if (checkboxes[i].checked)
+        selectedId.push(checkboxes[i].value);
+    }
+    if (selectedId.length === 0) {
+      NotificationManager.error("Please select people to add in list");
+      return false;
+    }
+
+    // console.log(selectedId);
+
+    dispatch(progressLoading(40))
+    const url = `${API_URL}/api/user/list/create`;
+    let data = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'auth-token': localStorage.getItem('token'),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        'list_name': list_name,
+        'ids': selectedId
+      })
+    });
+    dispatch(progressLoading(100))
+    let res = await data.json();
+    if (res.status === 'success') {
+      setNewListName("");
+      NotificationManager.success("List added successfully", "Success!");
+    }
+  }
+
   return (
     <div>
       <div className="card-body" id="result_body">
@@ -179,7 +244,31 @@ const Watchlist = () => {
             </span>
             <button type="button" className="btn btn-sm btn-outline-primary text-success bi-tooltip" id="export_csv" data-bs-placement="top" title="Export CSV"><i className="fas fa-download"></i></button>
             <button type="button" className="btn btn-sm btn-outline-primary text-danger bi-tooltip" data-bs-placement="top" title="Delete Contact(s)" onClick={() => { deleteContact() }}><i className="far fa-trash-alt"></i></button>
-            <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip" title="Add to list"><i className="fas fa-plus"></i></button>
+            <span className="dropdown bi-tooltip" title="Add to list">
+              <button className="btn btn-sm btn-outline-primary bi-tooltip" type="button" id="addlistDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="inside">
+                <i className="fas fa-plus"></i>
+              </button>
+              <div className="dropdown-menu shadow p-3" aria-labelledby="addlistDropdown">
+                <h5 className="text-center">Add to List</h5>
+                <form action="" onSubmit={handleAddList}>
+                  <div className="mb-3">
+                    <label htmlFor="newListName" className="form-label small">Create New List</label>
+                    <input type="text" name="newListName" id="newListName" className="form-control" style={{ "width": "260px" }} placeholder="Provide name for list" maxLength="50" value={newListName} onChange={handlenewListName} />
+                  </div>
+                  <div className="text-center mb-2">-- or --</div>
+                  <div className="mb-3">
+                    <label htmlFor="listName" className="form-label small">Select a List</label>
+                    <select name="listName" id="listName" onChange={handleSelectListName} className="form-select">
+                      <option value="">--</option>
+                      <option value="1">One</option>
+                      <option value="2">Two</option>
+                      <option value="3">Three</option>
+                    </select>
+                  </div>
+                  <button type="submit" className="btn btn-primary w-100" disabled={disAddBtn && "disabled"}>Save &amp; Add</button>
+                </form>
+              </div>
+            </span>
             <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip" title="Refresh" onClick={() => { window.location.reload() }}><i className="fas fa-sync-alt"></i></button>
           </div>
           <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" onClick={() => openModal('searchModal')}><i className="fas fa-search"></i> Search</button>
@@ -226,12 +315,15 @@ const Watchlist = () => {
                 <th>Direct Dial</th>
                 <th>Contact Location</th>
                 <th>Company Location</th>
+                <th>Added on</th>
               </tr>
             </thead>
             <tbody id="contactTable">
-              {watchList.length !== 0 ?
+              {skeletonLoading && <TableSkeleton />}
+              {!skeletonLoading &&
+                watchList.length !== 0 ?
                 <WatchListTableRow TableData={watchList.peoples} showCompanyInfo={getCompanyInfo} selectAll={selectAll} />
-                : <tr><td colSpan="11" className="text-center py-2" ><h5 className="mb-0">No record found</h5></td></tr>
+                : <NoRecordFound />
               }
             </tbody>
           </table>

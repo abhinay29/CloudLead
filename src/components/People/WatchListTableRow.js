@@ -71,6 +71,7 @@ const WatchListTableRow = (props) => {
             <td className="align-middle"><span className="badge bg-primary">Contact Us</span></td>
             <td className="align-middle"><strong>{data.person_country}</strong><br />{data.person_city}</td>
             <td className="align-middle"><strong>{data.company_country}</strong><br />{data.company_city}</td>
+            <td className="align-middle">{data.date}</td>
           </tr>
         )
       })}

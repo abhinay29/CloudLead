@@ -49,7 +49,28 @@ const SavedCompanySearch = new Schema({
 
 const savedCompanySearch = mongoose.model('saved_company_search', SavedCompanySearch);
 
+const List = new Schema({
+  list_name: {
+    type: String,
+    required: true,
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'users',
+    required: true
+  },
+  list_data: {
+    type: Object,
+    required: true,
+  },
+  created_at: {
+    type: Date,
+    default: Date.now
+  },
+})
+
 module.exports = {
   savedSearch: savedSearch,
-  savedCompanySearch: savedCompanySearch
+  savedCompanySearch: savedCompanySearch,
+  List: List
 }

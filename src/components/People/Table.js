@@ -6,6 +6,7 @@ import TableRow from './TableRow'
 import { NotificationManager } from 'react-notifications';
 import { useDispatch } from 'react-redux';
 import { progressLoading } from '../../states/action-creator';
+import TableSkeleton from '../Skeleton/TableSkeleton';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -14,10 +15,11 @@ const Table = (props) => {
   const dispatch = useDispatch()
 
   const context = useContext(PeopleContext);
-  const { peoples, getPeoples, totalPeople, setTotalPeople, uniqueComp } = context;
+  const { peoples, getPeoples, totalPeople, setTotalPeople, setUniqueComp, uniqueComp, setSkeletonLoading, skeletonLoading } = context;
   const [page, setPage] = useState(1);
   const [selectAll, setSelectAll] = useState(false);
   const [disSaveBtn, setDisSaveBtn] = useState(false);
+  const [disAddBtn, setDisAddBtn] = useState(false);
   const { setShowFilter, setShowTable } = props
   const [limit, setLimit] = useState(50);
 
@@ -33,6 +35,7 @@ const Table = (props) => {
     dispatch(progressLoading(100))
     let input = document.getElementById('allSelector');
     input.checked = false;
+    localStorage.removeItem('searchQuery');
     // props.setResetRole(true);
   }
 
@@ -42,6 +45,11 @@ const Table = (props) => {
   }
 
   const searchPeople = async (pageNumber = 1) => {
+
+    if (!localStorage.getItem('searchQuery')) {
+      return false;
+    }
+
     setPage(pageNumber);
     let query = localStorage.getItem('searchQuery') + `&page=${pageNumber}`;
 
@@ -65,6 +73,11 @@ const Table = (props) => {
         return
       }
       getPeoples(parsedData)
+      setTotalPeople(parsedData.totalResults)
+      setPage(1);
+      setSelectAll(false)
+      setUniqueComp(parsedData.uniqueCompany)
+      setSkeletonLoading(false);
     }
     dispatch(progressLoading(100))
   }
@@ -165,6 +178,40 @@ const Table = (props) => {
         })
       }
       NotificationManager.success(`${res.unlocked} contacts added to watchlist`, "Success!", 3000);
+    } else if (res.status === 'exist') {
+      NotificationManager.warning(res.msg);
+    } else if (res.status === 'limit_reached') {
+      NotificationManager.error(res.msg);
+    }
+  }
+
+  const handleAddList = async (e) => {
+    e.preventDefault();
+    let newListName = document.getElementById('newListName');
+    let listName = document.getElementById('listName');
+    let list_name = '';
+    if (newListName.value) {
+      list_name = newListName.value;
+    } else {
+      if (listName.value) {
+        list_name = listName.value;
+      } else {
+        NotificationManager.error('Please create or select a list to add people');
+        return false;
+      }
+    }
+
+    // console.log(list_name)
+
+    let selectedId = []
+    var checkboxes = document.getElementsByClassName('selectContacts')
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+      if (checkboxes[i].checked)
+        selectedId.push(checkboxes[i].value);
+    }
+    if (selectedId.length === 0) {
+      NotificationManager.error("Please select people to add in list");
+      return false;
     }
   }
 
@@ -224,9 +271,8 @@ const Table = (props) => {
                 <li><a className="dropdown-item select_contact" data-select="0" href="/">Clear Selection</a></li>
               </ul>
             </span>
-            {/* <button type="button" className="btn btn-sm btn-outline-primary"><i className="fas fa-plus small"></i></button> */}
             <span className="dropdown bi-tooltip">
-              <button className=" btn btn-sm btn-outline-primary bi-tooltip" type="button" id="saveSearch" data-bs-toggle="dropdown" aria-expanded="false">
+              <button className="btn btn-sm btn-outline-primary bi-tooltip" type="button" id="saveSearch" data-bs-toggle="dropdown" aria-expanded="false">
                 <i className="far fa-save"></i>
               </button>
               <div className="dropdown-menu shadow p-3" aria-labelledby="saveSearch">
@@ -240,7 +286,28 @@ const Table = (props) => {
                 </form>
               </div>
             </span>
-            <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip" title="Add to list"><i className="fas fa-plus"></i></button>
+            <span className="dropdown bi-tooltip" title="Add to list">
+              <button className="btn btn-sm btn-outline-primary bi-tooltip" type="button" id="saveSearch" data-bs-toggle="dropdown" aria-expanded="false">
+                <i className="fas fa-plus"></i>
+              </button>
+              <div className="dropdown-menu shadow p-3" aria-labelledby="addList">
+                <h5 className="text-center">Add to List</h5>
+                <form action="" onSubmit={handleAddList}>
+                  <div className="mb-3">
+                    <label htmlFor="newListName" className="form-label small">Create New List</label>
+                    <input type="text" name="newListName" id="newListName" className="form-control" style={{ "width": "260px" }} placeholder="Provide name for list" maxLength="50" />
+                  </div>
+                  <div className="text-center mb-2">-- or --</div>
+                  <div className="mb-3">
+                    <label htmlFor="listName" className="form-label small">Select a List</label>
+                    <select name="listName" id="listName" className="form-select">
+                      <option value="">--</option>
+                    </select>
+                  </div>
+                  <button type="submit" className="btn btn-primary w-100" disabled={disAddBtn && "disabled"}>Save &amp; Add</button>
+                </form>
+              </div>
+            </span>
             <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip" onClick={() => window.location.reload()} title="Refresh"><i className="fas fa-sync-alt"></i></button>
           </div>
           <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" title="Back to Search" onClick={backToSearch}><i className="fas fa-search"></i> Back to Search</button>
@@ -270,8 +337,11 @@ const Table = (props) => {
               </tr>
             </thead>
             <tbody id="contactTable">
-              {peoples.length !== 0 &&
+              {skeletonLoading && <TableSkeleton />}
+              {!skeletonLoading &&
+                peoples.length !== 0 ?
                 <TableRow TableData={peoples.data.contacts} showCompanyInfo={getCompanyInfo} selectAll={selectAll} />
+                : <tr><td colSpan="11" className="text-center py-2"><h5 className="mb-0">No record found</h5></td></tr>
               }
             </tbody>
           </table>
@@ -286,7 +356,7 @@ const Table = (props) => {
           <nav className="ms-auto d-flex align-items-center">
             <Pagination
               activePage={page}
-              itemsCountPerPage={limit}
+              itemsCountPerPage={parseInt(limit)}
               totalItemsCount={totalPeople}
               pageRangeDisplayed={7}
               onChange={handlePageChange}

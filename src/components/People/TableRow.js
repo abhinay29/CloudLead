@@ -44,6 +44,10 @@ const TableRow = (props) => {
       let unlockContainer = document.getElementById('unlock_' + personId);
       unlockContainer.innerHTML = `${res.data.primary_email} <br>${badge} <span class="ms-2" style="cursor: pointer"><i class="far fa-copy"></i></span>`;
       NotificationManager.success('Contact added to watchlist', "Success!", 2000);
+    } else if (res.status === 'exist') {
+      NotificationManager.warning(res.msg);
+    } else if (res.status === 'limit_reached') {
+      NotificationManager.error(res.msg);
     }
   }
 

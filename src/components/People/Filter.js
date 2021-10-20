@@ -22,7 +22,7 @@ const Filter = (props) => {
   const dispatch = useDispatch()
 
   const context = useContext(PeopleContext);
-  const { getPeoples, setTotalPeople, setUniqueComp } = context;
+  const { getPeoples, setTotalPeople, setUniqueComp, setSkeletonLoading } = context;
   const { showFilter, setShowFilter, setShowTable } = props
   const [disSearchBtn, setDisSearchBtn] = useState(false)
   const [deptState, setdeptState] = useState({
@@ -40,7 +40,7 @@ const Filter = (props) => {
 
   const handleDepartment = (e) => {
 
-    console.log(e.target.dataset.role);
+    // console.log(e.target.dataset.role);
 
     if (!e.target.checked) {
       setDefaultValue({ ...defaultValue, [e.target.dataset.role]: [] })
@@ -81,6 +81,13 @@ const Filter = (props) => {
       const stateRes = await response.json();
       setStates(stateRes);
     }
+  }
+
+  if (localStorage.getItem('searchQuery')) {
+    // let form = document.getElementById('search_form');
+    // form.submit();
+    setShowFilter(false);
+    setShowTable(true);
   }
 
   const searchPeople = async (e) => {
@@ -148,6 +155,7 @@ const Filter = (props) => {
       setUniqueComp(parsedData.uniqueCompany)
       setShowFilter(false)
       setShowTable(true)
+      setSkeletonLoading(false)
       dispatch(progressLoading(100))
     }
     setDisSearchBtn(false);

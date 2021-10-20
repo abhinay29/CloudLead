@@ -6,6 +6,7 @@ const PeopleState = (props) => {
   const [peoples, setPeoples] = useState(peopleInitial)
   const [totalPeople, settotpeople] = useState(0);
   const [uniqueComp, setunicomp] = useState(0);
+  const [skeletonLoading, setSkeletonLoading] = useState(true);
 
   const getPeoples = async (json) => {
     setPeoples(json)
@@ -20,7 +21,16 @@ const PeopleState = (props) => {
   }
 
   return (
-    <PeopleContext.Provider value={{ peoples, getPeoples, totalPeople, setTotalPeople, uniqueComp, setUniqueComp }}>
+    <PeopleContext.Provider value={{
+      peoples,
+      getPeoples,
+      totalPeople,
+      setTotalPeople,
+      uniqueComp,
+      setUniqueComp,
+      skeletonLoading,
+      setSkeletonLoading
+    }}>
       {props.children}
     </PeopleContext.Provider>
   )
