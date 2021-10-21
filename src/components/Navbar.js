@@ -64,7 +64,7 @@ const Navbar = () => {
 								{/* <Link className="nav-link nav-btn" to="/">
 									<span>Get Chrome Extension</span>
 								</Link> */}
-								<button type="button" class="btn btn-sm btn-warning fw-bold px-3">Get Chrome Extension</button>
+								<button type="button" className="btn btn-sm btn-warning fw-bold px-3">Get Chrome Extension</button>
 							</li>
 							<li className="nav-item dropdown">
 								<Link className="nav-link dropdown-toggle" to="/" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"> Products </Link>

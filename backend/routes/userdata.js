@@ -2,7 +2,17 @@ const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 const fetchuser = require('../middleware/fetchuser');
+const User = require('../models/User');
 const { savedSearch, savedCompanySearch } = require('../models/UserData');
+
+router.get('/', fetchuser, async (req, res) => {
+  let Check = await User.findOne({ _id: req.user.id })
+  if (Check.plan_id) {
+    res.status(200).json({ status: true });
+  } else {
+    res.status(200).json({ status: false });
+  }
+})
 
 router.post('/savesearch', fetchuser, async (req, res) => {
 
@@ -164,6 +174,30 @@ router.post('/list/create', fetchuser, async (req, res) => {
   //   console.error(error.message);
   //   res.status(500).send("Internal Server Error");
   // }
+})
+
+router.get('/checkphone/:phone', fetchuser, async (req, res) => {
+
+  let user = await User.findOne({ phone: req.params.phone });
+  if (user) {
+    return res.status(200).json({ status: "error", error: "Sorry a user with this phone number is already exists" })
+  } else {
+    return res.status(200).json({ status: "success" })
+  }
+})
+
+router.post('/subscribe', fetchuser, async (req, res) => {
+  let user = await User.findOneAndUpdate(
+    { _id: req.user.id },
+    { phone: req.body.phone, plan_id: req.body.plan, company: req.body.company },
+    function (err, data) {
+      if (err) {
+        return res.status(200).json({ status: "error", error: err })
+      }
+      if (data) {
+        res.status(200).json({ status: "success" });
+      }
+    });
 })
 
 module.exports = router

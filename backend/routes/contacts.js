@@ -5,6 +5,8 @@ const fetchuser = require('../middleware/fetchuser');
 const Contacts = require('../models/Contacts');
 const Watchlist = require('../models/Watchlist');
 const { body, validationResult } = require('express-validator');
+const User = require('../models/User');
+const Plans = require('../models/Plans');
 
 class ConvertStringRegex {
   constructor(str) {
@@ -427,6 +429,8 @@ router.get('/', fetchuser, async (req, res) => {
     //   reqLimit = parseInt(req.query.limit);
     // }
 
+    // const unlockedEmail = Contacts.find({contacts.primary_email})
+
     res.status(200).json({
       status: 'success',
       // total: totalContacts,
@@ -449,7 +453,8 @@ router.post('/unlock', fetchuser, async (req, res) => {
   try {
     const { cid } = req.body;
 
-    const Plan = { "name": "Free Forever", "download": 50, "unlock_month": 50, "unlock_daily": 10, "select_perpage": 50, "sendto_campaign": "No", "repeat_campaign": 0, "csv_upload": 0, "free_data": 0, "price": 0 };
+    const userData = await User.findOne({ _id: req.user.id })
+    const Plan = await Plans.findOne({ plan_id: userData.plan_id })
 
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
@@ -469,9 +474,7 @@ router.post('/unlock', fetchuser, async (req, res) => {
 
     let checkWatchlistCount = await Watchlist.count({ user: req.user.id });
 
-    if (Plan.unlock_daily > checkWatchlistCount) {
-
-    } else {
+    if (Plan.unlock_daily < checkWatchlistCount) {
       res.status(200).json({
         status: 'limit_reached',
         msg: 'Your daily unlock limit is reached, upgrade your plan or visit again tomorrow'
@@ -507,7 +510,8 @@ router.post('/unlock', fetchuser, async (req, res) => {
 
 router.post('/unlockbulk', fetchuser, async (req, res) => {
 
-  const Plan = { "name": "Free Forever", "download": 50, "unlock_month": 50, "unlock_daily": 10, "select_perpage": 50, "sendto_campaign": "No", "repeat_campaign": 0, "csv_upload": 0, "free_data": 0, "price": 0 };
+  const userData = await User.findOne({ _id: req.user.id })
+  const Plan = await Plans.findOne({ plan_id: userData.plan_id })
 
   try {
     const { ids } = req.body;
@@ -537,15 +541,6 @@ router.post('/unlockbulk', fetchuser, async (req, res) => {
       return false;
     }
 
-    // console.log(checkWatchlistCount);
-
-    // res.status(200).json({
-    //   status: 'success',
-    // });
-
-    // return false;
-
-    // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });

@@ -33,7 +33,7 @@ body {
 .modal-content {
   color: var(--color-text-primary);
   background: var(--card-bg);
-  box-shadow: 0 1px 20px 0 rgba(0, 0, 0, 8%);
+  box-shadow: 0 1px 20px 0 rgba(0, 0, 0, 0.2);
 }
 
 table td,
@@ -476,7 +476,38 @@ table th {
   color: #7367f0;
 }
 
+.border-primary {
+  border-color: #7367f0 !important;
+}
+
 .page-item.active .page-link {
   background-color: #7367f0;
   border-color: #7367f0;
+}
+
+.subscribe-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+}
+
+.rounded-lg {
+  border-radius: 1rem !important;
+}
+
+.text-small {
+  font-size: 0.9rem !important;
+}
+
+.custom-separator {
+  width: 5rem;
+  height: 6px;
+  border-radius: 1rem;
+}
+
+.text-uppercase {
+  letter-spacing: 0.2em;
 }

@@ -1,4 +1,5 @@
 const express = require('express');
+const nodemailer = require("nodemailer");
 const User = require('../models/User');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
@@ -7,6 +8,24 @@ var jwt = require('jsonwebtoken');
 var fetchuser = require('../middleware/fetchuser');
 
 const JWT_SECRET = 'mRMQW4ZnqyTiiN0Ng6RC';
+
+let transporter = nodemailer.createTransport({
+  host: "localhost",
+  port: 25,
+  secure: false,
+  // auth: {
+  //   user: 'napster@tb.net',
+  //   pass: 1989,
+  // },
+});
+
+// transporter.verify(function (error, success) {
+//   if (error) {
+//     console.log(error);
+//   } else {
+//     console.log("Server is ready to take our messages");
+//   }
+// });
 
 // ROUTE 1: Create a User using: POST "/api/auth/createuser". No login required
 router.post('/signup', [
@@ -36,23 +55,28 @@ router.post('/signup', [
       password: secPass,
       email: req.body.email,
     });
-    // const data = {
-    //   user: {
-    //     id: user.id
-    //   }
-    // }
+
+    let info = await transporter.sendMail({
+      from: '"Cloudlead" <napster@tb.net>',
+      to: req.body.email,
+      subject: "Confirm your email address", // Subject line
+      html: `<h5>Welcome to Cloudlead</h5>
+        <p>Thank you for signing up!</p>
+        <p>Please confirm your email address to start using Prospect.​io.</p>
+        <p></p>
+        <p>Have a wonderful day!</p>
+        <p>Team Cloudlead</p>
+      `,
+      // }, (err, info) => {
+      //   console.log(info.envelope);
+      //   console.log(info.messageId);
+    });
     res.json({ 'status': 'success' })
-    // const authtoken = jwt.sign(data, JWT_SECRET);
-
-    // res.json(user)
-    // res.json({ authtoken })
-
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Internal Server Error");
   }
 })
-
 
 // ROUTE 2: Authenticate a User using: POST "/api/auth/login". No login required
 router.post('/login', [
