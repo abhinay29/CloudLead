@@ -61,19 +61,17 @@ const Navbar = () => {
 						</ul>
 						<ul className="navbar-nav ms-auto">
 							<li className="nav-item me-3 d-flex align-items-center">
-								{/* <Link className="nav-link nav-btn" to="/">
-									<span>Get Chrome Extension</span>
-								</Link> */}
 								<button type="button" className="btn btn-sm btn-warning fw-bold px-3">Get Chrome Extension</button>
 							</li>
+							{/*
 							<li className="nav-item dropdown">
 								<Link className="nav-link dropdown-toggle" to="/" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"> Products </Link>
-								<ul className="dropdown-menu" aria-labelledby="navbarDropdown">
+								<ul className="dropdown-menu shadow" aria-labelledby="navbarDropdown">
 									<li><Link className="dropdown-item" to="/">Email Pattern Finder</Link></li>
 									<li><Link className="dropdown-item" to="/">Online Email Validation</Link></li>
 									<li className="nav-item dropstart">
 										<Link className="dropdown-item dropdown-toggle" to="/" id="alternative-tools" data-bs-toggle="dropdown" aria-expanded="false">Alternative Tools</Link>
-										<ul className="submenu submenu-left dropdown-menu" aria-labelledby="alternative-tools">
+										<ul className="submenu submenu-left dropdown-menu shadow" aria-labelledby="alternative-tools">
 											<li><Link className="dropdown-item" to="/">Email List Cleaner</Link></li>
 											<li><Link className="dropdown-item" to="/">File Merge (CSV/Excel)</Link></li>
 											<li><Link className="dropdown-item" to="/">Duplicate Remover</Link></li>
@@ -85,12 +83,50 @@ const Navbar = () => {
 									</li>
 									<li className="nav-item dropstart">
 										<Link className="dropdown-item dropdown-toggle" to="/" id="outlook-tools" data-bs-toggle="dropdown" aria-expanded="false">Outlook Tools</Link>
-										<ul className="submenu submenu-left dropdown-menu" aria-labelledby="outlook-tools">
+										<ul className="submenu submenu-left dropdown-menu shadow" aria-labelledby="outlook-tools">
 											<li><Link className="dropdown-item" to="/">Outlook Mobile Number Extracter</Link></li>
 											<li><Link className="dropdown-item" to="/">Auto Responder</Link></li>
 										</ul>
 									</li>
 								</ul>
+							</li> */}
+
+							<li className="nav-item dropdown">
+								<Link className="nav-link" to="/" id="productMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false"> Products <i className="fas fa-chevron-down ms-1"></i></Link>
+								<div className="dropdown-menu shadow-lg megamenu" aria-labelledby="productMenu">
+									<div className="megamenu-container" style={{ "width": "850px" }}>
+										<div className="row">
+											<div className="col-md-3">
+												<h6 className="text-muted menu-title">Tools</h6>
+											</div>
+											<div className="col-md-5">
+												<h6 className="text-muted menu-title">Alternative Tools</h6>
+											</div>
+											<div className="col-md-4">
+												<h6 className="text-muted menu-title">Outlook Tools</h6>
+											</div>
+										</div>
+										<div className="row">
+											<div className="col-md-3">
+												<Link className="dropdown-item" to="/">Email Pattern Finder</Link>
+												<Link className="dropdown-item" to="/">Online Email Validation</Link>
+											</div>
+											<div className="col-md-5">
+												<Link className="dropdown-item" to="/">Email List Cleaner</Link>
+												<Link className="dropdown-item" to="/">File Merge (CSV/Excel)</Link>
+												<Link className="dropdown-item" to="/">Duplicate Remover</Link>
+												<Link className="dropdown-item" to="/">VLookup</Link>
+												<Link className="dropdown-item" to="/">Appropriate / Fussy Vlookup</Link>
+												<Link className="dropdown-item" to="/">Catagorization</Link>
+												<Link className="dropdown-item" to="/">Offline Email Extracter from CSV/Excel</Link>
+											</div>
+											<div className="col-md-4">
+												<Link className="dropdown-item" to="/">Outlook Mobile Number Extracter</Link>
+												<Link className="dropdown-item" to="/">Auto Responder</Link>
+											</div>
+										</div>
+									</div>
+								</div>
 							</li>
 
 							<li className="nav-item">
@@ -102,18 +138,24 @@ const Navbar = () => {
 							<li className="nav-item">
 								<Link className="nav-link bi-tooltip" to="/" data-bs-placement="bottom" title="Support"> <i className="far fa-life-ring mx-1"></i> </Link>
 							</li>
-							<li className="nav-item">
-								<Link className="nav-link bi-tooltip" to="/" data-bs-placement="bottom" title="Settings"> <i className="fas fa-cog mx-1"></i> </Link>
+							<li className="nav-item dropdown">
+								<Link className="nav-link" to="/" id="settingsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"> <i className="fas fa-cog mx-1"></i> </Link>
+								<ul className="dropdown-menu shadow" aria-labelledby="settingsDropdown">
+									<li><Link className="dropdown-item" to="/profile"><i className="fas fa-user me-2"></i> My Profile</Link></li>
+									<li><Link className="dropdown-item" to="/billing"><i className="fas fa-file-invoice me-2"></i> Billing</Link></li>
+									<li><Link className="dropdown-item" to="/settings"><i className="fas fa-cog me-2"></i> Settings</Link></li>
+									<li><Link className="dropdown-item" to="/change-password"><i className="fas fa-lock me-2"></i> Change Password</Link></li>
+								</ul>
 							</li>
 							<li className="nav-item dropdown">
-								<Link className="nav-link dropdown-toggle" to="/" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<Link className="nav-link" to="/" id="userAccountMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 									<span className="bi-tooltip" data-bs-placement="left" title="My Account">
-										<span className="me-1">{localStorage.getItem('uemail')}</span>
+										<span className="me-1">{localStorage.getItem('uemail')}</span> <i className="fas fa-chevron-down"></i>
 									</span>
 								</Link>
 								{/* <li><Link className="dropdown-item" to="/"><i className="fas fa-user me-1 text-primary"></i> Profile</Link></li>
 								<li><Link className="dropdown-item" to="logout.php"><i className="fas fa-power-off me-1 text-danger"></i> Logout</Link></li> */}
-								<div className="dropdown-menu shadow" style={{ "width": "260px" }} aria-labelledby="navbarDropdown">
+								<div className="dropdown-menu shadow" style={{ "width": "260px" }} aria-labelledby="userAccountMenu">
 									<div className="py-2 px-3">
 										<div className="text-center">
 											<h6 className="fw-bold">{localStorage.getItem('uname')}</h6>

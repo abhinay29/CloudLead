@@ -95,9 +95,8 @@ router.post('/success', fetchuser, async (req, res) => {
           if (err) {
             return res.status(200).json({ status: "error", error: err })
           }
-          res.status(200).json({ status: "success" });
         });
-      res.json({ status: "success" });
+      res.status(200).json({ status: "success" });
     } else {
       res.json({ status: "error", error: "Something went wrong" });
     }

@@ -18,7 +18,7 @@ function SubscribePlan() {
   });
 
   const getPlans = async () => {
-    let Plans = await fetch(`${API_URL}/api/plans/`);
+    let Plans = await fetch(`${API_URL}/api/plans`);
     let res = await Plans.json()
     setPlans(res)
   }

@@ -486,6 +486,14 @@ router.post('/unlock', fetchuser, async (req, res) => {
     const { cid } = req.body;
 
     const userData = await User.findOne({ _id: req.user.id })
+
+    if (!userData) {
+      res.status(401).json({
+        status: 'error',
+        error: 'Unauthorised access'
+      });
+    }
+
     const Plan = await Plans.findOne({ plan_id: userData.plan_id })
 
     // If there are errors, return Bad request and the errors
@@ -542,13 +550,28 @@ router.post('/unlock', fetchuser, async (req, res) => {
 
 router.post('/unlockbulk', fetchuser, async (req, res) => {
 
+  // if (!req.body.ids) {
+  //   res.status(200).json({
+  //     status: 'error',
+  //     error: 'Invalid query'
+  //   });
+  // }
+
   const userData = await User.findOne({ _id: req.user.id })
+
+  if (!userData) {
+    res.status(401).json({
+      status: 'error',
+      error: 'Unauthorised access'
+    });
+  }
+
   const Plan = await Plans.findOne({ plan_id: userData.plan_id })
 
   try {
     const { ids } = req.body;
 
-    if (ids.length === 0) {
+    if (!ids || ids.length === 0) {
       res.status(200).json({
         status: 'error',
         message: 'Invalid access of blank data'

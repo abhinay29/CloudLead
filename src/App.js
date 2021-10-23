@@ -19,6 +19,7 @@ import CompanyWatchlist from './components/Company/Watchlist'
 import Signup from './components/Auth/Signup';
 import Login from './components/Auth/Login';
 import Verify from './components/Auth/Verify';
+import Profile from './components/User/Profile';
 
 const RouteWithoutNavbar = ({ component: Component, ...rest }) => {
   // const [loaded, setLoaded] = useState(false);
@@ -57,6 +58,7 @@ function App() {
           <RouteWithNavbar exact path={Routes.PeopleWatchlist.path} component={PeopleWatchlist} />
           <RouteWithNavbar exact path={Routes.CompanySearch.path} component={CompanySearch} />
           <RouteWithNavbar exact path={Routes.CompanyWatchlist.path} component={CompanyWatchlist} />
+          <RouteWithNavbar exact path={Routes.UserProfile.path} component={Profile} />
           <RouteWithoutNavbar exact path={Routes.Signup.path} component={Signup} />
           <RouteWithoutNavbar exact path={Routes.Signin.path} component={Login} />
           <RouteWithoutNavbar exact path={`${Routes.Verify.path}/:token`} component={Verify} />

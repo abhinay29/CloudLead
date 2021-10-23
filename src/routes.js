@@ -9,6 +9,7 @@ export const Routes = {
   PeopleWatchlist: { path: "/radar/people/watchlist" },
   CompanySearch: { path: "/radar/company" },
   CompanyWatchlist: { path: "/radar/company/watchlist" },
+  UserProfile: { path: "/profile" },
   // DashboardOverview: { path: "/dashboard/overview" },
   // Transactions: { path: "/transactions" },
   // Settings: { path: "/settings" },

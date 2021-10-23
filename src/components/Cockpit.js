@@ -10,7 +10,7 @@ const Cockpit = () => {
 	const [subscribe, setSubscribe] = useState(true);
 
 	const checkSubscription = async () => {
-		let Subcription = await fetch(`${API_URL}/api/user/`, {
+		let Subcription = await fetch(`${API_URL}/api/user`, {
 			method: 'GET',
 			headers: {
 				'auth-token': localStorage.getItem('token'),
