@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const ContactSchema = new Schema({
+  _id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'person_watchlists',
+    required: true
+  },
   first_name: {
     type: String,
     required: true
@@ -65,6 +70,9 @@ const ContactSchema = new Schema({
     type: String,
   },
   primary_mai_confidence: {
+    type: String,
+  },
+  primary_email: {
     type: String,
   }
 

@@ -4,6 +4,7 @@ export const Routes = {
   Cockpit: { path: "/" },
   Signin: { path: "/login" },
   Signup: { path: "/signup" },
+  Verify: { path: "/verify" },
   PeopleSearch: { path: "/radar/people" },
   PeopleWatchlist: { path: "/radar/people/watchlist" },
   CompanySearch: { path: "/radar/company" },

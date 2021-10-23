@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const nodemailer = require("nodemailer");
 const User = require('../models/User');
@@ -7,15 +8,25 @@ const bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 var fetchuser = require('../middleware/fetchuser');
 
-const JWT_SECRET = 'mRMQW4ZnqyTiiN0Ng6RC';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+const adminEmail = process.env.ADMIN_EMAIL;
+const SMTP_USER = process.env.SMTP_USER;
+const SMTP_PASS = process.env.SMTP_PASS;
+const SMTP_PORT = process.env.SMTP_PORT;
+const SMTP_HOST = process.env.SMTP_HOST;
+const hostWebsite = process.env.APP_URL;
+
+const rand = () => Math.random(0).toString(36).substr(2);
+const getToken = (length = 32) => (rand() + rand() + rand() + rand()).substr(0, length);
 
 let transporter = nodemailer.createTransport({
-  host: "localhost",
-  port: 25,
+  host: SMTP_HOST,
+  port: SMTP_PORT,
   secure: false,
   // auth: {
-  //   user: 'napster@tb.net',
-  //   pass: 1989,
+  //   user: SMTP_USER,
+  //   pass: SMTP_PASS,
   // },
 });
 
@@ -48,28 +59,29 @@ router.post('/signup', [
     const salt = await bcrypt.genSalt(10);
     const secPass = await bcrypt.hash(req.body.password, salt);
 
+    let token = getToken(40);
+
     // Create a new user
     user = await User.create({
       first_name: req.body.first_name,
       last_name: req.body.last_name,
       password: secPass,
       email: req.body.email,
+      token: token,
     });
 
     let info = await transporter.sendMail({
-      from: '"Cloudlead" <napster@tb.net>',
+      from: `"Cloudlead" <${adminEmail}>`,
       to: req.body.email,
       subject: "Confirm your email address", // Subject line
       html: `<h5>Welcome to Cloudlead</h5>
         <p>Thank you for signing up!</p>
         <p>Please confirm your email address to start using Prospect.​io.</p>
+        <p><a href="${hostWebsite}/verify/${token}">${hostWebsite}/verify/${token}</a></p>
         <p></p>
         <p>Have a wonderful day!</p>
         <p>Team Cloudlead</p>
       `,
-      // }, (err, info) => {
-      //   console.log(info.envelope);
-      //   console.log(info.messageId);
     });
     res.json({ 'status': 'success' })
   } catch (error) {
@@ -102,6 +114,25 @@ router.post('/login', [
     if (!passwordCompare) {
       success = false
       return res.status(200).json({ success, error: "Please try to login with correct credentials" });
+    }
+
+    //Check if user is active
+    if (user.status == 0) {
+      let token = getToken(40);
+      let info = await transporter.sendMail({
+        from: `"Cloudlead" <${adminEmail}>`,
+        to: req.body.email,
+        subject: "Confirm your email address", // Subject line
+        html: `<h5>Welcome to Cloudlead</h5>
+          <p>Thank you for signing up!</p>
+          <p>Please confirm your email address to start using Cloudlead.</p>
+          <p><a href="${hostWebsite}/verify/${token}">${hostWebsite}/verify/${token}</a></p>
+          <p>Have a wonderful day!</p>
+          <p>Team Cloudlead</p>
+        `,
+      });
+      let UpdateToken = await User.findByIdAndUpdate({ _id: user._id }, { token: token }, { new: true });
+      return res.status(200).json({ success, error: "Please verify your email address, we have sent you a confirmation email, please check your inbox." });
     }
 
     const data = {

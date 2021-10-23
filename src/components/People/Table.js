@@ -74,7 +74,6 @@ const Table = (props) => {
       }
       getPeoples(parsedData)
       setTotalPeople(parsedData.totalResults)
-      setPage(1);
       setSelectAll(false)
       setUniqueComp(parsedData.uniqueCompany)
       setSkeletonLoading(false);

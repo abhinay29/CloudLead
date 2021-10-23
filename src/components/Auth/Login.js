@@ -34,7 +34,7 @@ const Login = (props) => {
 			history.push("/");
 		}
 		else {
-			NotificationManager.error("Incorrect email or	 password", "Error!")
+			NotificationManager.error(json.error, "Error!", 5000)
 			setDisabled(false);
 		}
 	}

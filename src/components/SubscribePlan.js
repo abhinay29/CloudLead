@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { NotificationManager } from 'react-notifications';
 import { useHistory } from 'react-router-dom';
@@ -17,7 +18,7 @@ function SubscribePlan() {
   });
 
   const getPlans = async () => {
-    let Plans = await fetch(`${API_URL}/api/plans`);
+    let Plans = await fetch(`${API_URL}/api/plans/`);
     let res = await Plans.json()
     setPlans(res)
   }
@@ -49,8 +50,12 @@ function SubscribePlan() {
 
     if (res.status === 'error') {
       NotificationManager.error(res.error);
+      document.getElementById("phoneNumber").focus();
+      document.getElementById("phoneNumber").classList.add('is-invalid');
       return false;
     }
+
+    document.getElementById("phoneNumber").classList.remove('is-invalid');
     closeModal('billingInformation')
     openModal('tosModal')
   }
@@ -102,6 +107,90 @@ function SubscribePlan() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     history.push("/login");
+  }
+
+  function loadScript(src) {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
+    });
+  }
+
+  async function displayRazorpay() {
+    const res = await loadScript(
+      "https://checkout.razorpay.com/v1/checkout.js"
+    );
+
+    if (!res) {
+      alert("Razorpay SDK failed to load. Are you online?");
+      return;
+    }
+
+    const result = await axios.post(`${API_URL}/api/payment/orders`, {
+      planId: selectedPlan.plan_id
+    });
+
+    if (!result) {
+      alert("Server error. Are you online?");
+      return;
+    }
+
+    const { amount, id: order_id, currency, receipt } = result.data;
+
+    const options = {
+      key: "rzp_test_SqK219lnN6lSiA",
+      amount: amount.toString(),
+      currency: currency,
+      name: "TB.net",
+      description: "Transaction for " + selectedPlan.plan_id,
+      image: '/logo.png',
+      order_id: order_id,
+      handler: async function (response) {
+        const data = {
+          name: uname,
+          email: uemail,
+          contact: formData.phone,
+          company: formData.company_name,
+          planId: selectedPlan.plan_id,
+          receipt: receipt,
+          amount: parseInt(amount) / 100,
+          orderCreationId: order_id,
+          razorpayPaymentId: response.razorpay_payment_id,
+          razorpayOrderId: response.razorpay_order_id,
+          razorpaySignature: response.razorpay_signature,
+        };
+
+        const result = await axios.post(`${API_URL}/api/payment/success`, data, {
+          headers: {
+            'auth-token': localStorage.getItem('token'),
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (result.data.status === 'success') {
+          NotificationManager.success('Thank you for choosing us.', `Welcome! ${uname}`);
+          window.location.reload();
+        }
+      },
+      prefill: {
+        name: uname,
+        email: uemail,
+        contact: formData.phone,
+      },
+      theme: {
+        color: "#7367f0",
+      },
+    };
+
+    const paymentObject = new window.Razorpay(options);
+    paymentObject.open();
   }
 
   return (
@@ -271,7 +360,9 @@ function SubscribePlan() {
             </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" onClick={() => closeModal('tosModal')}>Close</button>
-              <button type="button" className="btn btn-primary" onClick={handleSubscribePlan}>Accept</button>
+              {selectedPlan &&
+                <button type="button" className="btn btn-primary" onClick={selectedPlan.plan_id === 1 ? handleSubscribePlan : displayRazorpay}>Accept &amp; Continue with {selectedPlan.name}</button>
+              }
             </div>
           </div>
         </div>
@@ -284,7 +375,7 @@ function SubscribePlan() {
               <h4 className="modal-title" id="tosLabel">Billing Information</h4>
               <button type="button" className="btn-close" onClick={() => closeModal('billingInformation')} aria-label="Close"></button>
             </div>
-            <form onSubmit={handleFormSubmit}>
+            <form onSubmit={handleFormSubmit} className="needs-validation" novalidate>
               <div className="modal-body">
 
                 <div className="row">
@@ -327,7 +418,10 @@ function SubscribePlan() {
                       <div className="col-md-6">
                         <div className="mb-3">
                           <label htmlFor="">Phone <span className="text-danger">*</span></label>
-                          <input type="text" className="form-control" name="phone" onChange={handleInput} value={formData.phone} required />
+                          <input type="text" className="form-control" name="phone" id="phoneNumber" onChange={handleInput} value={formData.phone} required />
+                          <div id="invalidPhone" class="invalid-feedback">
+                            A user with this phone number is already exists.
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -344,6 +438,7 @@ function SubscribePlan() {
 
               </div>
               <div className="modal-footer">
+                {selectedPlan && <input type="hidden" name="plan_id" value={selectedPlan.plan_id} />}
                 <button type="button" className="btn btn-danger" onClick={() => closeModal('billingInformation')}>Cancel</button>
                 <button type="submit" className="btn btn-primary">Continue <i className="fas fa-chevron-right ms-2"></i></button>
               </div>

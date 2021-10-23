@@ -429,7 +429,39 @@ router.get('/', fetchuser, async (req, res) => {
     //   reqLimit = parseInt(req.query.limit);
     // }
 
-    // const unlockedEmail = Contacts.find({contacts.primary_email})
+
+    const getEmail = (id, objId) => {
+      var WL = Watchlist.findOne({ user: req.user.id, contact_id: objId }).exec((err, results) => {
+        if (results) {
+          var tempWlcontact = Contacts.findOne({ _id: objId }).select(['_id',
+            'primary_mai_confidence',
+            'primary_email',
+          ]).exec((err, results) => {
+            if (err) {
+              console.log(err);
+            } else {
+              // console.log(results.primary_email);
+              return results.primary_email;
+            }
+          });
+          console.log(tempWlcontact);
+          return tempWlcontact;
+        } else {
+          return false;
+        }
+      });
+      // console.log(WL);
+      return WL;
+    }
+
+    // let Conts = [];
+    // contacts.map((contact) => {
+    //   var temp = JSON.parse(JSON.stringify(contact));
+    //   temp.unlocked_email = getEmail(temp._id, contact._id)
+    //   Conts.push(temp);
+    // })
+
+    // console.log(Conts);
 
     res.status(200).json({
       status: 'success',

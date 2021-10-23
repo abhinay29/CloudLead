@@ -37,15 +37,17 @@ const UserSchema = new Schema({
         default: null
     },
     status: {
-        type: String,
-        default: 1
+        type: Number,
+        default: 0
     },
     created_at: {
         type: Date,
         default: Date.now
     },
     token: {
-        type: String
+        type: String,
+        default: null,
+        unique: true,
     }
 });
 const User = mongoose.model('users', UserSchema);

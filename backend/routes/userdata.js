@@ -14,6 +14,17 @@ router.get('/', fetchuser, async (req, res) => {
   }
 })
 
+router.post('/verify', async (req, res) => {
+  // req.body.token
+  let Check = await User.findOne({ token: req.body.token, status: 0 })
+  if (Check) {
+    await User.updateOne({ _id: Check._id }, { status: 1 });
+    res.status(200).json({ status: true });
+  } else {
+    res.status(200).json({ status: false });
+  }
+})
+
 router.post('/savesearch', fetchuser, async (req, res) => {
 
   const user_id = req.user.id;
@@ -187,7 +198,7 @@ router.get('/checkphone/:phone', fetchuser, async (req, res) => {
 })
 
 router.post('/subscribe', fetchuser, async (req, res) => {
-  let user = await User.findOneAndUpdate(
+  let user = await User.findByIdAndUpdate(
     { _id: req.user.id },
     { phone: req.body.phone, plan_id: req.body.plan, company: req.body.company },
     function (err, data) {
