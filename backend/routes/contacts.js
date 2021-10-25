@@ -71,9 +71,7 @@ class APIfeatures {
   // }
 }
 
-// ROUTE 1: Seach Contacts using: GET "/". Login required
 router.get('/', fetchuser, async (req, res) => {
-  // router.get('/', async (req, res) => {
   if (
     req.query.first_name ||
     req.query.last_name ||
@@ -104,19 +102,6 @@ router.get('/', fetchuser, async (req, res) => {
     });
   }
 
-  // let reqQuery = JSON.stringify(req.query);
-
-  // let keysForDel = [];
-  // reqQuery.forEach((v, k) => {
-  //   if (v === '')
-  //     keysForDel.push(k);
-  // });
-  // keysForDel.forEach(k => {
-  //   reqQuery.delete(k);
-  // });
-
-  // console.log(req.query);
-
   let newQuery = {};
 
   if (req.query.page) {
@@ -132,8 +117,6 @@ router.get('/', fetchuser, async (req, res) => {
   if (req.query.first_name && req.query.first_name !== '') {
     if (req.query.first_name instanceof Array) {
       if (req.query.first_name.length > 0) {
-        //   // newQuery.first_name = { $regex: req.query.first_name[0], $options: 'i' }
-        // } else {
         let regexFirstName = new ConvertStringRegex(req.query.first_name).convertStr();
         newQuery.first_name = { $regex: regexFirstName, $options: 'i' }
       }
@@ -145,8 +128,6 @@ router.get('/', fetchuser, async (req, res) => {
   if (req.query.last_name && req.query.last_name !== '') {
     if (req.query.last_name instanceof Array) {
       if (req.query.last_name.length > 0) {
-        //   newQuery.last_name = { $regex: req.query.last_name[0], $options: 'i' }
-        // } else {
         let regexLastName = new ConvertStringRegex(req.query.last_name).convertStr();
         newQuery.last_name = { $regex: regexLastName, $options: 'i' }
       }
@@ -169,8 +150,6 @@ router.get('/', fetchuser, async (req, res) => {
   if (req.query.company_name && req.query.company_name !== '') {
     if (req.query.company_name instanceof Array) {
       if (req.query.company_name.length > 0) {
-        //   newQuery.company_name = { $regex: req.query.company_name[0], $options: 'i' }
-        // } else {
         let regexCompName = new ConvertStringRegex(req.query.company_name).convertStr();
         newQuery.company_name = { $regex: regexCompName, $options: 'i' }
       }
@@ -430,38 +409,27 @@ router.get('/', fetchuser, async (req, res) => {
     // }
 
 
-    const getEmail = (id, objId) => {
-      var WL = Watchlist.findOne({ user: req.user.id, contact_id: objId }).exec((err, results) => {
-        if (results) {
-          var tempWlcontact = Contacts.findOne({ _id: objId }).select(['_id',
-            'primary_mai_confidence',
-            'primary_email',
-          ]).exec((err, results) => {
-            if (err) {
-              console.log(err);
-            } else {
-              // console.log(results.primary_email);
-              return results.primary_email;
-            }
-          });
-          console.log(tempWlcontact);
-          return tempWlcontact;
-        } else {
-          return false;
-        }
-      });
-      // console.log(WL);
-      return WL;
+    async function getEmail(cid) {
+      let checkWatchlist = await Watchlist.findOne({ user: req.user.id, contact_id: cid });
+      if (checkWatchlist) {
+        return 'yes';
+      } else {
+        return 'no';
+      }
     }
 
-    // let Conts = [];
-    // contacts.map((contact) => {
-    //   var temp = JSON.parse(JSON.stringify(contact));
-    //   temp.unlocked_email = getEmail(temp._id, contact._id)
-    //   Conts.push(temp);
-    // })
+    const Conts = [];
+    const checkUnlock = contacts.map(async contact => {
+      var temp = JSON.parse(JSON.stringify(contact));
+      // let unlocked_email = getEmail(contact._id);
+      // temp.unlocked_email = unlocked_email.then(function (result) {
+      //   return result;
+      // })
+      temp.unlocked_email = await getEmail(contact._id);
+      Conts.push(temp);
+    })
 
-    // console.log(Conts);
+    await Promise.all(checkUnlock)
 
     res.status(200).json({
       status: 'success',
@@ -471,7 +439,7 @@ router.get('/', fetchuser, async (req, res) => {
       page: req.query.page,
       uniqueCompany: uniqueComp.length,
       data: {
-        contacts
+        contacts: Conts
       }
     });
   } catch (error) {

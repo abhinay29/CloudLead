@@ -63,33 +63,6 @@ const Navbar = () => {
 							<li className="nav-item me-3 d-flex align-items-center">
 								<button type="button" className="btn btn-sm btn-warning fw-bold px-3">Get Chrome Extension</button>
 							</li>
-							{/*
-							<li className="nav-item dropdown">
-								<Link className="nav-link dropdown-toggle" to="/" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"> Products </Link>
-								<ul className="dropdown-menu shadow" aria-labelledby="navbarDropdown">
-									<li><Link className="dropdown-item" to="/">Email Pattern Finder</Link></li>
-									<li><Link className="dropdown-item" to="/">Online Email Validation</Link></li>
-									<li className="nav-item dropstart">
-										<Link className="dropdown-item dropdown-toggle" to="/" id="alternative-tools" data-bs-toggle="dropdown" aria-expanded="false">Alternative Tools</Link>
-										<ul className="submenu submenu-left dropdown-menu shadow" aria-labelledby="alternative-tools">
-											<li><Link className="dropdown-item" to="/">Email List Cleaner</Link></li>
-											<li><Link className="dropdown-item" to="/">File Merge (CSV/Excel)</Link></li>
-											<li><Link className="dropdown-item" to="/">Duplicate Remover</Link></li>
-											<li><Link className="dropdown-item" to="/">VLookup</Link></li>
-											<li><Link className="dropdown-item" to="/">Appropriate / Fussy Vlookup</Link></li>
-											<li><Link className="dropdown-item" to="/">Catagorization</Link></li>
-											<li><Link className="dropdown-item" to="/">Offline Email Extracter from CSV/Excel</Link></li>
-										</ul>
-									</li>
-									<li className="nav-item dropstart">
-										<Link className="dropdown-item dropdown-toggle" to="/" id="outlook-tools" data-bs-toggle="dropdown" aria-expanded="false">Outlook Tools</Link>
-										<ul className="submenu submenu-left dropdown-menu shadow" aria-labelledby="outlook-tools">
-											<li><Link className="dropdown-item" to="/">Outlook Mobile Number Extracter</Link></li>
-											<li><Link className="dropdown-item" to="/">Auto Responder</Link></li>
-										</ul>
-									</li>
-								</ul>
-							</li> */}
 
 							<li className="nav-item dropdown">
 								<Link className="nav-link" to="/" id="productMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false"> Products <i className="fas fa-chevron-down ms-1"></i></Link>

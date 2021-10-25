@@ -81,9 +81,11 @@ const TableRow = (props) => {
             <td className="industry align-middle">{data.industry}</td>
             <td className="head-count align-middle">{data.company_size_range}</td>
             <td className="align-middle email" id={`unlock_${data._id}`} nowrap="true">
-              <span className="btn btn-sm btn-primary" onClick={() => { addToWatchList(data._id) }}>
-                <i className="fas fa-envelope"></i> Get Contact
-              </span>
+              {data.unlocked_email === 'yes' && <span className="badge bg-success">Already moved to watchlist</span>}
+              {data.unlocked_email === 'no' &&
+                <span className="btn btn-sm btn-primary" onClick={() => { addToWatchList(data._id) }}>
+                  <i className="fas fa-envelope"></i> Get Contact
+                </span>}
             </td>
             <td className="align-middle"><div style={{ "height": "40px", "overflow": "hidden" }}>{data.boardline_numbers}</div></td>
             <td className="align-middle"><span className="badge bg-primary">Contact Us</span></td>

@@ -1,13 +1,14 @@
 // eslint-disable-next-line
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router';
+import CockpitDash from './CockpitDash';
 import SubscribePlan from './SubscribePlan';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const Cockpit = () => {
 
-	const [subscribe, setSubscribe] = useState(true);
+	const [subscribed, setSubscribed] = useState("");
 
 	const checkSubscription = async () => {
 		let Subcription = await fetch(`${API_URL}/api/user`, {
@@ -19,94 +20,28 @@ const Cockpit = () => {
 		});
 		let res = await Subcription.json()
 		if (res.status) {
-			setSubscribe(false);
+			setSubscribed("yes");
+		} else {
+			setSubscribed("no");
 		}
 	}
+
 
 	let history = useHistory();
 
 	useEffect(() => {
 		if (!localStorage.getItem('token')) {
 			history.push("/login")
-		} else {
-			checkSubscription();
+			return false;
 		}
+		checkSubscription();
 		// eslint-disable-next-line
 	}, [])
 
 	return (
 		<>
-			{subscribe && <SubscribePlan />}
-			{!subscribe && <div className="container mt-4">
-				<div className="row">
-					<div className="col-md-4">
-						<div className="card shadow-none rounded-3 mb-4">
-							<div className="card-body">
-								<div style={{ "height": "160px" }}>
-									<h5 className="text-dark-50 mb-5">Contact Unlocked</h5>
-									<h1 className="text-dark">114</h1>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div className="col-md-4">
-						<div className="card shadow-none rounded-3 mb-4">
-							<div className="card-body">
-								<div style={{ "height": "160px" }}>
-									<h5 className="text-dark-50 mb-5">Contact Download</h5>
-									<h1 className="text-dark">20</h1>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div className="col-md-4">
-						<div className="card shadow-none rounded-3 mb-4">
-							<div className="card-body">
-								<div style={{ "height": "160px" }}>
-									<h5 className="text-dark-50 mb-5">Total Email Sent</h5>
-									<h1 className="text-dark">50</h1>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div className="col-md-4">
-						<div className="card shadow-none rounded-3 mb-4">
-							<div className="card-body">
-								<div style={{ "height": "160px" }}>
-									<h5 className="text-dark-50 mb-5">Avg Unique Open Rate</h5>
-									<h1 className="text-dark">60%</h1>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div className="col-md-4">
-						<div className="card shadow-none rounded-3 mb-4">
-							<div className="card-body">
-								<div style={{ "height": "160px" }}>
-									<h5 className="text-dark-50 mb-5">Avg Unique Link Click Rate</h5>
-									<h1 className="text-dark">45%</h1>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div className="col-md-4">
-						<div className="card shadow-none rounded-3 mb-4">
-							<div className="card-body">
-								<div style={{ "height": "160px" }}>
-									<h5 className="text-dark-50 mb-5">Avg Reply Rate</h5>
-									<h1 className="text-dark">35%</h1>
-								</div>
-							</div>
-						</div>
-					</div>
-
-				</div>
-			</div>}
+			{subscribed === "no" && <SubscribePlan />}
+			{subscribed === "yes" && <CockpitDash />}
 		</>
 	)
 }

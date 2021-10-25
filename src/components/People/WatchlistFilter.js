@@ -709,7 +709,7 @@ const WatchFilter = (props) => {
       </div>
       <div className="modal-footer justify-content-center">
         <button type="button" className="btn btn-secondary" onClick={() => closeModal('searchModal')}>Close</button>
-        <button type="submit" className="btn btn-primary">Search</button>
+        <button type="submit" className="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
       </div>
     </form >
 

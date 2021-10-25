@@ -7,6 +7,7 @@ import { progressLoading } from '../../states/action-creator';
 import WatchFilter from './WatchlistFilter';
 import TableSkeleton from '../Skeleton/TableSkeleton';
 import NoRecordFound from './NoRecordFound';
+import { Link } from 'react-router-dom';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -236,9 +237,8 @@ const Watchlist = () => {
               <ul className="dropdown-menu" aria-labelledby="selectDropdown">
                 <li><a className="dropdown-item select_contact" data-select="50" href="/">Select 50</a></li>
                 <li><a className="dropdown-item select_contact" data-select="100" href="/">Select 100</a></li>
+                <li><a className="dropdown-item select_contact" data-select="100" href="/">Select 500</a></li>
                 <li><a className="dropdown-item select_contact" data-select="2000" href="/">Select 2000</a></li>
-                <li><a className="dropdown-item select_contact" data-select="5000" href="/">Select 5000</a></li>
-                <li><a className="dropdown-item select_contact" data-select="10000" href="/">Select 10000</a></li>
                 <li><a className="dropdown-item select_contact" data-select="0" href="/">Clear Selection</a></li>
               </ul>
             </span>
@@ -271,7 +271,8 @@ const Watchlist = () => {
             </span>
             <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip" title="Refresh" onClick={() => { window.location.reload() }}><i className="fas fa-sync-alt"></i></button>
           </div>
-          <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" onClick={() => openModal('searchModal')}><i className="fas fa-search"></i> Search</button>
+          <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" onClick={() => openModal('searchModal')}><i class="fas fa-filter"></i> Filter Watchlist</button>
+          <Link to="/radar/people" className="btn btn-sm btn-outline-primary bi-tooltip me-2"><i class="fas fa-chevron-left"></i> Back to Result</Link>
 
           <div className="ms-3 d-flex mt-1 position-relative">
 

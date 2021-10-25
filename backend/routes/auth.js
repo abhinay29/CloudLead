@@ -24,10 +24,13 @@ let transporter = nodemailer.createTransport({
   host: SMTP_HOST,
   port: SMTP_PORT,
   secure: false,
-  // auth: {
-  //   user: SMTP_USER,
-  //   pass: SMTP_PASS,
-  // },
+  auth: {
+    user: SMTP_USER,
+    pass: SMTP_PASS,
+  },
+  tls: {
+    rejectUnauthorized: false,
+  },
 });
 
 // transporter.verify(function (error, success) {
