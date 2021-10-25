@@ -50,7 +50,7 @@ const Filter = (props) => {
       return false;
     }
     const deptSelect = deptState[e.target.value];
-    if (deptSelect) {
+    if (deptSelect && !e.target.checked) {
       setdeptState({ ...deptState, [e.target.value]: false })
     } else {
       setdeptState({ ...deptState, [e.target.value]: true })
@@ -613,6 +613,20 @@ const Filter = (props) => {
     }
   }
 
+  const selectAllCheckbox = (inputName) => {
+    let input = document.getElementsByName(inputName);
+    for (var i = 0, n = input.length; i < n; i++) {
+      input[i].checked = true;
+    }
+  }
+
+  const selectNoneCheckbox = (inputName) => {
+    let input = document.getElementsByName(inputName);
+    for (var i = 0, n = input.length; i < n; i++) {
+      input[i].checked = false;
+    }
+  }
+
   return (
 
     <div className="card border-0 shadow-none" style={{ "height": "calc(100vh - 56px)", "overflow": "hidden" }}>
@@ -652,7 +666,10 @@ const Filter = (props) => {
                 </div>
               </div>
 
-              <h6 className="fw-bold">Search By Company Type</h6>
+              <div className="d-flex selectAllCheckbox align-items-center mb-2">
+                <h6 className="fw-bold me-3 mb-0">Search By Company Type</h6>
+                <span>Select</span> <span className="selectBtn" onClick={() => { selectAllCheckbox('company_type') }}>All</span> <span>/</span> <span className="selectBtn" onClick={() => { selectNoneCheckbox('company_type') }} >None</span>
+              </div>
               <div className="row mb-1">
                 <div className="col-lg-4 col-md-4">
                   <div className="form-check">
@@ -698,9 +715,11 @@ const Filter = (props) => {
                 </div>
               </div>
 
-              <h6 className="fw-bold">Search by Department</h6>
+              <div className="d-flex selectAllCheckbox align-items-center mb-2">
+                <h6 className="fw-bold me-3 mb-0">Search by Department</h6>
+                <span>Select</span> <span className="selectBtn" onClick={() => { selectAllCheckbox('department') }}>All</span> <span>/</span> <span className="selectBtn" onClick={() => { selectNoneCheckbox('department') }} >None</span>
+              </div>
               <div className="row mb-1">
-
                 <div className="col-lg-4 col-md-4">
                   <div className="form-check">
                     <input className="form-check-input department_checkbox" name="department" type="checkbox" value="finance" id="finance" data-role="role_finance" onChange={handleDepartment} />
@@ -865,7 +884,10 @@ const Filter = (props) => {
                 </div>
               </div>
 
-              <h6 className="fw-bold">Search by Seniority</h6>
+              <div className="d-flex selectAllCheckbox align-items-center mb-2">
+                <h6 className="fw-bold me-3 mb-0">Search by Seniority</h6>
+                <span>Select</span> <span className="selectBtn" onClick={() => { selectAllCheckbox('seniority_level') }}>All</span> <span>/</span> <span className="selectBtn" onClick={() => { selectNoneCheckbox('seniority_level') }} >None</span>
+              </div>
               <div className="row mb-1">
                 <div className="col-lg-4 col-md-4">
                   <div className="form-check">

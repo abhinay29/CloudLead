@@ -256,6 +256,21 @@ const Filter = (props) => {
   }
 
 
+  const selectAllCheckbox = (inputName) => {
+    let input = document.getElementsByName(inputName);
+    for (var i = 0, n = input.length; i < n; i++) {
+      input[i].checked = true;
+    }
+  }
+
+  const selectNoneCheckbox = (inputName) => {
+    let input = document.getElementsByName(inputName);
+    for (var i = 0, n = input.length; i < n; i++) {
+      input[i].checked = false;
+    }
+  }
+
+
   return (
 
     <div className="card border-0 shadow-none" style={{ "height": "calc(100vh - 56px)", "overflow": "hidden" }}>
@@ -265,11 +280,14 @@ const Filter = (props) => {
           <form id="search_form" onSubmit={searchCompany}>
             <div style={{ "height": "calc(100vh - 240px)", "overflowY": "scroll" }} className="p-3">
 
-              <h6 className="fw-bold">Search By Company Type</h6>
+              <div className="d-flex selectAllCheckbox align-items-center mb-2">
+                <h6 className="fw-bold me-3 mb-0">Search By Company Type</h6>
+                <span>Select</span> <span className="selectBtn" onClick={() => { selectAllCheckbox('company_type') }}>All</span> <span>/</span> <span className="selectBtn" onClick={() => { selectNoneCheckbox('company_type') }} >None</span>
+              </div>
               <div className="row mb-1">
                 <div className="col-lg-4 col-md-4">
                   <div className="form-check">
-                    <input className="form-check-input" type="checkbox" name="company_type[]" value="India" id="indias-top-1000" />
+                    <input className="form-check-input" type="checkbox" name="company_type" value="India" id="indias-top-1000" />
                     <label className="form-check-label" htmlFor="indias-top-1000">
                       India's Top 1000
                     </label>
@@ -277,7 +295,7 @@ const Filter = (props) => {
                 </div>
                 <div className="col-lg-4 col-md-4">
                   <div className="form-check">
-                    <input className="form-check-input" type="checkbox" name="company_type[]" value="MNC" id="mnc" />
+                    <input className="form-check-input" type="checkbox" name="company_type" value="MNC" id="mnc" />
                     <label className="form-check-label" htmlFor="mnc">
                       MNC
                     </label>
@@ -285,7 +303,7 @@ const Filter = (props) => {
                 </div>
                 <div className="col-lg-4 col-md-4">
                   <div className="form-check">
-                    <input className="form-check-input" type="checkbox" name="company_type[]" value="Industry Top" id="industry-top" />
+                    <input className="form-check-input" type="checkbox" name="company_type" value="Industry Top" id="industry-top" />
                     <label className="form-check-label" htmlFor="industry-top">
                       Industry Leaders
                     </label>
@@ -295,7 +313,7 @@ const Filter = (props) => {
               <div className="row mb-3">
                 <div className="col-lg-4 col-md-4">
                   <div className="form-check">
-                    <input className="form-check-input" type="checkbox" name="company_type[]" value="SMEs" id="smes" />
+                    <input className="form-check-input" type="checkbox" name="company_type" value="SMEs" id="smes" />
                     <label className="form-check-label" htmlFor="smes">
                       SMEs/MSMEs
                     </label>
@@ -303,7 +321,7 @@ const Filter = (props) => {
                 </div>
                 <div className="col-lg-4 col-md-4">
                   <div className="form-check">
-                    <input className="form-check-input" type="checkbox" name="company_type[]" value="Startups" id="startups" />
+                    <input className="form-check-input" type="checkbox" name="company_type" value="Startups" id="startups" />
                     <label className="form-check-label" htmlFor="startups">
                       Startups
                     </label>

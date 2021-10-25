@@ -626,3 +626,15 @@ table th {
   border: 0;
   box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.075);
 }
+
+.selectAllCheckbox {
+  span {
+    font-size: .75rem;
+    margin: 0 3px;
+
+    &.selectBtn {
+      cursor: pointer;
+      color: #7367f0;
+    }
+  }
+}

@@ -271,8 +271,8 @@ const Watchlist = () => {
             </span>
             <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip" title="Refresh" onClick={() => { window.location.reload() }}><i className="fas fa-sync-alt"></i></button>
           </div>
-          <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" onClick={() => openModal('searchModal')}><i class="fas fa-filter"></i> Filter Watchlist</button>
-          <Link to="/radar/people" className="btn btn-sm btn-outline-primary bi-tooltip me-2"><i class="fas fa-chevron-left"></i> Back to Result</Link>
+          <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" onClick={() => openModal('searchModal')}><i className="fas fa-filter"></i> Filter Watchlist</button>
+          <Link to="/radar/people" className="btn btn-sm btn-outline-primary bi-tooltip me-2"><i className="fas fa-chevron-left"></i> Back to Result</Link>
 
           <div className="ms-3 d-flex mt-1 position-relative">
 

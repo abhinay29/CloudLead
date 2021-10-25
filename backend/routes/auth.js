@@ -24,22 +24,22 @@ let transporter = nodemailer.createTransport({
   host: SMTP_HOST,
   port: SMTP_PORT,
   secure: false,
-  auth: {
-    user: SMTP_USER,
-    pass: SMTP_PASS,
-  },
+  // auth: {
+  //   user: SMTP_USER,
+  //   pass: SMTP_PASS,
+  // },
   tls: {
     rejectUnauthorized: false,
   },
 });
 
-// transporter.verify(function (error, success) {
-//   if (error) {
-//     console.log(error);
-//   } else {
-//     console.log("Server is ready to take our messages");
-//   }
-// });
+transporter.verify(function (error, success) {
+  if (error) {
+    console.log(error);
+  } else {
+    console.log("Server is ready to take our messages");
+  }
+});
 
 // ROUTE 1: Create a User using: POST "/api/auth/createuser". No login required
 router.post('/signup', [
