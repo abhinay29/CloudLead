@@ -23,6 +23,7 @@ app.use('/api/states', require('./routes/states'))
 app.use('/api/user', require('./routes/userdata'))
 app.use('/api/plans', require('./routes/plans'))
 app.use('/api/payment', require('./routes/payment'))
+app.use('/api/feedback', require('./routes/feedback'))
 
 app.listen(port, () => {
   console.log(`Cloudlead API listening at http://localhost:${port}`)

@@ -7,6 +7,11 @@ const Plans = require('../models/Plans');
 const Payments = require('../models/Payments');
 const User = require('../models/User');
 const crypto = require("crypto");
+const transporter = require('../middleware/mailTransporter');
+
+const hostWebsite = process.env.APP_URL;
+const adminEmail = process.env.ADMIN_EMAIL;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 router.post('/orders', async (req, res) => {
 
@@ -94,9 +99,23 @@ router.post('/success', fetchuser, async (req, res) => {
         function (err, data) {
           if (err) {
             return res.status(200).json({ status: "error", error: err })
+          } else {
+            transporter.sendMail({
+              from: `"Cloudlead" <${adminEmail}>`,
+              to: req.body.email,
+              subject: `Subscription of "${transaction.planName}" plan detail`,
+              html: `
+                <p>Dear Customer,</p>
+                <p>Thank you for choosing Cloudlead.</p>
+                <p>You have subscribed "${transaction.planName}"</p>
+                <p></p>
+                <p>Have a wonderful day!</p>
+                <p>Team Cloudlead</p>
+              `,
+            });
+            res.status(200).json({ status: "success" });
           }
         });
-      res.status(200).json({ status: "success" });
     } else {
       res.json({ status: "error", error: "Something went wrong" });
     }

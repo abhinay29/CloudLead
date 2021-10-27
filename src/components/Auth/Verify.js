@@ -6,7 +6,7 @@ const API_URL = process.env.REACT_APP_API_URL;
 function Verify(props) {
 
   const token = props.match.params.token;
-  const [verified, setVerified] = useState(false);
+  const [verified, setVerified] = useState();
 
   const checkToken = async () => {
     const url = `${API_URL}/api/user/verify`;
@@ -25,7 +25,7 @@ function Verify(props) {
 
   useEffect(() => {
     checkToken();
-  }, [])
+  })
 
   return (
     <div className="container mt-5 pt-5 text-center" style={{ "maxWidth": "600px" }}>

@@ -23,6 +23,8 @@ import Profile from './components/User/Profile';
 import Billing from './components/User/Billing';
 import Settings from './components/User/Settings';
 import ChangePassword from './components/User/ChangePassword';
+import Export from './components/People/Export';
+import Feedback from './components/User/Feedback';
 
 const RouteWithoutNavbar = ({ component: Component, ...rest }) => {
   // const [loaded, setLoaded] = useState(false);
@@ -65,9 +67,11 @@ function App() {
           <RouteWithNavbar exact path={Routes.Billing.path} component={Billing} />
           <RouteWithNavbar exact path={Routes.Settings.path} component={Settings} />
           <RouteWithNavbar exact path={Routes.ChangePassword.path} component={ChangePassword} />
+          <RouteWithNavbar exact path={Routes.Feedback.path} component={Feedback} />
           <RouteWithoutNavbar exact path={Routes.Signup.path} component={Signup} />
           <RouteWithoutNavbar exact path={Routes.Signin.path} component={Login} />
           <RouteWithoutNavbar exact path={`${Routes.Verify.path}/:token`} component={Verify} />
+          <RouteWithoutNavbar exact path={`${Routes.Export.path}/:token`} component={Export} />
         </Switch>
       </Router>
       <NotificationContainer />

@@ -1,23 +1,29 @@
 import React, { useState } from 'react'
+import { NotificationManager } from 'react-notifications';
 import { Link, useHistory } from 'react-router-dom'
+import GoogleLogin from 'react-google-login';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const Signup = (props) => {
+
+	const [disabled, setDisabled] = useState(false)
 	const [credentials, setCredentials] = useState({
 		first_name: "",
 		last_name: "",
 		email: "",
 		password: "",
 		cpassword: ""
-
 	})
+
 	let history = useHistory();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setDisabled(true);
 		if (credentials.password !== credentials.cpassword) {
-			alert('Passsword & Confirmed password does not matched');
+			NotificationManager.error('Passsword & Confirmed password does not matched');
+			setDisabled(false);
 			return false;
 		}
 		const response = await fetch(`${API_URL}/api/auth/signup`, {
@@ -35,18 +41,52 @@ const Signup = (props) => {
 		const json = await response.json()
 		// console.log(json);
 		if (json.status === 'success') {
-			alert('Thank you for create account, please login to continue');
+			NotificationManager.success('Thank you for create account, please check your email and confirm it.');
 			history.push("/login");
 			return false;
 		} else if (json.status === 'error') {
-			alert(json.errors[0].msg);
+			NotificationManager.error(json.error);
 		} else {
-			alert("Something went wrong please try again later.");
+			NotificationManager.error("Something went wrong please try again later.");
 		}
+		setDisabled(false);
 	}
 
 	const onChange = (e) => {
 		setCredentials({ ...credentials, [e.target.name]: e.target.value })
+	}
+
+	const responseGoogleSuccess = async (response) => {
+		setDisabled(true);
+		const profileObj = response.profileObj;
+		const res = await fetch(`${API_URL}/api/auth/googlelogin`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ tokenId: response.tokenId })
+		});
+		const json = await res.json()
+		console.log(json);
+		if (json.success) {
+			if (localStorage.getItem('searchQuery')) {
+				localStorage.removeItem('searchQuery')
+			}
+			localStorage.setItem('token', json.authtoken);
+			localStorage.setItem('uname', json.uname);
+			localStorage.setItem('uemail', json.uemail);
+			localStorage.removeItem('searchQuery')
+			NotificationManager.success("Welcome uname!!!")
+			history.push("/");
+		}
+		else {
+			NotificationManager.error(json.error, "Error!", 5000)
+			setDisabled(false);
+		}
+	}
+
+	const responseGoogleFailure = (response) => {
+		console.log(response);
 	}
 
 	return (
@@ -75,12 +115,18 @@ const Signup = (props) => {
 								<div className="mb-3 last mb-3">
 									<input type="password" className="form-control p-2 border-1 border-primary" value={credentials.cpassword} onChange={onChange} name="cpassword" id="cpassword" placeholder="Confirm Password" />
 								</div>
-								<input type="submit" value="Signup" className="btn py-3 btn-block w-100 btn-primary" />
+								<input type="submit" disabled={disabled} value="Signup" className="btn py-3 btn-block w-100 btn-primary" />
 								<span className="d-block text-center my-4 text-muted">— or —</span>
 								<div className="social-login">
-									<a href="/" className="btn btn-danger py-3 w-100 d-flex justify-content-center align-items-center" onClick={() => { alert('This would be work soon.'); }}>
-										<i className="fab fa-google me-2"></i> Signup with Google
-									</a>
+									<GoogleLogin
+										clientId="551396029089-1sm0epbfkpki0192mnb3e44qb6i66n1t.apps.googleusercontent.com"
+										className="d-flex justify-content-center align-items-center mx-auto"
+										buttonText="Continue with Google"
+										theme="dark"
+										onSuccess={responseGoogleSuccess}
+										onFailure={responseGoogleFailure}
+										cookiePolicy={'single_host_origin'}
+									/>
 								</div>
 							</form>
 							<div className="text-center mt-3">

@@ -198,14 +198,13 @@ router.get('/checkphone/:phone', fetchuser, async (req, res) => {
 })
 
 router.post('/subscribe', fetchuser, async (req, res) => {
-  let user = await User.findByIdAndUpdate(
+  User.findByIdAndUpdate(
     { _id: req.user.id },
     { phone: req.body.phone, plan_id: req.body.plan, company: req.body.company },
     function (err, data) {
       if (err) {
         return res.status(200).json({ status: "error", error: err })
-      }
-      if (data) {
+      } else {
         res.status(200).json({ status: "success" });
       }
     });

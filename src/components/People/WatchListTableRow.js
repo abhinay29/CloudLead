@@ -28,7 +28,19 @@ const WatchListTableRow = (props) => {
   const toogleSelectAll = (selectAll) => {
     var checkboxes = document.getElementsByClassName('selectContacts')
     for (var i = 0, n = checkboxes.length; i < n; i++) {
-      checkboxes[i].checked = selectAll;
+      checkboxes[i].checked = false;
+    }
+    let length = selectAll.length;
+    if (length === 50) {
+      length = (checkboxes.length > 50) ? selectAll.length : checkboxes.length;
+    } else if (length === 100) {
+      length = (checkboxes.length < 100) ? checkboxes.length : selectAll.length
+    }
+    if (length === checkboxes.length) {
+
+    }
+    for (var i = 0, n = length; i < n; i++) {
+      checkboxes[i].checked = selectAll.select;
     }
   }
 

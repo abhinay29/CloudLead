@@ -265,9 +265,9 @@ const Table = (props) => {
                 <input type="checkbox" className="form-check-input" />
               </button>
               <ul className="dropdown-menu" aria-labelledby="selectDropdown">
-                <li><a className="dropdown-item select_contact" data-select="50" href="/">Select 50</a></li>
-                <li><a className="dropdown-item select_contact" data-select="100" href="/">Select 100</a></li>
-                <li><a className="dropdown-item select_contact" data-select="0" href="/">Clear Selection</a></li>
+                <li><a className="dropdown-item select_contact" data-select="50" href="/" onClick={(e) => { e.preventDefault(); setSelectAll(true) }}>Select 50</a></li>
+                <li><a className="dropdown-item select_contact" data-select="100" href="/" onClick={(e) => { e.preventDefault(); setSelectAll(true) }}>Select 100</a></li>
+                <li><a className="dropdown-item select_contact" data-select="0" href="/" onClick={(e) => { e.preventDefault(); setSelectAll(false) }}>Clear Selection</a></li>
               </ul>
             </span>
             <span className="dropdown bi-tooltip">

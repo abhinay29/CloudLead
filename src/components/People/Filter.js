@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
-import Select from "react-select";
+import Select, { components, GroupProps } from "react-select";
 import PeopleContext from '../Context/People/PeopleContext';
 import {
   positionOptions,
@@ -146,14 +146,13 @@ const Filter = (props) => {
         dispatch(progressLoading(100))
         NotificationManager.error('No result found');
         setDisSearchBtn(false);
-
         return
       }
       localStorage.setItem('searchQuery', query);
+      setShowFilter(false)
       getPeoples(parsedData)
       setTotalPeople(parsedData.totalResults)
       setUniqueComp(parsedData.uniqueCompany)
-      setShowFilter(false)
       setShowTable(true)
       setSkeletonLoading(false)
       dispatch(progressLoading(100))
@@ -627,6 +626,42 @@ const Filter = (props) => {
     }
   }
 
+  const setDefaultValueGroupFunction = (options, name) => {
+    setDefaultValue({ ...defaultValue, [name]: options })
+  }
+
+  const createGroup = (groupName, options, name) => {
+    return {
+      label: (() => {
+        return (
+          <div>
+            <input type="checkbox" className="form-check-input me-2" onClick={(e) => { if (e.target.checked) setDefaultValueGroupFunction(options, name) }} />
+            {groupName}
+          </div>
+        );
+      })(),
+      options: options,
+    };
+  };
+
+  let countryOptionsPerson = [
+    countryGroup.map(countryGrp => {
+      return createGroup(countryGrp.label, countryGrp.options, 'person_country')
+    })
+  ];
+
+  let countryOptionsCompany = [
+    countryGroup.map(countryGrp => {
+      return createGroup(countryGrp.label, countryGrp.options, 'company_country')
+    })
+  ];
+
+  let industryGroupOptions = [
+    industryGrpOpt.map(indGrp => {
+      return createGroup(indGrp.label, indGrp.options, 'industry')
+    })
+  ]
+
   return (
 
     <div className="card border-0 shadow-none" style={{ "height": "calc(100vh - 56px)", "overflow": "hidden" }}>
@@ -986,7 +1021,7 @@ const Filter = (props) => {
                     name="person_country"
                     onChange={handleSelectChange}
                     value={defaultValue.person_country}
-                    options={countryGroup}
+                    options={countryOptionsPerson[0]}
                     className="basic-multi-select"
                     placeholder="Person's Country"
                     styles={{ "background": "#000" }}
@@ -1074,7 +1109,7 @@ const Filter = (props) => {
                     onChange={handleSelectChange}
                     value={defaultValue.industry}
                     name="industry"
-                    options={industryGrpOpt}
+                    options={industryGroupOptions[0]}
                     className="basic-multi-select"
                     placeholder="Select Industry"
                   />
@@ -1092,7 +1127,7 @@ const Filter = (props) => {
                     onChange={handleSelectChange}
                     value={defaultValue.company_country}
                     name="company_country"
-                    options={countryGroup}
+                    options={countryOptionsCompany[0]}
                     className="basic-multi-select"
                     placeholder="Comapany's Country"
                   />

@@ -18,11 +18,12 @@ const Watchlist = () => {
   const [watchList, setWatchList] = useState([])
   const [page, setPage] = useState(1);
   const [people, setPeople] = useState(0)
-  const [selectAll, setSelectAll] = useState(false);
+  const [selectAll, setSelectAll] = useState({ select: false, length: 100 });
   // eslint-disable-next-line
   const [uniqueComp, setUniqueComp] = useState(0)
   const [disAddBtn, setDisAddBtn] = useState(false)
   const [skeletonLoading, setSkeletonLoading] = useState(true);
+  const [limit, setLimit] = useState(50);
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber !== page) {
@@ -41,7 +42,7 @@ const Watchlist = () => {
   const getWatchlist = async (pageNumber = 1, query = '') => {
     setPage(pageNumber);
     dispatch(progressLoading(30))
-    const url = `${API_URL}/api/contacts/watchlist?page=${pageNumber}${query}`;
+    const url = `${API_URL}/api/contacts/watchlist?page=${pageNumber}${query}&limit=${limit}`;
     let data = await fetch(url, {
       method: 'GET',
       headers: {
@@ -66,7 +67,7 @@ const Watchlist = () => {
 
   useEffect(() => {
     getWatchlist();
-  }, [])
+  }, [limit])
 
   const filterConfidence = () => {
     let confidence_checkbox = document.getElementsByClassName('confidence_level');
@@ -218,6 +219,62 @@ const Watchlist = () => {
     }
   }
 
+  const handleExportSelectContact = async () => {
+    let selectedId = []
+    var checkboxes = document.getElementsByClassName('selectContacts')
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+      if (checkboxes[i].checked)
+        selectedId.push(checkboxes[i].value);
+    }
+    if (selectedId.length === 0) {
+      NotificationManager.error("Please select record rows to download.");
+      return false;
+    }
+    dispatch(progressLoading(30))
+    const exportCsv = await fetch(`${API_URL}/api/contacts/watchlist/export`, {
+      method: 'POST',
+      headers: {
+        'auth-token': localStorage.getItem('token'),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ids: selectedId,
+        email: localStorage.getItem('uemail')
+      })
+    })
+
+    if (!exportCsv) { dispatch(progressLoading(100)); return false }
+    dispatch(progressLoading(60))
+    const res = await exportCsv.json();
+    if (res.status === 'success') {
+      NotificationManager.success('Contact exported successfully, please check your inbox', "Success!", 3000);
+    } else {
+      NotificationManager.error('Something went wrong, please try again later.');
+    }
+    dispatch(progressLoading(100))
+    return true;
+  }
+
+  const changeViewLimit = (e) => {
+    setLimit(e.target.value)
+  }
+
+  useEffect(() => {
+    var no_selected_contact = document.getElementById('no_selected_contact');
+
+    if (!selectAll.select) { no_selected_contact.innerHTML = ""; return false }
+
+    var selectedCheckbox = document.getElementsByClassName('selectContacts')
+    let length = 0;
+    for (var i = 0, n = selectedCheckbox.length; i < n; i++) {
+      if (selectedCheckbox[i].checked === true) {
+        length++;
+      }
+    }
+    no_selected_contact.innerHTML = `${length} contact selected`;
+
+  }, [selectAll])
+
   return (
     <div>
       <div className="card-body" id="result_body">
@@ -226,7 +283,7 @@ const Watchlist = () => {
             <span className="small fw-bold text-primary me-2">CONTACTS (<span>{people}</span>)</span>
             <span className="small fw-bold text-primary">UNIQUE COMPANIES (<span>{uniqueComp}</span>)</span>
           </div>
-          <div id="no_selected_contact"></div>
+          <div id="no_selected_contact" className="text-primary"></div>
         </div>
         <div className="mb-1 d-flex">
           <div className="btn-group me-2" role="group" aria-label="Menu">
@@ -235,14 +292,12 @@ const Watchlist = () => {
                 <input type="checkbox" className="form-check-input" />
               </button>
               <ul className="dropdown-menu" aria-labelledby="selectDropdown">
-                <li><a className="dropdown-item select_contact" data-select="50" href="/">Select 50</a></li>
-                <li><a className="dropdown-item select_contact" data-select="100" href="/">Select 100</a></li>
-                <li><a className="dropdown-item select_contact" data-select="100" href="/">Select 500</a></li>
-                <li><a className="dropdown-item select_contact" data-select="2000" href="/">Select 2000</a></li>
-                <li><a className="dropdown-item select_contact" data-select="0" href="/">Clear Selection</a></li>
+                <li><a className="dropdown-item select_contact" data-select="50" href="/" onClick={(e) => { e.preventDefault(); setSelectAll({ select: true, length: 50 }) }}>Select 50</a></li>
+                <li><a className="dropdown-item select_contact" data-select="100" href="/" onClick={(e) => { e.preventDefault(); setSelectAll({ select: true, length: 100 }) }}>Select 100</a></li>
+                <li><a className="dropdown-item select_contact" data-select="0" href="/" onClick={(e) => { e.preventDefault(); setSelectAll({ select: false, length: 100 }) }}>Clear Selection</a></li>
               </ul>
             </span>
-            <button type="button" className="btn btn-sm btn-outline-primary text-success bi-tooltip" id="export_csv" data-bs-placement="top" title="Export CSV"><i className="fas fa-download"></i></button>
+            <button type="button" className="btn btn-sm btn-outline-primary text-success bi-tooltip" id="export_csv" data-bs-placement="top" title="Export CSV" onClick={handleExportSelectContact}><i className="fas fa-download"></i></button>
             <button type="button" className="btn btn-sm btn-outline-primary text-danger bi-tooltip" data-bs-placement="top" title="Delete Contact(s)" onClick={() => { deleteContact() }}><i className="far fa-trash-alt"></i></button>
             <span className="dropdown bi-tooltip" title="Add to list">
               <button className="btn btn-sm btn-outline-primary bi-tooltip" type="button" id="addlistDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="inside">
@@ -303,7 +358,7 @@ const Watchlist = () => {
               <tr>
                 <th>
                   <div className="d-flex align-items-center">
-                    <input type="checkbox" onClick={(e) => { setSelectAll(e.target.checked) }} className="form-check-input mt-0 me-3" />
+                    <input type="checkbox" onClick={(e) => { setSelectAll({ select: e.target.checked, length: 100 }) }} className="form-check-input mt-0 me-3" />
                     <span>Person's Name</span>
                   </div>
                 </th>
@@ -331,15 +386,15 @@ const Watchlist = () => {
         </div>
         <div className="mt-3 d-flex align-items-center">
           <div>
-            <select name="no_of_contact" id="no_of_contact" className="form-select form-control-sm">
-              <option value="50">50 Contact</option>
-              <option value="100">100 Contact</option>
+            <select name="no_of_contact" id="no_of_contact" onChange={(e) => changeViewLimit(e)} className="form-select form-control-sm">
+              <option value="50" selected={limit === 50 ? true : false}>50 Contact</option>
+              <option value="100" selected={limit === 100 ? true : false}>100 Contact</option>
             </select>
           </div>
           <nav className="ms-auto d-flex align-items-center">
             <Pagination
               activePage={page}
-              itemsCountPerPage={50}
+              itemsCountPerPage={parseInt(limit)}
               totalItemsCount={people}
               pageRangeDisplayed={7}
               onChange={handlePageChange}

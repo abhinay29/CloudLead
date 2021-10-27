@@ -1,12 +1,15 @@
-const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 const fetchuser = require('../middleware/fetchuser');
 const Contacts = require('../models/Contacts');
 const Watchlist = require('../models/Watchlist');
+const useExport = require('../models/Export');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 const Plans = require('../models/Plans');
+
+const rand = () => Math.random(0).toString(36).substr(2);
+const getToken = (length = 32) => (rand() + rand() + rand() + rand()).substr(0, length);
 
 class ConvertStringRegex {
   constructor(str) {
@@ -971,6 +974,9 @@ router.get('/watchlist', fetchuser, async (req, res) => {
   }
 
 })
+
+router.post('/watchlist/export', fetchuser, require('./Contacts/export'));
+router.post('/watchlist/download', fetchuser, require('./Contacts/downloadcsv'));
 
 router.delete('/deletewatchlist', fetchuser, async (req, res) => {
 

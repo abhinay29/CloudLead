@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import PeopleState from '../Context/People/PeopleState'
 import CreatableSelect from 'react-select/creatable';
 import Select from "react-select";
@@ -176,6 +176,42 @@ const WatchFilter = (props) => {
       input[i].checked = false;
     }
   }
+
+  const setDefaultValueGroupFunction = (options, name) => {
+    setDefaultValue({ ...defaultValue, [name]: options })
+  }
+
+  const createGroup = (groupName, options, name) => {
+    return {
+      label: (() => {
+        return (
+          <div>
+            <input type="checkbox" className="form-check-input me-2" onClick={(e) => { if (e.target.checked) setDefaultValueGroupFunction(options, name) }} />
+            {groupName}
+          </div>
+        );
+      })(),
+      options: options,
+    };
+  };
+
+  let countryOptionsPerson = [
+    countryGroup.map(countryGrp => {
+      return createGroup(countryGrp.label, countryGrp.options, 'person_country')
+    })
+  ];
+
+  let countryOptionsCompany = [
+    countryGroup.map(countryGrp => {
+      return createGroup(countryGrp.label, countryGrp.options, 'company_country')
+    })
+  ];
+
+  let industryGroupOptions = [
+    industryGrpOpt.map(indGrp => {
+      return createGroup(indGrp.label, indGrp.options, 'industry')
+    })
+  ]
 
   return (
 
@@ -553,7 +589,7 @@ const WatchFilter = (props) => {
                       name="person_country"
                       onChange={handleSelectChange}
                       value={defaultValue.person_country}
-                      options={countryGroup}
+                      options={countryOptionsPerson[0]}
                       className="basic-multi-select"
                       placeholder="Person's Country"
                       styles={{ "background": "#000" }}
@@ -641,7 +677,7 @@ const WatchFilter = (props) => {
                       onChange={handleSelectChange}
                       value={defaultValue.industry}
                       name="industry"
-                      options={industryGrpOpt}
+                      options={industryGroupOptions[0]}
                       className="basic-multi-select"
                       placeholder="Select Industry"
                     />
@@ -659,7 +695,7 @@ const WatchFilter = (props) => {
                       onChange={handleSelectChange}
                       value={defaultValue.company_country}
                       name="company_country"
-                      options={countryGroup}
+                      options={countryOptionsCompany[0]}
                       className="basic-multi-select"
                       placeholder="Comapany's Country"
                     />

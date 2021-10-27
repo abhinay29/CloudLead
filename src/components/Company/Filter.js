@@ -270,6 +270,36 @@ const Filter = (props) => {
     }
   }
 
+  const setDefaultValueGroupFunction = (options, name) => {
+    setDefaultValue({ ...defaultValue, [name]: options })
+  }
+
+  const createGroup = (groupName, options, name) => {
+    return {
+      label: (() => {
+        return (
+          <div>
+            <input type="checkbox" className="form-check-input me-2" onClick={(e) => { if (e.target.checked) setDefaultValueGroupFunction(options, name) }} />
+            {groupName}
+          </div>
+        );
+      })(),
+      options: options,
+    };
+  };
+
+  let countryOptionsCompany = [
+    countryGroup.map(countryGrp => {
+      return createGroup(countryGrp.label, countryGrp.options, 'company_country')
+    })
+  ];
+
+  let industryGroupOptions = [
+    industryGrpOpt.map(indGrp => {
+      return createGroup(indGrp.label, indGrp.options, 'industry')
+    })
+  ]
+
 
   return (
 
@@ -376,7 +406,7 @@ const Filter = (props) => {
                     isMulti
                     closeMenuOnSelect={false}
                     name="industry[]"
-                    options={industryGrpOpt}
+                    options={industryGroupOptions[0]}
                     className="basic-multi-select"
                     placeholder="Select Industry"
                   />
@@ -402,7 +432,7 @@ const Filter = (props) => {
                     defaultValue={[]}
                     closeMenuOnSelect={false}
                     isMulti
-                    options={countryGroup}
+                    options={countryOptionsCompany[0]}
                     name="company_country[]"
                     className="basic-multi-select"
                     placeholder="Comapany's Country"
