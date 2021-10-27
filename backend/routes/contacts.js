@@ -976,7 +976,7 @@ router.get('/watchlist', fetchuser, async (req, res) => {
 })
 
 router.post('/watchlist/export', fetchuser, require('./Contacts/export'));
-router.post('/watchlist/download', fetchuser, require('./Contacts/downloadcsv'));
+router.get('/watchlist/download', require('./Contacts/downloadcsv'));
 
 router.delete('/deletewatchlist', fetchuser, async (req, res) => {
 

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
-import Select, { components, GroupProps } from "react-select";
+import Select from "react-select";
 import PeopleContext from '../Context/People/PeopleContext';
 import {
   positionOptions,
@@ -39,8 +39,6 @@ const Filter = (props) => {
   const [states, setStates] = useState([]);
 
   const handleDepartment = (e) => {
-
-    // console.log(e.target.dataset.role);
 
     if (!e.target.checked) {
       setDefaultValue({ ...defaultValue, [e.target.dataset.role]: [] })
@@ -84,8 +82,6 @@ const Filter = (props) => {
   }
 
   if (localStorage.getItem('searchQuery')) {
-    // let form = document.getElementById('search_form');
-    // form.submit();
     setShowFilter(false);
     setShowTable(true);
   }

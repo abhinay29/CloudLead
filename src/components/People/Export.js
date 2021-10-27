@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
+import axios from 'axios';
+import React, { useState, useEffect } from 'react'
 import { CSVLink } from "react-csv";
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 function Export(props) {
 
   const token = props.match.params.token;
   const [csvData, setCsvData] = useState([]);
-
-  
 
   let headers = [
     { label: "First Name", key: "firstname" },
@@ -14,36 +15,58 @@ function Export(props) {
     { label: "Email", key: "email" }
   ];
 
-  let data = [
-    { firstname: "Ahmed", lastname: "Tomi", email: "ah@smthing.co.com" },
-    { firstname: "Raed", lastname: "Labes", email: "rl@smthing.co.com" },
-    { firstname: "Yezzi", lastname: "Min l3b", email: "ymin@cocococo.com" }
-  ];
+  const initiateDownload = async () => {
+    await axios({
+      method: 'GET',
+      url: `${API_URL}/api/contacts/watchlist/download`,
+      data: JSON.stringify({ token: token }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    }).then(function (response) {
+      //handle success
+      console.log(response);
+    }).catch(function (err) {
+      //handle error
+      console.log(err);
+    });
+  }
 
-  const filename = "Contacts.csv";
+  useEffect(() => {
+    initiateDownload()
+  }, [token])
+
+  // let data = [
+  //   { firstname: "Ahmed", lastname: "Tomi", email: "ah@smthing.co.com" },
+  //   { firstname: "Raed", lastname: "Labes", email: "rl@smthing.co.com" },
+  //   { firstname: "Yezzi", lastname: "Min l3b", email: "ymin@cocococo.com" }
+  // ];
+
+  const filename = "Contacts-cloudlead.csv";
 
   const closeWindow = () => {
     setTimeout(function () {
       window.location.href = "/";
-    }, 3000);
+    }, 5000);
   }
 
   return (
     <div className="p-3 text-center">
-      <div>
+      {!csvData && <div>
         Please wait...
-      </div>
-      <div>
-        {/* <CSVDownload data={csvData} filename={filename} /> */}
-        <CSVLink
-          data={data}
-          filename={filename}
-          onClick={closeWindow}
-          target="_blank"
-        >
-          Download File
-        </CSVLink>
-      </div>
+      </div>}
+      {csvData &&
+        <div>
+          <CSVLink
+            data={csvData}
+            filename={filename}
+            onClick={closeWindow}
+            target="_blank"
+          >
+            Download File
+          </CSVLink>
+        </div>
+      }
     </div>
   )
 }

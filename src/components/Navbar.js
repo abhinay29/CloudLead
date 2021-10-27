@@ -60,7 +60,7 @@ const Navbar = () => {
 							</li>
 						</ul>
 						<ul className="navbar-nav ms-auto">
-							<li className="nav-item me-3"><a href="https://cloudlead.in" className="nav-link active" title="Visit Website" target="_blank">Visit WebSite</a></li>
+							<li className="nav-item me-3"><a href="https://cloudlead.in" className="nav-link active" title="Visit Website" target="_blank">Back to WebSite</a></li>
 							<li className="nav-item me-3 d-flex align-items-center">
 								<button type="button" className="btn btn-sm btn-warning fw-bold px-3">Get Chrome Extension</button>
 							</li>
