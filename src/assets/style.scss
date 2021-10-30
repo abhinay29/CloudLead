@@ -23,7 +23,8 @@
 
 body {
   // background-color: var(--color-bg-canvas);
-  background-color: #f6fbff;
+  // background-color: #f6fbff;
+  background-color: #fff;
   font-size: 1rem;
   font-family: "Nunito", sans-serif;
   color: var(--color-text-primary);
@@ -80,38 +81,37 @@ table th {
 .table_social_link {
   a {
     text-decoration: none;
-    font-size: 12px;
 
     &:hover i {
       transform: translateY(-5px);
+      color: #7367f0;
     }
 
     i {
-      color: #fff;
+      color: #949fb1;
       border-radius: 50%;
-      margin-right: 3px;
-      width: 22px;
-      height: 22px;
+      margin-right: 8px;
+      font-size: 1rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       transition: all 0.2s ease;
 
-      &.fa-linkedin-in {
-        background: #0085ae;
-      }
+      // &.fa-linkedin-in {
+      //   background: #0085ae;
+      // }
 
-      &.fa-twitter {
-        background: #32ccfe;
-      }
+      // &.fa-twitter {
+      //   background: #32ccfe;
+      // }
 
-      &.fa-facebook-f {
-        background: #3c599f;
-      }
+      // &.fa-facebook-f {
+      //   background: #3c599f;
+      // }
 
-      &.fa-globe {
-        background: var(--bs-primary);
-      }
+      // &.fa-globe {
+      //   background: var(--bs-primary);
+      // }
     }
   }
 }
@@ -184,14 +184,14 @@ table th {
 
 .table {
   position: relative;
-  font-size: 15px;
+  font-size: 14px;
 
   tr {
 
     th,
     td {
       vertical-align: middle;
-      border: 0;
+      // border: 0;
     }
   }
 
@@ -201,7 +201,7 @@ table th {
   }
 
   .name_of_contact {
-    min-width: 220px;
+    min-width: 250px;
   }
 
   .actions {
@@ -307,15 +307,28 @@ table th {
 
 #peopleTable,
 #compTable {
-  tbody tr {
-    box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.15);
-    height: 80px;
+  thead {
+    box-shadow: 1px 1px 5px #dee2e6;
+
+    th {
+      white-space: nowrap;
+      padding: .75rem .5rem;
+      background-color: #eceff1 !important;
+      font-weight: 600;
+    }
   }
 
-  &.table {
-    border-collapse: separate;
-    border-spacing: 0 1em;
+  tbody tr {
+    // box-shadow: 0px 1px 8px #dee2e6;
+    height: 70px;
+    border-bottom: 1px solid #dee2e6;
+    // line-height: 1.5rem;
   }
+
+  // &.table {
+  //   border-collapse: separate;
+  //   border-spacing: 0 1em;
+  // }
 }
 
 .has-options {
@@ -514,7 +527,7 @@ table th {
 }
 
 .text-uppercase {
-  letter-spacing: 0.2em;
+  letter-spacing: 0.05em;
 }
 
 .megamenu {
@@ -587,6 +600,24 @@ table th {
       padding: 5px;
       margin: 0 !important;
       height: calc(100vh - 135px);
+    }
+
+  }
+}
+
+.sideNavbar {
+  .card {
+    padding: 1rem .25rem 1rem 1rem !important;
+    border-radius: 0;
+    border-right: 1px solid #eee;
+
+    .card-body {
+      padding: 5px;
+      margin: 0 !important;
+      height: calc(100vh - 90px);
+      overflow-y: auto;
+      border-radius: 0;
+
     }
 
   }

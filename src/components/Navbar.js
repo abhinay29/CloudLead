@@ -1,12 +1,16 @@
-import React from 'react'
-import { Link, useLocation, useHistory } from "react-router-dom";
+import React, { useEffect } from 'react'
+import { Link, useHistory } from "react-router-dom";
 import LoadingBar from 'react-top-loading-bar'
 import { useSelector, useDispatch } from 'react-redux';
-import { progressLoading } from '../states/action-creator';
+import { progressLoading, userInfo, watchList } from '../states/action-creator';
+import axios from 'axios';
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 const Navbar = () => {
 
 	const loadingState = useSelector(state => state.setLoadingProgress)
+	const userState = useSelector(state => state.setUserData)
 	const dispatch = useDispatch()
 
 	let history = useHistory();
@@ -14,14 +18,50 @@ const Navbar = () => {
 		localStorage.removeItem('token');
 		history.push("/login");
 	}
-	let location = useLocation();
 
-	const linkClick = () => {
-		dispatch(progressLoading(30))
-		setTimeout(() => {
-			dispatch(progressLoading(100))
-		}, 400);
+	const initiateUserInfo = async () => {
+		await axios({
+			method: 'GET',
+			url: `${API_URL}/api/auth/getuser`,
+			headers: {
+				'auth-token': localStorage.getItem('token'),
+				'Content-Type': 'application/json'
+			},
+		}).then(function (response) {
+			if (response.data.status === 'success') {
+				dispatch(userInfo(response.data.userdata))
+				localStorage.removeItem('searchQuery');
+			} else {
+				console.log(response)
+			}
+		}).catch(function (err) {
+			console.log(err);
+		});
 	}
+
+	const initiateWatchlist = async () => {
+		await axios({
+			method: 'GET',
+			url: `${API_URL}/api/contacts/watchlist?page=1&limit=25`,
+			headers: {
+				'auth-token': localStorage.getItem('token'),
+				'Content-Type': 'application/json'
+			},
+		}).then(function (response) {
+			if (response.data.status === 'success') {
+				dispatch(watchList(response.data))
+			} else {
+				console.log(response)
+			}
+		}).catch(function (err) {
+			console.log(err);
+		});
+	}
+
+	useEffect(() => {
+		initiateWatchlist()
+		initiateUserInfo()
+	}, [])
 
 
 	return (
@@ -34,15 +74,15 @@ const Navbar = () => {
 			/>
 			<nav className="navbar top-nav navbar-expand-lg bg-primary">
 				<div className="container-fluid">
-					<Link className="navbar-brand me-4 p-0" to="/" style={{ "width": "40px", "height": "40px" }}>
-						{/* <div className="rounded-circle bg-dark d-flex justify-content-center align-items-center" style={{ "width": "40px", "height": "40px" }}>C</div> */}
+					<Link className="navbar-brand text-light me-4 d-flex align-items-center p-0" to="/" style={{ "height": "40px" }}>
 						<img src="/logo.png" alt="Logo" style={{ "width": "40px", "height": "40px" }} />
+						<h5 className="fw-bold ms-3 mb-0">CLOUDLEAD</h5>
 					</Link>
 					<button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 						<span className="navbar-toggler-icon"></span>
 					</button>
 					<div className="collapse navbar-collapse" id="navbarNav">
-						<ul className="navbar-nav me-auto mb-2 mb-lg-0">
+						{/* <ul className="navbar-nav me-auto mb-2 mb-lg-0">
 							<li className="nav-item">
 								<Link className={`nav-link ${location.pathname === '/' ? "active" : ""}`} aria-current="page" to="/" onClick={() => linkClick()}><i className="far fa-chart-bar"></i> Cockpit</Link>
 							</li>
@@ -58,9 +98,9 @@ const Navbar = () => {
 							<li className="nav-item">
 								<Link className="nav-link" to="lists"><i className="far fa-list-alt"></i> Sequences</Link>
 							</li>
-						</ul>
+						</ul> */}
 						<ul className="navbar-nav ms-auto">
-							<li className="nav-item me-3"><a href="https://cloudlead.in" className="nav-link active" title="Visit Website" target="_blank">Back to WebSite</a></li>
+							<li className="nav-item me-3"><a href="https://cloudlead.in" className="nav-link active" target="_blank"><i className="fas fa-globe"></i> Back to WebSite</a></li>
 							<li className="nav-item me-3 d-flex align-items-center">
 								<button type="button" className="btn btn-sm btn-warning fw-bold px-3">Get Chrome Extension</button>
 							</li>
@@ -124,7 +164,7 @@ const Navbar = () => {
 							<li className="nav-item dropdown">
 								<Link className="nav-link" to="/" id="userAccountMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 									<span className="bi-tooltip" data-bs-placement="left" title="My Account">
-										<span className="me-1">{localStorage.getItem('uemail')}</span> <i className="fas fa-chevron-down"></i>
+										<span className="me-1">{userState.email}</span> <i className="fas fa-chevron-down"></i>
 									</span>
 								</Link>
 								{/* <li><Link className="dropdown-item" to="/"><i className="fas fa-user me-1 text-primary"></i> Profile</Link></li>
@@ -132,7 +172,7 @@ const Navbar = () => {
 								<div className="dropdown-menu shadow" style={{ "width": "260px" }} aria-labelledby="userAccountMenu">
 									<div className="py-2 px-3">
 										<div className="text-center">
-											<h6 className="fw-bold">{localStorage.getItem('uname')}</h6>
+											<h6 className="fw-bold">{userState.first_name} {userState.last_name}</h6>
 											<button type="button" onClick={handleLogout} className="btn btn-sm btn-danger"><i className="fas fa-power-off"></i> Logout</button>
 										</div>
 										<hr />

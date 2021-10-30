@@ -24,7 +24,7 @@ const UserSchema = new Schema({
         unique: true,
         default: null
     },
-    city: {
+    country_code: {
         type: String,
         default: null
     },
@@ -39,6 +39,18 @@ const UserSchema = new Schema({
     status: {
         type: Number,
         default: 0
+    },
+    billing_info: {
+        type: Object,
+        default: {
+            address: "",
+            city: "",
+            state: "",
+            country: "",
+            pin: "",
+            gst: false,
+            gst_number: "",
+        }
     },
     created_at: {
         type: Date,

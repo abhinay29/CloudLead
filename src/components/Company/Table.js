@@ -19,7 +19,7 @@ const Table = (props) => {
   const [page, setPage] = useState(1);
   const [pageContact, setPageContact] = useState(1);
   const [disSaveBtn, setDisSaveBtn] = useState(false);
-  const [limit, setLimit] = useState(50);
+  const [limit, setLimit] = useState(25);
   const { setShowFilter, setShowTable } = props
   const [companyName, setCompanyName] = useState("");
 
@@ -191,18 +191,8 @@ const Table = (props) => {
           </div>
           <div id="no_selected_contact"></div>
         </div>
-        <div className="mb-1">
+        <div className="mb-2">
           <div className="btn-group me-2" role="group" aria-label="Menu">
-            <span className="dropdown bi-tooltip" data-bs-placement="top" title="Select">
-              <button className="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="selectDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <input type="checkbox" className="form-check-input" />
-              </button>
-              <ul className="dropdown-menu" aria-labelledby="selectDropdown">
-                <li><a className="dropdown-item select_contact" data-select="50" href="/">Select 50</a></li>
-                <li><a className="dropdown-item select_contact" data-select="100" href="/">Select 100</a></li>
-                <li><a className="dropdown-item select_contact" data-select="0" href="/">Clear Selection</a></li>
-              </ul>
-            </span>
             <span className="dropdown bi-tooltip">
               <button className=" btn btn-sm btn-outline-primary bi-tooltip" type="button" id="saveSearch" data-bs-toggle="dropdown" aria-expanded="false">
                 <i className="far fa-save"></i>
@@ -224,7 +214,7 @@ const Table = (props) => {
           <Link to="/radar/company/watchlist" className="btn btn-sm btn-outline-primary me-2"><i className="fas fa-bookmark"></i> My Watchlist</Link>
         </div>
 
-        <div className="table-responsive border-bottom" style={{ "height": "calc(100vh - 210px)", "overflowY": "scroll", "padding": "0 10px", "margin": "0 -10px" }}>
+        <div className="table-responsive border" style={{ "height": "calc(100vh - 215px)", "overflowY": "scroll" }}>
           <table className="table table-borderless tableFixHead mb-0" id="peopleTable">
             <thead>
               <tr>
@@ -245,15 +235,15 @@ const Table = (props) => {
         </div>
         <div className="mt-3 d-flex align-items-center">
           <div>
-            <select name="no_of_contact" id="no_of_contact" className="form-select form-control-sm">
-              <option value="50">50 Contact</option>
-              <option value="100">100 Contact</option>
+            <select name="no_of_contact" id="no_of_contact" value={limit} className="form-select form-control-sm">
+              <option value="25">25 Companies</option>
+              <option value="50">50 Companies</option>
             </select>
           </div>
           <nav className="ms-auto d-flex align-items-center">
             <Pagination
               activePage={page}
-              itemsCountPerPage={50}
+              itemsCountPerPage={limit}
               totalItemsCount={totalComapany}
               pageRangeDisplayed={7}
               onChange={handlePageChange}

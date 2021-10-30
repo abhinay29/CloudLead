@@ -96,9 +96,9 @@ function ContactModal() {
         </div>
         <div className="mt-3 d-flex align-items-center">
           <div>
-            <select name="no_of_contact" id="no_of_contact" onChange={(e) => changeViewLimit(e)} className="form-select form-control-sm">
-              <option value="50" selected={limit === 50 ? true : false}>50 Contact</option>
-              <option value="100" selected={limit === 100 ? true : false}>100 Contact</option>
+            <select name="no_of_contact" id="no_of_contact" value={limit} onChange={(e) => changeViewLimit(e)} className="form-select form-control-sm">
+              <option value="25">25 Contact</option>
+              <option value="50">50 Contact</option>
             </select>
           </div>
           <nav className="ms-auto d-flex align-items-center">

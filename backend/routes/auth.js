@@ -133,19 +133,21 @@ router.post('/login', [
 
 });
 
-router.post('/getuser', fetchuser, async (req, res) => {
+router.get('/getuser', fetchuser, async (req, res) => {
   try {
     userId = req.user.id;
-    const user = await User.findById(userId).select("-password")
-    res.send(user)
+    const user = await User.findById(userId).select(["-password", "-token", "-_id", "-__v"])
+    res.status(200).send({
+      status: 'success',
+      userdata: user
+    })
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(400).send({ status: 'error', error: 'User not found' });
   }
 })
 
 router.post('/googlelogin', async (req, res) => {
-  const profileObj = req.body.profileObj;
   const tokenId = req.body.tokenId;
   let success = false;
   client.verifyIdToken({ idToken: tokenId, audience: "551396029089-1sm0epbfkpki0192mnb3e44qb6i66n1t.apps.googleusercontent.com" }).then(async (response) => {

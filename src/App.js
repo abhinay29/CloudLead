@@ -25,15 +25,9 @@ import Settings from './components/User/Settings';
 import ChangePassword from './components/User/ChangePassword';
 import Export from './components/People/Export';
 import Feedback from './components/User/Feedback';
+import Sidebar from './components/Sidebar';
 
 const RouteWithoutNavbar = ({ component: Component, ...rest }) => {
-  // const [loaded, setLoaded] = useState(false);
-
-  // useEffect(() => {
-  //   const timer = setTimeout(() => setLoaded(true), 1000);
-  //   return () => clearTimeout(timer);
-  // }, []);
-
   return (
     <Route {...rest} render={props => (<> <Component {...props} /> </>)} />
   );
@@ -43,9 +37,13 @@ const RouteWithNavbar = ({ component: Component, ...rest }) => {
   return (
     <Route {...rest} render={props => (
       <>
-        {/* <Preloader show={loaded ? false : true} /> */}
         <Navbar />
-        <Component {...props} />
+        <div className="row m-0">
+          <Sidebar />
+          <div className="col p-0" style={{ "maxWidth": "calc(100vw - 260px)" }}>
+            <Component {...props} />
+          </div>
+        </div>
       </>
     )}
     />

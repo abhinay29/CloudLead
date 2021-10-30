@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Pagination from "react-js-pagination";
 import WatchListTableRow from './WatchListTableRow'
 import { NotificationManager } from 'react-notifications';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { progressLoading } from '../../states/action-creator';
 import WatchFilter from './WatchlistFilter';
 import TableSkeleton from '../Skeleton/TableSkeleton';
@@ -13,17 +13,20 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 const Watchlist = () => {
 
+  const [watchList, setWatchList] = useState([])
+  const initialWatchlist = useSelector(state => state.initialWatchlist)
+  // setWatchList(initialWatchlist);
+
   const dispatch = useDispatch()
 
-  const [watchList, setWatchList] = useState([])
   const [page, setPage] = useState(1);
   const [people, setPeople] = useState(0)
   const [selectAll, setSelectAll] = useState({ select: false, length: 100 });
   // eslint-disable-next-line
   const [uniqueComp, setUniqueComp] = useState(0)
   const [disAddBtn, setDisAddBtn] = useState(false)
-  const [skeletonLoading, setSkeletonLoading] = useState(true);
-  const [limit, setLimit] = useState(50);
+  const [skeletonLoading, setSkeletonLoading] = useState(false);
+  const [limit, setLimit] = useState(25);
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber !== page) {
@@ -35,7 +38,6 @@ const Watchlist = () => {
 
   const searchWatchList = (query, pageNumber = 1) => {
     closeModal('searchModal');
-    // console.log(query);
     getWatchlist(pageNumber, query);
   }
 
@@ -66,8 +68,18 @@ const Watchlist = () => {
   }
 
   useEffect(() => {
-    getWatchlist();
-  }, [limit])
+    // getWatchlist();
+    if (initialWatchlist) {
+      if (initialWatchlist.totalResults === 0) {
+        getWatchlist();
+      } else {
+        setPeople(initialWatchlist.totalResults);
+        setWatchList(initialWatchlist);
+      }
+    } else {
+      getWatchlist();
+    }
+  }, [])
 
   const filterConfidence = () => {
     let confidence_checkbox = document.getElementsByClassName('confidence_level');
@@ -285,7 +297,7 @@ const Watchlist = () => {
           </div>
           <div id="no_selected_contact" className="text-primary"></div>
         </div>
-        <div className="mb-1 d-flex">
+        <div className="mb-2 d-flex">
           <div className="btn-group me-2" role="group" aria-label="Menu">
             <span className="dropdown bi-tooltip" data-bs-placement="top" title="Select">
               <button className="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="selectDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -352,7 +364,7 @@ const Watchlist = () => {
           </div>
 
         </div>
-        <div className="table-responsive border-bottom" style={{ "height": "calc(100vh - 210px)", "overflowY": "scroll", "padding": "0 10px", "margin": "0 -10px" }}>
+        <div className="table-responsive border" style={{ "height": "calc(100vh - 215px)", "overflowY": "scroll" }}>
           <table className="table table-borderless tableFixHead mb-0" id="peopleTable">
             <thead>
               <tr>
@@ -367,17 +379,17 @@ const Watchlist = () => {
                 <th>Industry</th>
                 <th>Head Count</th>
                 <th>Email</th>
-                <th>Boardline Numbers</th>
-                <th>Direct Dial</th>
-                <th>Contact Location</th>
-                <th>Company Location</th>
-                <th>Added on</th>
+                <th nowrap={true}>Boardline Numbers</th>
+                <th nowrap>Direct Dial</th>
+                <th nowrap>Contact Location</th>
+                <th nowrap>Company Location</th>
+                <th nowrap>Added on</th>
               </tr>
             </thead>
             <tbody id="contactTable">
               {skeletonLoading && <TableSkeleton />}
               {!skeletonLoading &&
-                watchList.length !== 0 ?
+                people !== 0 ?
                 <WatchListTableRow TableData={watchList.peoples} showCompanyInfo={getCompanyInfo} selectAll={selectAll} />
                 : <NoRecordFound />
               }
@@ -386,9 +398,9 @@ const Watchlist = () => {
         </div>
         <div className="mt-3 d-flex align-items-center">
           <div>
-            <select name="no_of_contact" id="no_of_contact" onChange={(e) => changeViewLimit(e)} className="form-select form-control-sm">
-              <option value="50" selected={limit === 50 ? true : false}>50 Contact</option>
-              <option value="100" selected={limit === 100 ? true : false}>100 Contact</option>
+            <select name="no_of_contact" id="no_of_contact" value={limit} onChange={(e) => changeViewLimit(e)} className="form-select form-control-sm">
+              <option value="25">25 Contact</option>
+              <option value="50">50 Contact</option>
             </select>
           </div>
           <nav className="ms-auto d-flex align-items-center">

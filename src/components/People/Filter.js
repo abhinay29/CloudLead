@@ -11,8 +11,9 @@ import {
 import { industryGrpOpt } from "../Data/industries"
 import { countryGroup } from "../Data/countries"
 import { useDispatch } from 'react-redux';
-import { progressLoading } from '../../states/action-creator';
+import { progressLoading, setPeopleSearchResults } from '../../states/action-creator';
 import { NotificationManager } from 'react-notifications';
+import Sidebar from '../Sidebar';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -152,6 +153,7 @@ const Filter = (props) => {
       setShowTable(true)
       setSkeletonLoading(false)
       dispatch(progressLoading(100))
+      dispatch(setPeopleSearchResults(parsedData));
     }
     setDisSearchBtn(false);
 
@@ -659,575 +661,575 @@ const Filter = (props) => {
   ]
 
   return (
-
-    <div className="card border-0 shadow-none" style={{ "height": "calc(100vh - 56px)", "overflow": "hidden" }}>
-      <div className="card-body">
-        <h4 className="fw-lighter text-center mb-2">Search Potential Contacts.</h4>
-        <div className="container mt-3" style={{ "maxWidth": "992px" }}>
-          <form id="search_form" onSubmit={searchPeople}>
-            <div style={{ "height": "calc(100vh - 240px)", "overflowY": "scroll" }} className="p-3">
-              <h6 className="fw-bold">Search by Person Name</h6>
-              <div className="row mb-3">
-                <div className="col-md-4 col-lg-4 position-relative">
-                  <CreatableSelect
-                    isClearable
-                    defaultValue={[]}
-                    value={defaultValue.first_name}
-                    name="first_name"
-                    noOptionsMessage={({ inputValue }) => "Type to add..."}
-                    isMulti
-                    onChange={handleSelectChange}
-                    className="basic-multi-select"
-                    placeholder="First Name"
-                  />
-                  <p style={{ "fontSize": "12px" }} className="mb-0 mt-1">Use tab/enter for multi selection.</p>
-                </div>
-                <div className="col-md-4 col-lg-4 position-relative">
-                  <CreatableSelect
-                    defaultValue={[]}
-                    name="last_name"
-                    value={defaultValue.last_name}
-                    noOptionsMessage={({ inputValue }) => ""}
-                    isMulti
-                    onChange={handleSelectChange}
-                    className="basic-multi-select"
-                    placeholder="Last Name"
-                  />
-                  <p style={{ "fontSize": "12px" }} className="mb-0 mt-1">Use tab/enter for multi selection.</p>
-                </div>
-              </div>
-
-              <div className="d-flex selectAllCheckbox align-items-center mb-2">
-                <h6 className="fw-bold me-3 mb-0">Search By Company Type</h6>
-                <span>Select</span> <span className="selectBtn" onClick={() => { selectAllCheckbox('company_type') }}>All</span> <span>/</span> <span className="selectBtn" onClick={() => { selectNoneCheckbox('company_type') }} >None</span>
-              </div>
-              <div className="row mb-1">
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input" type="checkbox" name="company_type" value="India" id="indias-top-1000" />
-                    <label className="form-check-label" htmlFor="indias-top-1000">
-                      India's Top 1000
-                    </label>
-                  </div>
-                </div>
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input" type="checkbox" name="company_type" value="MNC" id="mnc" />
-                    <label className="form-check-label" htmlFor="mnc">
-                      MNC
-                    </label>
-                  </div>
-                </div>
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input" type="checkbox" name="company_type" value="Industry Top" id="industry-top" />
-                    <label className="form-check-label" htmlFor="industry-top">
-                      Industry Leaders
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <div className="row mb-3">
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input" type="checkbox" name="company_type" value="SMEs" id="smes" />
-                    <label className="form-check-label" htmlFor="smes">
-                      SMEs/MSMEs
-                    </label>
-                  </div>
-                </div>
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input" type="checkbox" name="company_type" value="Startups" id="startups" />
-                    <label className="form-check-label" htmlFor="startups">
-                      Startups
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <div className="d-flex selectAllCheckbox align-items-center mb-2">
-                <h6 className="fw-bold me-3 mb-0">Search by Department</h6>
-                <span>Select</span> <span className="selectBtn" onClick={() => { selectAllCheckbox('department') }}>All</span> <span>/</span> <span className="selectBtn" onClick={() => { selectNoneCheckbox('department') }} >None</span>
-              </div>
-              <div className="row mb-1">
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input department_checkbox" name="department" type="checkbox" value="finance" id="finance" data-role="role_finance" onChange={handleDepartment} />
-                    <label className="form-check-label" htmlFor="finance">
-                      Finance &amp; Accounts
-                    </label>
-                  </div>
-                  {deptState.finance && <Select
-                    defaultValue={[]}
-                    closeMenuOnSelect={false}
-                    value={defaultValue.role_finance}
-                    isMulti
-                    onChange={handleSelectChange}
-                    name="role_finance"
-                    options={departmentRole.finance}
-                    className="basic-multi-select"
-                    placeholder="Select Role"
-                  />}
-                </div>
-
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input department_checkbox" name="department" type="checkbox" value="human" data-role="role_hr" id="hr" onChange={handleDepartment} />
-                    <label className="form-check-label" htmlFor="hr">
-                      Human Resources
-                    </label>
-                  </div>
-                  {deptState.human && <Select
-                    defaultValue={[]}
-                    closeMenuOnSelect={false}
-                    value={defaultValue.role_hr}
-                    isMulti
-                    onChange={handleSelectChange}
-                    name="role_hr"
-                    options={departmentRole.hr}
-                    className="basic-multi-select"
-                    placeholder="Select Role"
-                  />}
-                </div>
-
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input department_checkbox" name="department" type="checkbox" value="marketing" data-role="role_marketing" id="sales-marketing" onChange={handleDepartment} />
-                    <label className="form-check-label" htmlFor="sales-marketing">
-                      Sales &amp; Marketing
-                    </label>
-                  </div>
-                  {deptState.marketing && <Select
-                    defaultValue={[]}
-                    closeMenuOnSelect={false}
-                    value={defaultValue.role_marketing}
-                    isMulti
-                    onChange={handleSelectChange}
-                    name="role_marketing"
-                    options={departmentRole.marketing}
-                    className="basic-multi-select"
-                    placeholder="Select Role"
-                  />}
-                </div>
-
-              </div>
-              <div className="row mb-1">
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input department_checkbox" name="department" type="checkbox" value="purchase" id="purchase" data-role="role_purchase" onChange={handleDepartment} />
-                    <label className="form-check-label" htmlFor="purchase">
-                      Purchase &amp; Supply Chain
-                    </label>
-                  </div>
-                  {deptState.purchase && <Select
-                    defaultValue={[]}
-                    closeMenuOnSelect={false}
-                    value={defaultValue.role_purchase}
-                    isMulti
-                    onChange={handleSelectChange}
-                    name="role_purchase"
-                    options={departmentRole.purchase}
-                    className="basic-multi-select"
-                    placeholder="Select Role"
-                  />}
-                </div>
-
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input department_checkbox" name="department" type="checkbox" value="operation" id="operation" data-role="role_operation" onChange={handleDepartment} />
-                    <label className="form-check-label" htmlFor="operation">
-                      Manufacturing Operations
-                    </label>
-                  </div>
-                  {deptState.operation && <Select
-                    defaultValue={[]}
-                    closeMenuOnSelect={false}
-                    value={defaultValue.role_operation}
-                    isMulti
-                    onChange={handleSelectChange}
-                    name="role_operation"
-                    options={departmentRole.operation}
-                    className="basic-multi-select"
-                    placeholder="Select Role"
-                  />}
-                </div>
-
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input department_checkbox" name="department" type="checkbox" value="corporate" id="corporate" data-role="role_corporate" onChange={handleDepartment} />
-                    <label className="form-check-label" htmlFor="corporate">
-                      Corporate/HQ
-                    </label>
-                  </div>
-                  {deptState.corporate && <Select
-                    defaultValue={[]}
-                    closeMenuOnSelect={false}
-                    value={defaultValue.role_corporate}
-                    isMulti
-                    onChange={handleSelectChange}
-                    name="role_corporate"
-                    options={departmentRole.corporate}
-                    className="basic-multi-select"
-                    placeholder="Select Role"
-                  />}
-                </div>
-
-              </div>
-              <div className="row mb-3">
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input department_checkbox" name="department" type="checkbox" value="it" data-role="role_it" id="it" onChange={handleDepartment} />
-                    <label className="form-check-label" htmlFor="it">
-                      IT
-                    </label>
-                  </div>
-                  {deptState.it && <Select
-                    defaultValue={[]}
-                    closeMenuOnSelect={false}
-                    value={defaultValue.role_it}
-                    isMulti
-                    onChange={handleSelectChange}
-                    name="role_it"
-                    options={departmentRole.it}
-                    className="basic-multi-select"
-                    placeholder="Select Role"
-                  />}
-                </div>
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input department_checkbox" name="department" type="checkbox" value="others" id="other" data-role="role_others" onChange={handleDepartment} />
-                    <label className="form-check-label" htmlFor="other">
-                      Others
-                    </label>
-                  </div>
-                  {deptState.others && <Select
-                    defaultValue={[]}
-                    closeMenuOnSelect={false}
-                    value={defaultValue.role_others}
-                    isMulti
-                    onChange={handleSelectChange}
-                    name="role_others"
-                    options={departmentRole.others}
-                    className="basic-multi-select"
-                    placeholder="Select Role"
-                  />}
-                </div>
-              </div>
-
-              <div className="d-flex selectAllCheckbox align-items-center mb-2">
-                <h6 className="fw-bold me-3 mb-0">Search by Seniority</h6>
-                <span>Select</span> <span className="selectBtn" onClick={() => { selectAllCheckbox('seniority_level') }}>All</span> <span>/</span> <span className="selectBtn" onClick={() => { selectNoneCheckbox('seniority_level') }} >None</span>
-              </div>
-              <div className="row mb-1">
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input seniority" name="seniority_level" type="checkbox" value="Director" id="director" />
-                    <label className="form-check-label" htmlFor="director">
-                      Director
-                    </label>
-                  </div>
-                </div>
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input seniority" name="seniority_level" type="checkbox" value="Owner" id="owner" />
-                    <label className="form-check-label" htmlFor="owner">
-                      Onwer/Partner
-                    </label>
-                  </div>
-                </div>
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input seniority" name="seniority_level" type="checkbox" value="Founder" id="founder" />
-                    <label className="form-check-Founder" htmlFor="founder">
-                      Founder
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <div className="row mb-1">
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input seniority" name="seniority_level" type="checkbox" value="C Suite" id="csuite" />
-                    <label className="form-check-label" htmlFor="csuite">
-                      C Suite
-                    </label>
-                  </div>
-                </div>
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input seniority" name="seniority_level" type="checkbox" value="VP" id="vp" />
-                    <label className="form-check-label" htmlFor="vp">
-                      VP
-                    </label>
-                  </div>
-                </div>
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input seniority" name="seniority_level" type="checkbox" value="HOD" id="hod" />
-                    <label className="form-check-label" htmlFor="hod">
-                      HOD
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <div className="row mb-3">
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input seniority" name="seniority_level" type="checkbox" value="Manager" id="manager" />
-                    <label className="form-check-label" htmlFor="manager">
-                      Manager
-                    </label>
-                  </div>
-                </div>
-                <div className="col-lg-4 col-md-4">
-                  <div className="form-check">
-                    <input className="form-check-input seniority" name="seniority_level" type="checkbox" value="Officer" id="officer" />
-                    <label className="form-check-label" htmlFor="officer">
-                      Officer
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <h6 className="fw-bold">Search by Title</h6>
-              <div className="row mb-3">
-                <div className="col-md-4 col-lg-4">
-                  <CreatableSelect
-                    defaultValue={[]}
-                    closeMenuOnSelect={false}
-                    isMulti
-                    name="position"
-                    onChange={handleSelectChange}
-                    value={defaultValue.position}
-                    options={positionOptions}
-                    className="basic-multi-select"
-                    placeholder="Select Title"
-                  />
-                </div>
-              </div>
-
-              <h6 className="fw-bold">Search by Person's Location</h6>
-              <div className="row mb-3">
-                <div className="col-md-4 col-lg-4 position-relative">
-                  <Select
-                    defaultValue={[]}
-                    closeMenuOnSelect={false}
-                    isMulti
-                    name="person_country"
-                    onChange={handleSelectChange}
-                    value={defaultValue.person_country}
-                    options={countryOptionsPerson[0]}
-                    className="basic-multi-select"
-                    placeholder="Person's Country"
-                    styles={{ "background": "#000" }}
-                  />
-                </div>
-                <div className="col-md-4 col-lg-4 position-relative">
-                  <Select
-                    defaultValue={[]}
-                    closeMenuOnSelect={false}
-                    noOptionsMessage={({ inputValue }) => "Type to search.."}
-                    isMulti
-                    name="person_state"
-                    onChange={handleSelectChange}
-                    value={defaultValue.person_state}
-                    options={states}
-                    onKeyDown={handleState}
-                    className="basic-multi-select"
-                    placeholder="Person's State"
-                  />
-                </div>
-                <div className="col-md-4 col-lg-4 position-relative">
-                  <Select
-                    defaultValue={[]}
-                    closeMenuOnSelect={false}
-                    noOptionsMessage={({ inputValue }) => "Type to search.."}
-                    isMulti
-                    name="person_city"
-                    onChange={handleSelectChange}
-                    value={defaultValue.person_city}
-                    options={cities}
-                    onKeyDown={handleCity}
-                    className="basic-multi-select"
-                    placeholder="Person's City"
-                  />
-                </div>
-              </div>
-              <h6 className="fw-bold">Search by Company</h6>
-              <div className="row mb-3">
-                <div className="col-md-4 col-lg-4 position-relative">
-                  <CreatableSelect
-                    defaultValue={[]}
-                    name="company_name"
-                    onChange={handleSelectChange}
-                    value={defaultValue.company_name}
-                    noOptionsMessage={({ inputValue }) => "Type to add..."}
-                    isMulti
-                    className="basic-multi-select"
-                    placeholder="Company Name"
-                  />
-                  <p style={{ "fontSize": "12px" }} className="mb-0 mt-1">Use tab/enter for multi selection.</p>
-                </div>
-                <div className="col-md-4 col-lg-4 position-relative">
-                  <Select
-                    defaultValue={[]}
-                    closeMenuOnSelect={false}
-                    isMulti
-                    name="company_size_range"
-                    onChange={handleSelectChange}
-                    value={defaultValue.company_size_range}
-                    options={compSizeRangeOpt}
-                    className="basic-multi-select"
-                    placeholder="Select Company Size"
-                  />
-                </div>
-                <div className="col-md-4 col-lg-4 position-relative">
-                  <Select
-                    defaultValue={[]}
-                    closeMenuOnSelect={false}
-                    isMulti
-                    name="revenue_range"
-                    options={revenueRange}
-                    className="basic-multi-select"
-                    placeholder="Select Company Size"
-                  />
-                </div>
-              </div>
-
-              <div className="row mb-3">
-
-                <div className="col-md-4 col-lg-4 position-relative">
-                  <Select
-                    defaultValue={[]}
-                    isMulti
-                    closeMenuOnSelect={false}
-                    onChange={handleSelectChange}
-                    value={defaultValue.industry}
-                    name="industry"
-                    options={industryGroupOptions[0]}
-                    className="basic-multi-select"
-                    placeholder="Select Industry"
-                  />
-                </div>
-
-              </div>
-
-              <h6 className="fw-bold">Search by Company Location</h6>
-              <div className="row mb-3">
-                <div className="col-md-4 col-lg-4 position-relative">
-                  <Select
-                    defaultValue={[]}
-                    closeMenuOnSelect={false}
-                    isMulti
-                    onChange={handleSelectChange}
-                    value={defaultValue.company_country}
-                    name="company_country"
-                    options={countryOptionsCompany[0]}
-                    className="basic-multi-select"
-                    placeholder="Comapany's Country"
-                  />
-                </div>
-                <div className="col-md-4 col-lg-4 position-relative">
-                  <Select
-                    defaultValue={[]}
-                    closeMenuOnSelect={false}
-                    noOptionsMessage={({ inputValue }) => "Type to search.."}
-                    isMulti
-                    name="company_state"
-                    options={states}
-                    onKeyDown={handleState}
-                    onChange={handleSelectChange}
-                    value={defaultValue.company_state}
-                    className="basic-multi-select"
-                    placeholder="Comapany's State"
-                  />
-                </div>
-                <div className="col-md-4 col-lg-4 position-relative">
-                  <Select
-                    defaultValue={[]}
-                    closeMenuOnSelect={false}
-                    noOptionsMessage={({ inputValue }) => "Type to search.."}
-                    isMulti
-                    name="company_city"
-                    options={cities}
-                    onKeyDown={handleCity}
-                    onChange={handleSelectChange}
-                    value={defaultValue.company_city}
-                    className="basic-multi-select"
-                    placeholder="Comapany's City"
-                  />
-                </div>
-              </div>
-
-              <h6 className="fw-bold">Search by Website & Keywords</h6>
-              <div className="row">
-                <div className="col-md-4 col-lg-4 position-relative">
-                  <CreatableSelect
-                    defaultValue=""
-                    name="domain"
-                    isMulti
-                    onChange={handleSelectChange}
-                    value={defaultValue.domain}
-                    noOptionsMessage={({ inputValue }) => ""}
-                    className="basic-multi-select"
-                    placeholder="Domain/Website"
-                  />
-                  <p style={{ "fontSize": "12px" }} className="mb-0 mt-1">Use tab/enter for multi selection.</p>
-                </div>
-                <div className="col-md-4 col-lg-4 position-relative">
-                  <CreatableSelect
-                    defaultValue=""
-                    name="keyword"
-                    isMulti
-                    onChange={handleSelectChange}
-                    value={defaultValue.keyword}
-                    noOptionsMessage={({ inputValue }) => ""}
-                    className="basic-multi-select"
-                    placeholder="Keyword"
-                  />
-                  <p style={{ "fontSize": "12px" }} className="mb-0 mt-1">Use tab/enter for multi selection.</p>
-                </div>
-              </div>
-            </div>
-
-            <div
-              className="d-flex justify-content-center position-absolute py-4 border-top"
-              style={{ "bottom": "0", "left": "0", "right": "0", "background": "#fff", "width": "100%", "zIndex": "10" }}>
-              <button type="reset" id="reset_search" onClick={() => { window.location.reload(false); }} className="btn btn-outline-secondary">Reset</button>
-              <button type="submit" className="btn btn-primary mx-3" id="search_btn" style={{ "width": "160px" }} disabled={disSearchBtn && "disabled"} >Run Search Query</button>
-              <span className="dropup">
-                <button type="button" className="btn btn-outline-secondary" id="savedSearchBtn" data-bs-auto-close="false" data-bs-toggle="dropdown" aria-expanded="false">Saved Search</button>
-                <div className="dropdown-menu shadow p-3" style={{ "width": "260px" }}>
-                  <h6 className="fw-bold">Saved/Recent Searches</h6>
-                  <hr />
-                  <h6 className="fw-bold">Saved Seaches</h6>
-                  <div className="mb-3">
-                    <Select
-                      defaultValue=""
-                      options={savedSearches}
-                      noOptionsMessage={({ inputValue }) => "No search found"}
-                      onChange={onSelectSavedSearch}
+    <>
+      <div className="card border-0 shadow-none" style={{ "height": "calc(100vh - 56px)", "overflow": "hidden" }}>
+        <div className="card-body">
+          <h4 className="fw-lighter text-center mb-2">Search Potential Contacts.</h4>
+          <div className="container mt-3" style={{ "maxWidth": "992px" }}>
+            <form id="search_form" onSubmit={searchPeople}>
+              <div style={{ "height": "calc(100vh - 240px)", "overflowY": "scroll" }} className="p-3">
+                <h6 className="fw-bold">Search by Person Name</h6>
+                <div className="row mb-3">
+                  <div className="col-md-4 col-lg-4 position-relative">
+                    <CreatableSelect
+                      isClearable
+                      defaultValue={[]}
+                      value={defaultValue.first_name}
+                      name="first_name"
+                      noOptionsMessage={({ inputValue }) => "Type to add..."}
+                      isMulti
+                      onChange={handleSelectChange}
                       className="basic-multi-select"
-                      placeholder="Type to search"
+                      placeholder="First Name"
+                    />
+                    <p style={{ "fontSize": "12px" }} className="mb-0 mt-1">Use tab/enter for multi selection.</p>
+                  </div>
+                  <div className="col-md-4 col-lg-4 position-relative">
+                    <CreatableSelect
+                      defaultValue={[]}
+                      name="last_name"
+                      value={defaultValue.last_name}
+                      noOptionsMessage={({ inputValue }) => ""}
+                      isMulti
+                      onChange={handleSelectChange}
+                      className="basic-multi-select"
+                      placeholder="Last Name"
+                    />
+                    <p style={{ "fontSize": "12px" }} className="mb-0 mt-1">Use tab/enter for multi selection.</p>
+                  </div>
+                </div>
+
+                <div className="d-flex selectAllCheckbox align-items-center mb-2">
+                  <h6 className="fw-bold me-3 mb-0">Search By Company Type</h6>
+                  <span>Select</span> <span className="selectBtn" onClick={() => { selectAllCheckbox('company_type') }}>All</span> <span>/</span> <span className="selectBtn" onClick={() => { selectNoneCheckbox('company_type') }} >None</span>
+                </div>
+                <div className="row mb-1">
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input" type="checkbox" name="company_type" value="India" id="indias-top-1000" />
+                      <label className="form-check-label" htmlFor="indias-top-1000">
+                        India's Top 1000
+                      </label>
+                    </div>
+                  </div>
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input" type="checkbox" name="company_type" value="MNC" id="mnc" />
+                      <label className="form-check-label" htmlFor="mnc">
+                        MNC
+                      </label>
+                    </div>
+                  </div>
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input" type="checkbox" name="company_type" value="Industry Top" id="industry-top" />
+                      <label className="form-check-label" htmlFor="industry-top">
+                        Industry Leaders
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div className="row mb-3">
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input" type="checkbox" name="company_type" value="SMEs" id="smes" />
+                      <label className="form-check-label" htmlFor="smes">
+                        SMEs/MSMEs
+                      </label>
+                    </div>
+                  </div>
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input" type="checkbox" name="company_type" value="Startups" id="startups" />
+                      <label className="form-check-label" htmlFor="startups">
+                        Startups
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="d-flex selectAllCheckbox align-items-center mb-2">
+                  <h6 className="fw-bold me-3 mb-0">Search by Department</h6>
+                  <span>Select</span> <span className="selectBtn" onClick={() => { selectAllCheckbox('department') }}>All</span> <span>/</span> <span className="selectBtn" onClick={() => { selectNoneCheckbox('department') }} >None</span>
+                </div>
+                <div className="row mb-1">
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input department_checkbox" name="department" type="checkbox" value="finance" id="finance" data-role="role_finance" onChange={handleDepartment} />
+                      <label className="form-check-label" htmlFor="finance">
+                        Finance &amp; Accounts
+                      </label>
+                    </div>
+                    {deptState.finance && <Select
+                      defaultValue={[]}
+                      closeMenuOnSelect={false}
+                      value={defaultValue.role_finance}
+                      isMulti
+                      onChange={handleSelectChange}
+                      name="role_finance"
+                      options={departmentRole.finance}
+                      className="basic-multi-select"
+                      placeholder="Select Role"
+                    />}
+                  </div>
+
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input department_checkbox" name="department" type="checkbox" value="human" data-role="role_hr" id="hr" onChange={handleDepartment} />
+                      <label className="form-check-label" htmlFor="hr">
+                        Human Resources
+                      </label>
+                    </div>
+                    {deptState.human && <Select
+                      defaultValue={[]}
+                      closeMenuOnSelect={false}
+                      value={defaultValue.role_hr}
+                      isMulti
+                      onChange={handleSelectChange}
+                      name="role_hr"
+                      options={departmentRole.hr}
+                      className="basic-multi-select"
+                      placeholder="Select Role"
+                    />}
+                  </div>
+
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input department_checkbox" name="department" type="checkbox" value="marketing" data-role="role_marketing" id="sales-marketing" onChange={handleDepartment} />
+                      <label className="form-check-label" htmlFor="sales-marketing">
+                        Sales &amp; Marketing
+                      </label>
+                    </div>
+                    {deptState.marketing && <Select
+                      defaultValue={[]}
+                      closeMenuOnSelect={false}
+                      value={defaultValue.role_marketing}
+                      isMulti
+                      onChange={handleSelectChange}
+                      name="role_marketing"
+                      options={departmentRole.marketing}
+                      className="basic-multi-select"
+                      placeholder="Select Role"
+                    />}
+                  </div>
+
+                </div>
+                <div className="row mb-1">
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input department_checkbox" name="department" type="checkbox" value="purchase" id="purchase" data-role="role_purchase" onChange={handleDepartment} />
+                      <label className="form-check-label" htmlFor="purchase">
+                        Purchase &amp; Supply Chain
+                      </label>
+                    </div>
+                    {deptState.purchase && <Select
+                      defaultValue={[]}
+                      closeMenuOnSelect={false}
+                      value={defaultValue.role_purchase}
+                      isMulti
+                      onChange={handleSelectChange}
+                      name="role_purchase"
+                      options={departmentRole.purchase}
+                      className="basic-multi-select"
+                      placeholder="Select Role"
+                    />}
+                  </div>
+
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input department_checkbox" name="department" type="checkbox" value="operation" id="operation" data-role="role_operation" onChange={handleDepartment} />
+                      <label className="form-check-label" htmlFor="operation">
+                        Manufacturing Operations
+                      </label>
+                    </div>
+                    {deptState.operation && <Select
+                      defaultValue={[]}
+                      closeMenuOnSelect={false}
+                      value={defaultValue.role_operation}
+                      isMulti
+                      onChange={handleSelectChange}
+                      name="role_operation"
+                      options={departmentRole.operation}
+                      className="basic-multi-select"
+                      placeholder="Select Role"
+                    />}
+                  </div>
+
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input department_checkbox" name="department" type="checkbox" value="corporate" id="corporate" data-role="role_corporate" onChange={handleDepartment} />
+                      <label className="form-check-label" htmlFor="corporate">
+                        Corporate/HQ
+                      </label>
+                    </div>
+                    {deptState.corporate && <Select
+                      defaultValue={[]}
+                      closeMenuOnSelect={false}
+                      value={defaultValue.role_corporate}
+                      isMulti
+                      onChange={handleSelectChange}
+                      name="role_corporate"
+                      options={departmentRole.corporate}
+                      className="basic-multi-select"
+                      placeholder="Select Role"
+                    />}
+                  </div>
+
+                </div>
+                <div className="row mb-3">
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input department_checkbox" name="department" type="checkbox" value="it" data-role="role_it" id="it" onChange={handleDepartment} />
+                      <label className="form-check-label" htmlFor="it">
+                        IT
+                      </label>
+                    </div>
+                    {deptState.it && <Select
+                      defaultValue={[]}
+                      closeMenuOnSelect={false}
+                      value={defaultValue.role_it}
+                      isMulti
+                      onChange={handleSelectChange}
+                      name="role_it"
+                      options={departmentRole.it}
+                      className="basic-multi-select"
+                      placeholder="Select Role"
+                    />}
+                  </div>
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input department_checkbox" name="department" type="checkbox" value="others" id="other" data-role="role_others" onChange={handleDepartment} />
+                      <label className="form-check-label" htmlFor="other">
+                        Others
+                      </label>
+                    </div>
+                    {deptState.others && <Select
+                      defaultValue={[]}
+                      closeMenuOnSelect={false}
+                      value={defaultValue.role_others}
+                      isMulti
+                      onChange={handleSelectChange}
+                      name="role_others"
+                      options={departmentRole.others}
+                      className="basic-multi-select"
+                      placeholder="Select Role"
+                    />}
+                  </div>
+                </div>
+
+                <div className="d-flex selectAllCheckbox align-items-center mb-2">
+                  <h6 className="fw-bold me-3 mb-0">Search by Seniority</h6>
+                  <span>Select</span> <span className="selectBtn" onClick={() => { selectAllCheckbox('seniority_level') }}>All</span> <span>/</span> <span className="selectBtn" onClick={() => { selectNoneCheckbox('seniority_level') }} >None</span>
+                </div>
+                <div className="row mb-1">
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input seniority" name="seniority_level" type="checkbox" value="Director" id="director" />
+                      <label className="form-check-label" htmlFor="director">
+                        Director
+                      </label>
+                    </div>
+                  </div>
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input seniority" name="seniority_level" type="checkbox" value="Owner" id="owner" />
+                      <label className="form-check-label" htmlFor="owner">
+                        Onwer/Partner
+                      </label>
+                    </div>
+                  </div>
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input seniority" name="seniority_level" type="checkbox" value="Founder" id="founder" />
+                      <label className="form-check-Founder" htmlFor="founder">
+                        Founder
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div className="row mb-1">
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input seniority" name="seniority_level" type="checkbox" value="C Suite" id="csuite" />
+                      <label className="form-check-label" htmlFor="csuite">
+                        C Suite
+                      </label>
+                    </div>
+                  </div>
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input seniority" name="seniority_level" type="checkbox" value="VP" id="vp" />
+                      <label className="form-check-label" htmlFor="vp">
+                        VP
+                      </label>
+                    </div>
+                  </div>
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input seniority" name="seniority_level" type="checkbox" value="HOD" id="hod" />
+                      <label className="form-check-label" htmlFor="hod">
+                        HOD
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div className="row mb-3">
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input seniority" name="seniority_level" type="checkbox" value="Manager" id="manager" />
+                      <label className="form-check-label" htmlFor="manager">
+                        Manager
+                      </label>
+                    </div>
+                  </div>
+                  <div className="col-lg-4 col-md-4">
+                    <div className="form-check">
+                      <input className="form-check-input seniority" name="seniority_level" type="checkbox" value="Officer" id="officer" />
+                      <label className="form-check-label" htmlFor="officer">
+                        Officer
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <h6 className="fw-bold">Search by Title</h6>
+                <div className="row mb-3">
+                  <div className="col-md-4 col-lg-4">
+                    <CreatableSelect
+                      defaultValue={[]}
+                      closeMenuOnSelect={false}
+                      isMulti
+                      name="position"
+                      onChange={handleSelectChange}
+                      value={defaultValue.position}
+                      options={positionOptions}
+                      className="basic-multi-select"
+                      placeholder="Select Title"
                     />
                   </div>
-                  <h6 className="fw-bold">Last 5 Searches</h6>
-                  <div>
-                    <span className="badge bg-success me-1">Search 1</span>
-                    <span className="badge bg-success me-1">Search 2</span>
-                    <span className="badge bg-success me-1">Search 3</span>
-                    <span className="badge bg-success me-1">Search 4</span>
-                    <span className="badge bg-success me-1">Search 5</span>
+                </div>
+
+                <h6 className="fw-bold">Search by Person's Location</h6>
+                <div className="row mb-3">
+                  <div className="col-md-4 col-lg-4 position-relative">
+                    <Select
+                      defaultValue={[]}
+                      closeMenuOnSelect={false}
+                      isMulti
+                      name="person_country"
+                      onChange={handleSelectChange}
+                      value={defaultValue.person_country}
+                      options={countryOptionsPerson[0]}
+                      className="basic-multi-select"
+                      placeholder="Person's Country"
+                      styles={{ "background": "#000" }}
+                    />
+                  </div>
+                  <div className="col-md-4 col-lg-4 position-relative">
+                    <Select
+                      defaultValue={[]}
+                      closeMenuOnSelect={false}
+                      noOptionsMessage={({ inputValue }) => "Type to search.."}
+                      isMulti
+                      name="person_state"
+                      onChange={handleSelectChange}
+                      value={defaultValue.person_state}
+                      options={states}
+                      onKeyDown={handleState}
+                      className="basic-multi-select"
+                      placeholder="Person's State"
+                    />
+                  </div>
+                  <div className="col-md-4 col-lg-4 position-relative">
+                    <Select
+                      defaultValue={[]}
+                      closeMenuOnSelect={false}
+                      noOptionsMessage={({ inputValue }) => "Type to search.."}
+                      isMulti
+                      name="person_city"
+                      onChange={handleSelectChange}
+                      value={defaultValue.person_city}
+                      options={cities}
+                      onKeyDown={handleCity}
+                      className="basic-multi-select"
+                      placeholder="Person's City"
+                    />
                   </div>
                 </div>
-              </span>
-            </div>
-          </form>
-        </div>
-      </div >
-    </div>
+                <h6 className="fw-bold">Search by Company</h6>
+                <div className="row mb-3">
+                  <div className="col-md-4 col-lg-4 position-relative">
+                    <CreatableSelect
+                      defaultValue={[]}
+                      name="company_name"
+                      onChange={handleSelectChange}
+                      value={defaultValue.company_name}
+                      noOptionsMessage={({ inputValue }) => "Type to add..."}
+                      isMulti
+                      className="basic-multi-select"
+                      placeholder="Company Name"
+                    />
+                    <p style={{ "fontSize": "12px" }} className="mb-0 mt-1">Use tab/enter for multi selection.</p>
+                  </div>
+                  <div className="col-md-4 col-lg-4 position-relative">
+                    <Select
+                      defaultValue={[]}
+                      closeMenuOnSelect={false}
+                      isMulti
+                      name="company_size_range"
+                      onChange={handleSelectChange}
+                      value={defaultValue.company_size_range}
+                      options={compSizeRangeOpt}
+                      className="basic-multi-select"
+                      placeholder="Select Company Size"
+                    />
+                  </div>
+                  <div className="col-md-4 col-lg-4 position-relative">
+                    <Select
+                      defaultValue={[]}
+                      closeMenuOnSelect={false}
+                      isMulti
+                      name="revenue_range"
+                      options={revenueRange}
+                      className="basic-multi-select"
+                      placeholder="Select Company Size"
+                    />
+                  </div>
+                </div>
 
+                <div className="row mb-3">
+
+                  <div className="col-md-4 col-lg-4 position-relative">
+                    <Select
+                      defaultValue={[]}
+                      isMulti
+                      closeMenuOnSelect={false}
+                      onChange={handleSelectChange}
+                      value={defaultValue.industry}
+                      name="industry"
+                      options={industryGroupOptions[0]}
+                      className="basic-multi-select"
+                      placeholder="Select Industry"
+                    />
+                  </div>
+
+                </div>
+
+                <h6 className="fw-bold">Search by Company Location</h6>
+                <div className="row mb-3">
+                  <div className="col-md-4 col-lg-4 position-relative">
+                    <Select
+                      defaultValue={[]}
+                      closeMenuOnSelect={false}
+                      isMulti
+                      onChange={handleSelectChange}
+                      value={defaultValue.company_country}
+                      name="company_country"
+                      options={countryOptionsCompany[0]}
+                      className="basic-multi-select"
+                      placeholder="Comapany's Country"
+                    />
+                  </div>
+                  <div className="col-md-4 col-lg-4 position-relative">
+                    <Select
+                      defaultValue={[]}
+                      closeMenuOnSelect={false}
+                      noOptionsMessage={({ inputValue }) => "Type to search.."}
+                      isMulti
+                      name="company_state"
+                      options={states}
+                      onKeyDown={handleState}
+                      onChange={handleSelectChange}
+                      value={defaultValue.company_state}
+                      className="basic-multi-select"
+                      placeholder="Comapany's State"
+                    />
+                  </div>
+                  <div className="col-md-4 col-lg-4 position-relative">
+                    <Select
+                      defaultValue={[]}
+                      closeMenuOnSelect={false}
+                      noOptionsMessage={({ inputValue }) => "Type to search.."}
+                      isMulti
+                      name="company_city"
+                      options={cities}
+                      onKeyDown={handleCity}
+                      onChange={handleSelectChange}
+                      value={defaultValue.company_city}
+                      className="basic-multi-select"
+                      placeholder="Comapany's City"
+                    />
+                  </div>
+                </div>
+
+                <h6 className="fw-bold">Search by Website & Keywords</h6>
+                <div className="row">
+                  <div className="col-md-4 col-lg-4 position-relative">
+                    <CreatableSelect
+                      defaultValue=""
+                      name="domain"
+                      isMulti
+                      onChange={handleSelectChange}
+                      value={defaultValue.domain}
+                      noOptionsMessage={({ inputValue }) => ""}
+                      className="basic-multi-select"
+                      placeholder="Domain/Website"
+                    />
+                    <p style={{ "fontSize": "12px" }} className="mb-0 mt-1">Use tab/enter for multi selection.</p>
+                  </div>
+                  <div className="col-md-4 col-lg-4 position-relative">
+                    <CreatableSelect
+                      defaultValue=""
+                      name="keyword"
+                      isMulti
+                      onChange={handleSelectChange}
+                      value={defaultValue.keyword}
+                      noOptionsMessage={({ inputValue }) => ""}
+                      className="basic-multi-select"
+                      placeholder="Keyword"
+                    />
+                    <p style={{ "fontSize": "12px" }} className="mb-0 mt-1">Use tab/enter for multi selection.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="d-flex justify-content-center position-absolute py-4 border-top"
+                style={{ "bottom": "0", "left": "0", "right": "0", "background": "#fff", "width": "100%", "zIndex": "10" }}>
+                <button type="reset" id="reset_search" onClick={() => { window.location.reload(false); }} className="btn btn-outline-secondary">Reset</button>
+                <button type="submit" className="btn btn-primary mx-3" id="search_btn" style={{ "width": "160px" }} disabled={disSearchBtn && "disabled"} >Run Search Query</button>
+                <span className="dropup">
+                  <button type="button" className="btn btn-outline-secondary" id="savedSearchBtn" data-bs-auto-close="false" data-bs-toggle="dropdown" aria-expanded="false">Saved Search</button>
+                  <div className="dropdown-menu shadow p-3" style={{ "width": "260px" }}>
+                    <h6 className="fw-bold">Saved/Recent Searches</h6>
+                    <hr />
+                    <h6 className="fw-bold">Saved Seaches</h6>
+                    <div className="mb-3">
+                      <Select
+                        defaultValue=""
+                        options={savedSearches}
+                        noOptionsMessage={({ inputValue }) => "No search found"}
+                        onChange={onSelectSavedSearch}
+                        className="basic-multi-select"
+                        placeholder="Type to search"
+                      />
+                    </div>
+                    <h6 className="fw-bold">Last 5 Searches</h6>
+                    <div>
+                      <span className="badge bg-success me-1">Search 1</span>
+                      <span className="badge bg-success me-1">Search 2</span>
+                      <span className="badge bg-success me-1">Search 3</span>
+                      <span className="badge bg-success me-1">Search 4</span>
+                      <span className="badge bg-success me-1">Search 5</span>
+                    </div>
+                  </div>
+                </span>
+              </div>
+            </form>
+          </div>
+        </div >
+      </div>
+    </>
   )
 }
 

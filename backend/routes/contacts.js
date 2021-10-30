@@ -53,10 +53,10 @@ class APIfeatures {
     const page = this.queryString.page * 1 || 1;
     const limit = this.queryString.limit * 1 || 10;
     let newLimit;
-    if (limit === 25 || limit === 50 || limit === 100) {
+    if (limit === 25 || limit === 50) {
       newLimit = limit;
     } else {
-      newLimit = 50;
+      newLimit = 25;
     }
     const skip = (page - 1) * newLimit;
     this.query = this.query.skip(skip).limit(newLimit);

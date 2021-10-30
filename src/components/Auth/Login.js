@@ -8,7 +8,6 @@ const API_URL = process.env.REACT_APP_API_URL;
 const Login = (props) => {
 
 	const responseGoogleSuccess = async (response) => {
-		const profileObj = response.profileObj;
 		setDisabled(true)
 		const res = await fetch(`${API_URL}/api/auth/googlelogin`, {
 			method: 'POST',
@@ -27,7 +26,7 @@ const Login = (props) => {
 			localStorage.setItem('uname', json.uname);
 			localStorage.setItem('uemail', json.uemail);
 			localStorage.removeItem('searchQuery')
-			NotificationManager.success("Welcome uname!!!")
+			NotificationManager.success(`Welcome back!!!`)
 			history.push("/");
 		}
 		else {
@@ -68,7 +67,12 @@ const Login = (props) => {
 			history.push("/");
 		}
 		else {
-			NotificationManager.error(json.error, "Error!", 5000)
+			if (json.error) {
+				NotificationManager.error(json.error, "Error!", 5000)
+			}
+			if (json.errors) {
+				NotificationManager.error(json.errors[0].msg, "Error!", 5000)
+			}
 			setDisabled(false);
 		}
 	}

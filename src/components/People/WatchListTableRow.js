@@ -48,7 +48,7 @@ const WatchListTableRow = (props) => {
 
   return (
     <>
-      {TableData.map(data => {
+      {TableData && TableData.map(data => {
         return (
           <tr key={data._id} id={`wlrow_${data._id}`}>
             <td className="name_of_contact align-middle">
@@ -70,6 +70,7 @@ const WatchListTableRow = (props) => {
               <div className="table_social_link mt-1">
                 <a href={data.website} data-bs-toggle="tooltip" data-bs-placement="top" title="Website" target="_blank" rel="noreferrer"><i className="fas fa-globe"></i></a>
                 <a href={data.linkedin_link} data-bs-toggle="tooltip" data-bs-placement="top" title="Linkedin Link" target="_blank" rel="noreferrer"><i className="fab fa-linkedin-in"></i></a>
+                <a href="#" onClick={(e) => { e.preventDefault(); showCompanyInfo(data.company_name) }} title="View Company Profile"><i className="fas fa-eye small"></i></a>
               </div>
             </td>
             <td className="industry align-middle">{data.industry}</td>
@@ -79,7 +80,7 @@ const WatchListTableRow = (props) => {
               <Badge confidence={data.primary_mai_confidence} />
               <span className="ms-2" style={{ "cursor": "pointer" }}><i className="far fa-copy"></i></span>
             </td>
-            <td className="align-middle"><div style={{ "height": "40px", "overflow": "hidden" }}>{data.boardline_numbers}</div></td>
+            <td className="align-middle"><div style={{ "height": "45px", "overflow": "hidden" }}>{data.boardline_numbers}</div></td>
             <td className="align-middle"><span className="badge bg-primary">Contact Us</span></td>
             <td className="align-middle"><strong>{data.person_country}</strong><br />{data.person_city}</td>
             <td className="align-middle"><strong>{data.company_country}</strong><br />{data.company_city}</td>

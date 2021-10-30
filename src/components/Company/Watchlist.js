@@ -4,6 +4,7 @@ import WatchListTableRow from './WatchListTableRow'
 import { NotificationManager } from 'react-notifications';
 import { useDispatch } from 'react-redux';
 import { progressLoading } from '../../states/action-creator';
+import ContactTableRow from '../People/TableRow'
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -14,7 +15,12 @@ const Watchlist = () => {
   const [watchList, setWatchList] = useState([])
   const [page, setPage] = useState(1);
   const [companies, setCompanies] = useState(0)
-  const [selectAll, setSelectAll] = useState(false);
+  const [selectAll] = useState(false);
+  const [totalContacts, setTotalContacts] = useState(0);
+  const [companyName, setCompanyName] = useState("");
+  const [peoples, getPeoples] = useState([]);
+  const [pageContact, setPageContact] = useState(1);
+
   // eslint-disable-next-line
 
   const handlePageChange = (pageNumber) => {
@@ -133,6 +139,40 @@ const Watchlist = () => {
     return true;
   }
 
+  const handleContactPageChange = (pageNumber) => {
+    if (pageContact !== pageNumber) {
+      showContacts(companyName, pageNumber)
+    }
+  }
+
+  const showContacts = async (company_name, pageNumber = 1) => {
+    setPageContact(pageNumber);
+    dispatch(progressLoading(10))
+    let query;
+    query = 'company_name=' + company_name
+    const url = `${API_URL}/api/contacts?${query}&page=${pageNumber}`;
+    const watchList = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'auth-token': localStorage.getItem('token'),
+        'Content-Type': 'application/json'
+      },
+    })
+    dispatch(progressLoading(50))
+    const res = await watchList.json();
+    if (res.status === 'success') {
+      if (res.totalResults === 0) {
+        NotificationManager.error('No result found');
+        return
+      }
+      setTotalContacts(res.totalResults);
+      getPeoples(res.data.contacts)
+      setCompanyName(company_name);
+      openModal('showContactModal');
+    }
+    dispatch(progressLoading(100))
+  }
+
   return (
     <div>
       <div className="card-body" id="result_body">
@@ -142,22 +182,8 @@ const Watchlist = () => {
           </div>
           <div id="no_selected_contact"></div>
         </div>
-        <div className="mb-1 d-flex">
+        <div className="mb-2 d-flex">
           <div className="btn-group me-2" role="group" aria-label="Menu">
-            <span className="dropdown bi-tooltip" data-bs-placement="top" title="Select">
-              <button className="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="selectDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <input type="checkbox" className="form-check-input" />
-              </button>
-              <ul className="dropdown-menu" aria-labelledby="selectDropdown">
-                <li><a className="dropdown-item select_contact" data-select="50" href="/">Select 50</a></li>
-                <li><a className="dropdown-item select_contact" data-select="100" href="/">Select 100</a></li>
-                <li><a className="dropdown-item select_contact" data-select="2000" href="/">Select 2000</a></li>
-                <li><a className="dropdown-item select_contact" data-select="5000" href="/">Select 5000</a></li>
-                <li><a className="dropdown-item select_contact" data-select="10000" href="/">Select 10000</a></li>
-                <li><a className="dropdown-item select_contact" data-select="0" href="/">Clear Selection</a></li>
-              </ul>
-            </span>
-            {/* <button type="button" className="btn btn-sm btn-outline-primary text-success bi-tooltip" id="export_csv" data-bs-placement="top" title="Export CSV"><i className="fas fa-download"></i></button> */}
             <button type="button" className="btn btn-sm btn-outline-primary text-danger bi-tooltip" data-bs-placement="top" title="Delete Contact(s)" onClick={() => { deleteContact() }}><i className="far fa-trash-alt"></i></button>
             <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip" title="Refresh" onClick={() => { window.location.reload() }}><i className="fas fa-sync-alt"></i></button>
           </div>
@@ -165,7 +191,7 @@ const Watchlist = () => {
           {/* <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" title="Search" data-bs-toggle="modal" data-bs-target="#search_modal"><i className="fas fa-search"></i> Search</button> */}
 
         </div>
-        <div className="table-responsive border-bottom" style={{ "height": "calc(100vh - 210px)", "overflowY": "scroll", "padding": "0 10px", "margin": "0 -10px" }}>
+        <div className="table-responsive border" style={{ "height": "calc(100vh - 215px)", "overflowY": "scroll" }}>
           <table className="table table-borderless tableFixHead mb-0" id="peopleTable">
             <thead>
               <tr>
@@ -178,7 +204,7 @@ const Watchlist = () => {
             </thead>
             <tbody id="contactTable">
               {watchList.length !== 0 ?
-                <WatchListTableRow TableData={watchList.companies} showCompanyInfo={getCompanyInfo} selectAll={selectAll} />
+                <WatchListTableRow TableData={watchList.companies} showCompanyInfo={getCompanyInfo} showContacts={showContacts} />
                 : <tr><td colSpan="11" className="text-center py-2" ><h5 className="mb-0">No record found</h5></td></tr>
               }
             </tbody>
@@ -187,14 +213,14 @@ const Watchlist = () => {
         <div className="mt-3 d-flex align-items-center">
           <div>
             <select name="no_of_contact" id="no_of_contact" className="form-select form-control-sm">
-              <option value="50">50 Contact</option>
-              <option value="100">100 Contact</option>
+              <option value="25">25 Companies</option>
+              <option value="50">50 Companies</option>
             </select>
           </div>
           <nav className="ms-auto d-flex align-items-center">
             <Pagination
               activePage={page}
-              itemsCountPerPage={50}
+              itemsCountPerPage={25}
               totalItemsCount={companies}
               pageRangeDisplayed={7}
               onChange={handlePageChange}
@@ -254,6 +280,77 @@ const Watchlist = () => {
           </div>
         </div>
       </div>
+
+      <div className="modal" id="showContactModal" tabIndex="-1">
+        <div className="modal-dialog modal-fullscreen">
+          <div className="modal-content">
+            <div className="modal-header">
+              <p className="text-primary position-absolute">Total Contacts: {totalContacts}</p>
+              <h5 className="modal-title w-100 text-center">{companyName}</h5>
+              <button type="button" className="btn-close" onClick={() => closeModal('showContactModal')} aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              <div className="table-responsive border-bottom"
+                style={{ "height": "calc(100vh - 150px)", "overflowY": "scroll", "padding": "0 10px", "margin": "0 -10px" }}
+              >
+                <table className="table table-borderless tableFixHead mb-0" id="peopleTable">
+                  <thead>
+                    <tr>
+                      <th>
+                        <div className="d-flex align-items-center">
+                          <input type="checkbox" id="allSelector" onClick={(e) => { return false; }} className="form-check-input mt-0 me-3" />
+                          <span>Person's Name</span>
+                        </div>
+                      </th>
+                      <th>Title</th>
+                      <th>Company</th>
+                      <th>Industry</th>
+                      <th>Head Count</th>
+                      <th>Email</th>
+                      <th>Boardline Numbers</th>
+                      <th>Direct Dial</th>
+                      <th>Contact Location</th>
+                      <th>Company Location</th>
+                    </tr>
+                  </thead>
+                  <tbody id="contactTable">
+                    {peoples.length !== 0 &&
+                      <ContactTableRow
+                        TableData={peoples}
+                        closeModal={closeModal}
+                        showCompanyInfo={() => { return false }}
+                        selectAll={false}
+                      />
+                    }
+                  </tbody>
+                </table>
+              </div>
+              <div className="mt-3 d-flex align-items-end">
+                <nav className="ms-auto d-flex align-items-center">
+                  <Pagination
+                    activePage={pageContact}
+                    itemsCountPerPage={50}
+                    totalItemsCount={totalContacts}
+                    pageRangeDisplayed={7}
+                    onChange={handleContactPageChange}
+                    activeClass="active"
+                    itemClass="page-item"
+                    innerClass="pagination mb-0"
+                    linkClass="page-link"
+                    firstPageText="First"
+                    lastPageText="Last"
+                    prevPageText="Previous"
+                    nextPageText="Next"
+                    disabledClass="disabled"
+                    activeLinkClass="disabled"
+                  />
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="modal-backdrop" id="modal-backdrop" style={{ "display": "none", "opacity": ".5" }}></div>
 
     </div >

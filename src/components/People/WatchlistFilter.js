@@ -41,8 +41,6 @@ const WatchFilter = (props) => {
 
   const handleDepartment = (e) => {
 
-    console.log(e.target.dataset.role);
-
     if (!e.target.checked) {
       setDefaultValue({ ...defaultValue, [e.target.dataset.role]: [] })
     }

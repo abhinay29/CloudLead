@@ -4,15 +4,18 @@ import { Link } from 'react-router-dom'
 import Pagination from "react-js-pagination";
 import TableRow from './TableRow'
 import { NotificationManager } from 'react-notifications';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { progressLoading } from '../../states/action-creator';
 import TableSkeleton from '../Skeleton/TableSkeleton';
+import NoRecordFound from './NoRecordFound';
+import Sidebar from '../Sidebar';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const Table = (props) => {
 
   const dispatch = useDispatch()
+  const peopleSearchResults = useSelector(state => state.peopleSearchResults)
 
   const context = useContext(PeopleContext);
   const { peoples, getPeoples, totalPeople, setTotalPeople, setUniqueComp, uniqueComp, setSkeletonLoading, skeletonLoading } = context;
@@ -21,7 +24,7 @@ const Table = (props) => {
   const [disSaveBtn, setDisSaveBtn] = useState(false);
   const [disAddBtn, setDisAddBtn] = useState(false);
   const { setShowFilter, setShowTable } = props
-  const [limit, setLimit] = useState(50);
+  const [limit, setLimit] = useState(25);
 
   const backToSearch = () => {
     dispatch(progressLoading(30))
@@ -80,6 +83,7 @@ const Table = (props) => {
     }
     dispatch(progressLoading(100))
   }
+
 
   const [company_info, setCompInfo] = useState({})
 
@@ -235,7 +239,19 @@ const Table = (props) => {
   }
 
   useEffect(() => {
-    searchPeople()
+    if (peopleSearchResults) {
+      if (peopleSearchResults.totalResults === 0) {
+        searchPeople()
+      } else {
+        getPeoples(peopleSearchResults)
+        setTotalPeople(peopleSearchResults.totalResults)
+        setSelectAll(false)
+        setUniqueComp(peopleSearchResults.uniqueCompany)
+        setSkeletonLoading(false);
+      }
+    } else {
+      searchPeople()
+    }
   }, [limit])
 
   useEffect(() => {
@@ -249,131 +265,132 @@ const Table = (props) => {
   }, [selectAll])
 
   return (
-    <div>
-      <div className="card-body" id="result_body">
-        <div className="mb-2 d-flex">
-          <div className="me-auto">
-            <span className="small fw-bold text-primary me-2">CONTACTS (<span>{totalPeople}</span>)</span>
-            <span className="small fw-bold text-primary">UNIQUE COMPANIES (<span>{uniqueComp}</span>)</span>
-          </div>
-          <div id="no_selected_contact" className="text-primary"></div>
-        </div>
-        <div className="mb-1">
-          <div className="btn-group me-2" role="group" aria-label="Menu">
-            <span className="dropdown bi-tooltip" data-bs-placement="top" title="Select">
-              <button className="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="selectDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <input type="checkbox" className="form-check-input" />
-              </button>
-              <ul className="dropdown-menu" aria-labelledby="selectDropdown">
-                <li><a className="dropdown-item select_contact" data-select="50" href="/" onClick={(e) => { e.preventDefault(); setSelectAll(true) }}>Select 50</a></li>
-                <li><a className="dropdown-item select_contact" data-select="100" href="/" onClick={(e) => { e.preventDefault(); setSelectAll(true) }}>Select 100</a></li>
-                <li><a className="dropdown-item select_contact" data-select="0" href="/" onClick={(e) => { e.preventDefault(); setSelectAll(false) }}>Clear Selection</a></li>
-              </ul>
-            </span>
-            <span className="dropdown bi-tooltip">
-              <button className="btn btn-sm btn-outline-primary bi-tooltip" type="button" id="saveSearch" data-bs-toggle="dropdown" aria-expanded="false">
-                <i className="far fa-save"></i>
-              </button>
-              <div className="dropdown-menu shadow p-3" aria-labelledby="saveSearch">
-                <form action="" onSubmit={saveSearchQuery}>
-                  <div className="mb-3">
-                    <label htmlFor="" className="form-label small">Save Search</label>
-                    <input type="text" id="saveSearchName" className="form-control" style={{ "width": "200px" }} />
-                    <p className="small text-muted">Provide name for this search</p>
-                  </div>
-                  <button type="submit" className="btn btn-primary w-100" disabled={disSaveBtn && "disabled"}>Save Search</button>
-                </form>
-              </div>
-            </span>
-            <span className="dropdown bi-tooltip" title="Add to list">
-              <button className="btn btn-sm btn-outline-primary bi-tooltip" type="button" id="saveSearch" data-bs-toggle="dropdown" aria-expanded="false">
-                <i className="fas fa-plus"></i>
-              </button>
-              <div className="dropdown-menu shadow p-3" aria-labelledby="addList">
-                <h5 className="text-center">Add to List</h5>
-                <form action="" onSubmit={handleAddList}>
-                  <div className="mb-3">
-                    <label htmlFor="newListName" className="form-label small">Create New List</label>
-                    <input type="text" name="newListName" id="newListName" className="form-control" style={{ "width": "260px" }} placeholder="Provide name for list" maxLength="50" />
-                  </div>
-                  <div className="text-center mb-2">-- or --</div>
-                  <div className="mb-3">
-                    <label htmlFor="listName" className="form-label small">Select a List</label>
-                    <select name="listName" id="listName" className="form-select">
-                      <option value="">--</option>
-                    </select>
-                  </div>
-                  <button type="submit" className="btn btn-primary w-100" disabled={disAddBtn && "disabled"}>Save &amp; Add</button>
-                </form>
-              </div>
-            </span>
-            <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip" onClick={() => window.location.reload()} title="Refresh"><i className="fas fa-sync-alt"></i></button>
-          </div>
-          <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" title="Back to Search" onClick={backToSearch}><i className="fas fa-search"></i> Back to Search</button>
-          <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" onClick={() => { getContacts() }} title="Get Contacts"><i className="fas fa-envelope"></i> Get Contacts</button>
-          <Link to="/radar/people/watchlist" className="btn btn-sm btn-outline-primary me-2"><i className="fas fa-bookmark"></i> My Watchlist</Link>
-        </div>
 
-        <div className="table-responsive border-bottom" style={{ "height": "calc(100vh - 210px)", "overflowY": "scroll", "padding": "0 10px", "margin": "0 -10px" }}>
-          <table className="table table-borderless tableFixHead mb-0" id="peopleTable">
-            <thead>
-              <tr>
-                <th>
-                  <div className="d-flex align-items-center">
-                    <input type="checkbox" id="allSelector" onClick={(e) => { setSelectAll(e.target.checked) }} className="form-check-input mt-0 me-3" />
-                    <span>Person's Name</span>
-                  </div>
-                </th>
-                <th>Title</th>
-                <th>Company</th>
-                <th>Industry</th>
-                <th>Head Count</th>
-                <th>Email</th>
-                <th>Boardline Numbers</th>
-                <th>Direct Dial</th>
-                <th>Contact Location</th>
-                <th>Company Location</th>
-              </tr>
-            </thead>
-            <tbody id="contactTable">
-              {skeletonLoading && <TableSkeleton />}
-              {!skeletonLoading &&
-                peoples.length !== 0 ?
-                <TableRow TableData={peoples.data.contacts} showCompanyInfo={getCompanyInfo} selectAll={selectAll} />
-                : <tr><td colSpan="11" className="text-center py-2"><h5 className="mb-0">No record found</h5></td></tr>
-              }
-            </tbody>
-          </table>
-        </div>
-        <div className="mt-3 d-flex align-items-center">
-          <div>
-            <select name="no_of_contact" id="no_of_contact" onChange={(e) => changeViewLimit(e)} className="form-select form-control-sm">
-              <option value="50" selected={limit === 50 ? true : false}>50 Contact</option>
-              <option value="100" selected={limit === 100 ? true : false}>100 Contact</option>
-            </select>
+    <>
+      <div>
+        <div className="card-body" id="result_body">
+          <div className="mb-2 d-flex">
+            <div className="me-auto">
+              <span className="small fw-bold text-primary me-2">CONTACTS (<span>{totalPeople}</span>)</span>
+              <span className="small fw-bold text-primary">UNIQUE COMPANIES (<span>{uniqueComp}</span>)</span>
+            </div>
+            <div id="no_selected_contact" className="text-primary"></div>
           </div>
-          <nav className="ms-auto d-flex align-items-center">
-            <Pagination
-              activePage={page}
-              itemsCountPerPage={parseInt(limit)}
-              totalItemsCount={totalPeople}
-              pageRangeDisplayed={7}
-              onChange={handlePageChange}
-              activeClass="active"
-              itemClass="page-item"
-              innerClass="pagination mb-0"
-              linkClass="page-link"
-              firstPageText="First"
-              lastPageText="Last"
-              prevPageText="Previous"
-              nextPageText="Next"
-              disabledClass="disabled"
-              activeLinkClass="disabled"
-            />
-          </nav>
+          <div className="mb-2">
+            <div className="btn-group me-2" role="group" aria-label="Menu">
+              {/* <span className="dropdown bi-tooltip" data-bs-placement="top" title="Select">
+                    <button className="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="selectDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                      <input type="checkbox" className="form-check-input" />
+                    </button>
+                    <ul className="dropdown-menu" aria-labelledby="selectDropdown">
+                      <li><a className="dropdown-item select_contact" data-select="50" href="/" onClick={(e) => { e.preventDefault(); setSelectAll(true) }}>Select 50</a></li>
+                      <li><a className="dropdown-item select_contact" data-select="100" href="/" onClick={(e) => { e.preventDefault(); setSelectAll(true) }}>Select 100</a></li>
+                      <li><a className="dropdown-item select_contact" data-select="0" href="/" onClick={(e) => { e.preventDefault(); setSelectAll(false) }}>Clear Selection</a></li>
+                    </ul>
+                  </span> */}
+              <span className="dropdown bi-tooltip">
+                <button className="btn btn-sm btn-outline-primary bi-tooltip" type="button" id="saveSearch" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i className="far fa-save"></i>
+                </button>
+                <div className="dropdown-menu shadow p-3" aria-labelledby="saveSearch">
+                  <form action="" onSubmit={saveSearchQuery}>
+                    <div className="mb-3">
+                      <label htmlFor="" className="form-label small">Save Search</label>
+                      <input type="text" id="saveSearchName" className="form-control" style={{ "width": "200px" }} />
+                      <p className="small text-muted">Provide name for this search</p>
+                    </div>
+                    <button type="submit" className="btn btn-primary w-100" disabled={disSaveBtn && "disabled"}>Save Search</button>
+                  </form>
+                </div>
+              </span>
+              <span className="dropdown bi-tooltip" title="Add to list">
+                <button className="btn btn-sm btn-outline-primary bi-tooltip" type="button" id="saveSearch" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i className="fas fa-plus"></i>
+                </button>
+                <div className="dropdown-menu shadow p-3" aria-labelledby="addList">
+                  <h5 className="text-center">Add to List</h5>
+                  <form action="" onSubmit={handleAddList}>
+                    <div className="mb-3">
+                      <label htmlFor="newListName" className="form-label small">Create New List</label>
+                      <input type="text" name="newListName" id="newListName" className="form-control" style={{ "width": "260px" }} placeholder="Provide name for list" maxLength="50" />
+                    </div>
+                    <div className="text-center mb-2">-- or --</div>
+                    <div className="mb-3">
+                      <label htmlFor="listName" className="form-label small">Select a List</label>
+                      <select name="listName" id="listName" className="form-select">
+                        <option value="">--</option>
+                      </select>
+                    </div>
+                    <button type="submit" className="btn btn-primary w-100" disabled={disAddBtn && "disabled"}>Save &amp; Add</button>
+                  </form>
+                </div>
+              </span>
+              <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip" onClick={() => window.location.reload()} title="Refresh"><i className="fas fa-sync-alt"></i></button>
+            </div>
+            <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" title="Back to Search" onClick={backToSearch}><i className="fas fa-search"></i> Back to Search</button>
+            <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" onClick={() => { getContacts() }} title="Get Contacts"><i className="fas fa-envelope"></i> Get Contacts</button>
+            <Link to="/radar/people/watchlist" className="btn btn-sm btn-outline-primary me-2"><i className="fas fa-bookmark"></i> My Watchlist</Link>
+          </div>
+
+          <div className="table-responsive border" style={{ "height": "calc(100vh - 215px)", "overflowY": "scroll" }}>
+            <table className="table table-borderless tableFixHead mb-0" id="peopleTable">
+              <thead>
+                <tr>
+                  <th>
+                    <div className="d-flex align-items-center">
+                      <input type="checkbox" id="allSelector" onClick={(e) => { setSelectAll(e.target.checked) }} className="form-check-input mt-0 me-3" title="Select all rows" />
+                      <span>Person's Name</span>
+                    </div>
+                  </th>
+                  <th>Title</th>
+                  <th>Company</th>
+                  <th>Industry</th>
+                  <th>Head Count</th>
+                  <th>Email</th>
+                  <th>Boardline Numbers</th>
+                  <th>Direct Dial</th>
+                  <th>Contact Location</th>
+                  <th>Company Location</th>
+                </tr>
+              </thead>
+              <tbody id="contactTable">
+                {skeletonLoading ? <TableSkeleton /> :
+                  peoples.length !== 0 ?
+                    <TableRow TableData={peoples.data.contacts} showCompanyInfo={getCompanyInfo} selectAll={selectAll} />
+                    : <NoRecordFound />
+                }
+              </tbody>
+            </table>
+          </div>
+          <div className="mt-3 d-flex align-items-center">
+            <div>
+              <select name="no_of_contact" id="no_of_contact" value={limit} onChange={(e) => changeViewLimit(e)} className="form-select form-control-sm">
+                <option value="25">25 Contact</option>
+                <option value="50">50 Contact</option>
+              </select>
+            </div>
+            <nav className="ms-auto d-flex align-items-center">
+              <Pagination
+                activePage={page}
+                itemsCountPerPage={parseInt(limit)}
+                totalItemsCount={totalPeople}
+                pageRangeDisplayed={7}
+                onChange={handlePageChange}
+                activeClass="active"
+                itemClass="page-item"
+                innerClass="pagination mb-0"
+                linkClass="page-link"
+                firstPageText="First"
+                lastPageText="Last"
+                prevPageText="Previous"
+                nextPageText="Next"
+                disabledClass="disabled"
+                activeLinkClass="disabled"
+              />
+            </nav>
+          </div>
         </div>
       </div>
-
       <div className="modal fade" id="showCompany" tabIndex="-1" role="dialog">
         <div className="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" role="document">
           <div className="modal-content shadow-lg">
@@ -416,8 +433,7 @@ const Table = (props) => {
         </div>
       </div>
       <div className="modal-backdrop" id="modal-backdrop" style={{ "display": "none", "opacity": ".5" }}></div>
-
-    </div >
+    </>
   )
 }
 

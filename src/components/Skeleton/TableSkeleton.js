@@ -29,6 +29,8 @@ function TableSkeleton() {
       <TableRow />
       <TableRow />
       <TableRow />
+      <TableRow />
+      <TableRow />
     </>
   )
 }

@@ -210,4 +210,32 @@ router.post('/subscribe', fetchuser, async (req, res) => {
     });
 })
 
+router.post('/update/profile', fetchuser, async (req, res) => {
+  const { country_code, phone, company } = req.body
+  User.findByIdAndUpdate(
+    { _id: req.user.id },
+    { country_code, phone, company },
+    function (err, data) {
+      if (err) {
+        return res.status(200).json({ status: "error", error: err })
+      } else {
+        res.status(200).json({ status: "success" });
+      }
+    });
+})
+
+router.post('/update/billing', fetchuser, async (req, res) => {
+  const { address, city, state, country, pin, gst, gst_number } = req.body
+  User.findByIdAndUpdate(
+    { _id: req.user.id },
+    { billing_info: { address, city, state, country, pin, gst, gst_number } },
+    function (err, data) {
+      if (err) {
+        return res.status(200).json({ status: "error", error: err })
+      } else {
+        res.status(200).json({ status: "success" });
+      }
+    });
+})
+
 module.exports = router
