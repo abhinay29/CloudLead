@@ -12,6 +12,7 @@ import { industryGrpOpt } from "../Data/industries"
 import { countryGroup } from "../Data/countries"
 import { useDispatch } from 'react-redux';
 import { progressLoading } from '../../states/action-creator';
+import { Link } from 'react-router-dom';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -492,7 +493,7 @@ const Filter = (props) => {
             </div>
 
             <div
-              className="d-flex justify-content-center position-absolute py-4 border-top"
+              className="d-flex justify-content-center align-items-center position-absolute py-4 border-top"
               style={{ "bottom": "0", "left": "0", "right": "0", "background": "#fff", "width": "100%", "zIndex": "10" }}>
               <button type="reset" id="reset_search" onClick={() => { window.location.reload(false); }} className="btn btn-outline-secondary">Reset</button>
               <button type="submit" className="btn btn-primary mx-3" id="search_btn" style={{ "width": "160px" }} disabled={disSearchBtn && "disabled"} >Run Search Query</button>
@@ -521,6 +522,7 @@ const Filter = (props) => {
                   </div>
                 </div>
               </span>
+              <Link to="/radar/company/watchlist" className="btn btn-primary ms-3"><i className="fas fa-bookmark"></i> Watchlist</Link>
             </div>
           </form>
         </div>

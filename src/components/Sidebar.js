@@ -32,9 +32,6 @@ function Sidebar() {
                 <Link className={`${location.pathname === '/radar/company' ? "active" : ""}`} to="/radar/company"><i className="far fa-building me-2"></i> Companies</Link>
               </li>
               <li>
-                <Link className={`${location.pathname === '/radar/people/watchlist' ? "active" : ""}`} to="/radar/people/watchlist" onClick={() => linkClick()}><i className="far fa-bookmark me-2"></i>My Watchlist</Link>
-              </li>
-              <li>
                 <Link to="lists"><i className="far fa-list-alt me-2"></i> Sequences</Link>
               </li>
             </ul>

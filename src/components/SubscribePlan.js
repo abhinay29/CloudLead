@@ -2,20 +2,50 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { NotificationManager } from 'react-notifications';
 import { useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 function SubscribePlan() {
 
+  const userState = useSelector(state => state.setUserData)
+
   const [plans, setPlans] = useState([])
-  const [selectedPlan, setSelectedPlan] = useState()
+  const [selectedPlan, setSelectedPlan] = useState({})
   const uemail = localStorage.getItem('uemail');
   const uname = localStorage.getItem('uname');
-  const [formData, setFormData] = useState({
-    country_code: '',
-    phone: '',
-    company_name: ''
-  });
+  const [invalidPhoneMsg, setInvalidPhoneMsg] = useState("");
+  // const [formData, setFormData] = useState({
+  //   country_code: '',
+  //   phone: '',
+  //   company_name: ''
+  // });
+  const [profile, setProfile] = useState({
+    country_code: "",
+    phone: "",
+    company: "",
+    address: "",
+    city: "",
+    state: "",
+    country: "",
+    pin: "",
+    gst: false,
+    gst_number: "",
+  })
+
+  // useEffect(() => {
+  //   if (userState) {
+  //     setProfile({ company: userState.company, phone: userState.phone, country_code: userState.country_code });
+  //   }
+  // }, [userState])
+
+  const handleInput = (e) => {
+    if (e.target.type === 'checkbox') {
+      setProfile({ ...profile, [e.target.name]: e.target.checked });
+    } else {
+      setProfile({ ...profile, [e.target.name]: e.target.value });
+    }
+  }
 
   const getPlans = async () => {
     let Plans = await fetch(`${API_URL}/api/plans`);
@@ -33,13 +63,49 @@ function SubscribePlan() {
     openModal('billingInformation')
   }
 
-  const handleInput = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  // const handleInput = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // }
+
+  const handleFormValidation = () => {
+    let companyInput = document.getElementById("company");
+    if (!profile.company) {
+      companyInput.classList.add('is-invalid');
+      NotificationManager.error("Please enter your company name");
+      return false;
+    } else {
+      companyInput.classList.add('is-valid')
+      companyInput.classList.remove('is-invalid');
+    }
+    if (!profile.country_code) {
+      NotificationManager.error("Please enter valid country code");
+      return false;
+    }
+    if (!profile.phone) {
+      let phoneNumberInput = document.getElementById("phoneNumber");
+      NotificationManager.error("Please enter valid phone no.");
+      setInvalidPhoneMsg("Please enter valid phone no.")
+      phoneNumberInput.focus()
+      phoneNumberInput.classList.add('is-invalid');
+      return false;
+    }
+    // phone: "",
+    //   company: "",
+    //     address: "",
+    //       city: "",
+    //         state: "",
+    //           country: "",
+    //             pin: "",
+    //               gst: false,
+    //                 gst_number: "",
   }
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    let User = await fetch(`${API_URL}/api/user/checkphone/${formData.phone}`, {
+    // if (!handleFormValidation()) {
+    //   return false;
+    // }
+    let User = await fetch(`${API_URL}/api/user/checkphone/${profile.phone}`, {
       method: 'GET',
       headers: {
         'auth-token': localStorage.getItem('token'),
@@ -49,15 +115,22 @@ function SubscribePlan() {
     let res = await User.json()
 
     if (res.status === 'error') {
+      let phoneNumberInput = document.getElementById("phoneNumber");
       NotificationManager.error(res.error);
-      document.getElementById("phoneNumber").focus();
-      document.getElementById("phoneNumber").classList.add('is-invalid');
+      setInvalidPhoneMsg("A user with this phone number is already exists.");
+      phoneNumberInput.focus()
+      phoneNumberInput.classList.add('is-invalid');
       return false;
     }
 
     document.getElementById("phoneNumber").classList.remove('is-invalid');
     closeModal('billingInformation')
     openModal('tosModal')
+  }
+
+  const acceptTerms = () => {
+    closeModal('tosModal');
+    openModal('orderSummery');
   }
 
   const handleSubscribePlan = async () => {
@@ -68,9 +141,9 @@ function SubscribePlan() {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        phone: formData.phone,
+        phone: profile.phone,
         plan: selectedPlan.plan_id,
-        company: formData.company_name
+        company: profile.company_name
       })
     });
     let res = await Subscribe.json()
@@ -124,6 +197,9 @@ function SubscribePlan() {
   }
 
   async function displayRazorpay() {
+
+    console.log("trigger click")
+
     const res = await loadScript(
       "https://checkout.razorpay.com/v1/checkout.js"
     );
@@ -156,8 +232,16 @@ function SubscribePlan() {
         const data = {
           name: uname,
           email: uemail,
-          contact: formData.phone,
-          company: formData.company_name,
+          contact: profile.phone,
+          company: profile.company_name,
+          country_code: profile.country_code,
+          address: profile.address,
+          city: profile.city,
+          state: profile.state,
+          country: profile.country,
+          pin: profile.pin,
+          gst: profile.gst,
+          gst_number: profile.gst_number,
           planId: selectedPlan.plan_id,
           receipt: receipt,
           amount: parseInt(amount) / 100,
@@ -176,13 +260,14 @@ function SubscribePlan() {
 
         if (result.data.status === 'success') {
           NotificationManager.success('Thank you for choosing us.', `Welcome! ${uname}`);
+          closeModal('orderSummery');
           window.location.reload();
         }
       },
       prefill: {
         name: uname,
         email: uemail,
-        contact: formData.phone,
+        contact: profile.phone,
       },
       theme: {
         color: "#7367f0",
@@ -361,7 +446,7 @@ function SubscribePlan() {
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" onClick={() => closeModal('tosModal')}>Close</button>
               {selectedPlan &&
-                <button type="button" className="btn btn-primary" onClick={selectedPlan.plan_id === 1 ? handleSubscribePlan : displayRazorpay}>Accept &amp; Continue with {selectedPlan.name}</button>
+                <button type="button" className="btn btn-primary" onClick={selectedPlan.plan_id === 1 ? handleSubscribePlan : acceptTerms}>Accept &amp; Continue with {selectedPlan.name}</button>
               }
             </div>
           </div>
@@ -375,11 +460,10 @@ function SubscribePlan() {
               <h4 className="modal-title" id="tosLabel">Billing Information</h4>
               <button type="button" className="btn-close" onClick={() => closeModal('billingInformation')} aria-label="Close"></button>
             </div>
-            <form onSubmit={handleFormSubmit} className="needs-validation" novalidate>
+            <form onSubmit={handleFormSubmit} className="needs-validation">
               <div className="modal-body">
-
                 <div className="row">
-                  <div className="col-md-4">
+                  <div className="col-md-4 border-right border-end">
                     {selectedPlan &&
                       <div className="text-center">
                         <h3>{selectedPlan.name}</h3>
@@ -394,7 +478,101 @@ function SubscribePlan() {
                     }
                   </div>
                   <div className="col-md-8">
-                    <div className="row">
+                    <div className="p-3" style={{ "maxHeight": "500px", "overflowY": "auto" }}>
+                      <div className="row">
+                        <div className="col-md-6">
+                          <div className="mb-3">
+                            <label htmlFor="" className="form-label">First Name</label>
+                            <input type="text" className="form-control" value={userState.first_name} disabled />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="mb-3">
+                            <label htmlFor="" className="form-label">Last Name</label>
+                            <input type="text" className="form-control" value={userState.last_name} disabled />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col-md-6">
+                          <div className="mb-3">
+                            <label htmlFor="" className="form-label">Email</label>
+                            <input type="text" className="form-control" value={userState.email} disabled />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="mb-3">
+                            <label htmlFor="" className="form-label">Company Name <span className="text-danger">*</span></label>
+                            <input type="text" className="form-control" name="company" id="company" onChange={handleInput} value={profile.company} required />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col-md-3">
+                          <div className="mb-3">
+                            <label htmlFor="" className="form-label">Country Code <span className="text-danger">*</span></label>
+                            <input type="text" className="form-control" placeholder="e.g. 91" name="country_code" onChange={handleInput} value={profile.country_code} required />
+                          </div>
+                        </div>
+                        <div className="col-md-9">
+                          <div className="mb-3">
+                            <label htmlFor="" className="form-label">Phone <span className="text-danger">*</span><small className="text-secondary">(You may receive an otp for payment verification on this number)</small></label>
+                            <input type="text" className="form-control" name="phone" id="phoneNumber" onChange={handleInput} value={profile.phone} required />
+                            <div id="invalidPhone" className="invalid-feedback">
+                              {invalidPhoneMsg}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col-md-12">
+                          <div className="mb-3">
+                            <label htmlFor="" className="form-label">Billing Address <span className="text-danger">*</span></label>
+                            <input name="" className="form-control" name="address" onChange={handleInput} value={profile.address} required />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col-md-3">
+                          <div className="mb-3">
+                            <label htmlFor="" className="form-label">Country <span className="text-danger">*</span></label>
+                            <input type="text" className="form-control" name="country" onChange={handleInput} value={profile.country} required />
+                          </div>
+                        </div>
+                        <div className="col-md-3">
+                          <div className="mb-3">
+                            <label htmlFor="" className="form-label">State <span className="text-danger">*</span></label>
+                            <input type="text" className="form-control" name="state" onChange={handleInput} value={profile.state} required />
+                          </div>
+                        </div>
+                        <div className="col-md-3">
+                          <div className="mb-3">
+                            <label htmlFor="" className="form-label">City <span className="text-danger">*</span></label>
+                            <input type="text" className="form-control" name="city" onChange={handleInput} value={profile.city} required />
+                          </div>
+                        </div>
+                        <div className="col-md-3">
+                          <div className="mb-3">
+                            <label htmlFor="" className="form-label">Pin Code</label>
+                            <input type="text" className="form-control" name="pin" onChange={handleInput} value={profile.pin} />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col-md-6">
+                          <div className="mb-3">
+                            <div className="form-check form-switch">
+                              <label className="form-check-label" style={{ "fontWeight": "600" }} htmlFor="gstApplicable">GST Applicable?(Optional)</label>
+                              <input className="form-check-input" type="checkbox" role="switch" id="gstApplicable" name="gst" onChange={handleInput} checked={profile.gst} />
+                            </div>
+                          </div>
+                          <div className="mb-3">
+                            <label htmlFor="" className="form-label">GST Number {profile.gst && <span className="text-danger">*</span>}</label>
+                            <input type="text" className="form-control" name="gst_number" onChange={handleInput} value={profile.gst_number} required={profile.gst} />
+                          </div>
+                        </div>
+                      </div>
+                      {/* <div className="row">
                       <div className="col-md-6">
                         <div className="mb-3">
                           <label htmlFor="">Name</label>
@@ -419,7 +597,7 @@ function SubscribePlan() {
                         <div className="mb-3">
                           <label htmlFor="">Phone <span className="text-danger">*</span></label>
                           <input type="text" className="form-control" name="phone" id="phoneNumber" onChange={handleInput} value={formData.phone} required />
-                          <div id="invalidPhone" class="invalid-feedback">
+                          <div id="invalidPhone" className="invalid-feedback">
                             A user with this phone number is already exists.
                           </div>
                         </div>
@@ -432,6 +610,7 @@ function SubscribePlan() {
                           <input type="text" className="form-control" name="company_name" onChange={handleInput} value={formData.company_name} required />
                         </div>
                       </div>
+                    </div> */}
                     </div>
                   </div>
                 </div>
@@ -443,6 +622,68 @@ function SubscribePlan() {
                 <button type="submit" className="btn btn-primary">Continue <i className="fas fa-chevron-right ms-2"></i></button>
               </div>
             </form>
+          </div>
+        </div>
+      </div>
+
+      <div className="modal fade" id="orderSummery" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="tosLabel" aria-hidden="true">
+        <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h4 className="modal-title" id="tosLabel">Order Summery</h4>
+              <button type="button" className="btn-close" onClick={() => closeModal('orderSummery')} aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              <table className="table table-borderless">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th className="text-end">Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style={{ "width": "70%" }}>
+                      <h6 className="mb-0 text-uppercase">{selectedPlan.name} Plan</h6>
+                    </td>
+                    <td className="text-end">₹ {selectedPlan.price_inr}</td>
+                  </tr>
+                  <tr className="border-bottom">
+                    <td colSpan="2" style={{ "width": "70%" }}>
+                      <ul>
+                        <li>1 Month</li>
+                        <li>{selectedPlan.unlock_daily} Daily Unlock</li>
+                        <li>{selectedPlan.unlock_month} Monthly Unlock</li>
+                        <li>{selectedPlan.download} Downloads</li>
+                      </ul>
+                    </td>
+                  </tr>
+                  <tr className="border-bottom">
+                    <td>
+                      <h6 className="mb-0 fw-bold">SUBTOTAL</h6>
+                    </td>
+                    <td className="text-end fw-bold">₹ {selectedPlan.price_inr}</td>
+                  </tr>
+                  <tr>
+                    <td><h6 className="mb-0">CGST 9%</h6></td>
+                    <td className="text-end">₹ {selectedPlan.price_inr * 9 / 100}</td>
+                  </tr>
+                  <tr>
+                    <td><h6 className="mb-0">SGST 9%</h6></td>
+                    <td className="text-end">₹ {selectedPlan.price_inr * 9 / 100}</td>
+                  </tr>
+                  <tr className="border-top">
+                    <td><h6 className="mb-0 text-primary fw-bold">TOTAL</h6></td>
+                    <td className="text-end text-primary fw-bold">₹ {selectedPlan.price_inr + (selectedPlan.price_inr * 9 / 100 * 2)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="modal-footer">
+              {selectedPlan && <input type="hidden" name="plan_id" value={selectedPlan.plan_id} />}
+              <button type="button" className="btn btn-danger" onClick={() => closeModal('orderSummery')}>Cancel</button>
+              <button type="button" className="btn btn-primary" onClick={() => displayRazorpay()}>Pay &amp; Subscribe <i className="fas fa-chevron-right ms-2"></i></button>
+            </div>
           </div>
         </div>
       </div>

@@ -28,8 +28,12 @@ router.post('/orders', async (req, res) => {
       key_secret: process.env.RAZORPAY_SECRET,
     });
 
+    let planAmount = parseInt(plan.price_inr);
+    let cgst = planAmount * 9 / 100;
+    let sgst = planAmount * 9 / 100;
+    let totalAmount = planAmount + cgst + sgst
     const options = {
-      amount: parseInt(plan.price_inr) * 100,
+      amount: totalAmount * 100,
       currency: "INR",
       receipt: `${plan.plan_id}${Date.now()}`,
     };
@@ -56,6 +60,14 @@ router.post('/success', fetchuser, async (req, res) => {
       contact,
       company,
       planId,
+      country_code,
+      address,
+      city,
+      state,
+      country,
+      pin,
+      gst,
+      gst_number,
       receipt,
       amount,
       orderCreationId,
@@ -80,6 +92,8 @@ router.post('/success', fetchuser, async (req, res) => {
       return res.status(400).json({ msg: "Transaction not legit!" });
 
     const transaction = await Payments.create({
+      name: name,
+      email: email,
       user: req.user.id,
       amount: amount,
       orderId: receipt,
@@ -95,7 +109,18 @@ router.post('/success', fetchuser, async (req, res) => {
     if (transaction) {
       User.updateOne(
         { _id: req.user.id },
-        { phone: contact, plan_id: planId, company: company },
+        {
+          phone: contact, country_code: country_code, plan_id: planId, company: company,
+          billing_info: {
+            address: address,
+            city: city,
+            state: state,
+            country: country,
+            pin: pin,
+            gst: gst,
+            gst_number: gst_number,
+          }
+        },
         function (err, data) {
           if (err) {
             return res.status(200).json({ status: "error", error: err })

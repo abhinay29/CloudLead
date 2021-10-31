@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux';
 import { progressLoading, setPeopleSearchResults } from '../../states/action-creator';
 import { NotificationManager } from 'react-notifications';
 import Sidebar from '../Sidebar';
+import { Link } from 'react-router-dom';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -1224,6 +1225,7 @@ const Filter = (props) => {
                     </div>
                   </div>
                 </span>
+                <Link to="/radar/people/watchlist" className="btn btn-primary ms-3"><i className="fas fa-bookmark"></i> My Watchlist</Link>
               </div>
             </form>
           </div>

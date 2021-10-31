@@ -70,7 +70,7 @@ function Billing() {
                     <div className="col-md-12">
                       <div className="mb-3">
                         <label htmlFor="" className="form-label">Billing Address</label>
-                        <input name="" className="form-control" name="address" onChange={handleInput} value={billingInfo.address} required />
+                        <input type="text" className="form-control" name="address" onChange={handleInput} value={billingInfo.address} required />
                       </div>
                     </div>
                   </div>

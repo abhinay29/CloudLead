@@ -236,6 +236,7 @@ const Table = (props) => {
 
   const changeViewLimit = (e) => {
     setLimit(e.target.value)
+    searchPeople()
   }
 
   useEffect(() => {
@@ -252,7 +253,7 @@ const Table = (props) => {
     } else {
       searchPeople()
     }
-  }, [limit])
+  }, [])
 
   useEffect(() => {
     var no_selected_contact = document.getElementById('no_selected_contact');
@@ -289,7 +290,7 @@ const Table = (props) => {
                     </ul>
                   </span> */}
               <span className="dropdown bi-tooltip">
-                <button className="btn btn-sm btn-outline-primary bi-tooltip" type="button" id="saveSearch" data-bs-toggle="dropdown" aria-expanded="false">
+                <button className="btn btn-sm btn-outline-primary bi-tooltip" title="Save Search" type="button" id="saveSearch" data-bs-toggle="dropdown" aria-expanded="false">
                   <i className="far fa-save"></i>
                 </button>
                 <div className="dropdown-menu shadow p-3" aria-labelledby="saveSearch">
@@ -327,9 +328,9 @@ const Table = (props) => {
               </span>
               <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip" onClick={() => window.location.reload()} title="Refresh"><i className="fas fa-sync-alt"></i></button>
             </div>
-            <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" title="Back to Search" onClick={backToSearch}><i className="fas fa-search"></i> Back to Search</button>
-            <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" onClick={() => { getContacts() }} title="Get Contacts"><i className="fas fa-envelope"></i> Get Contacts</button>
-            <Link to="/radar/people/watchlist" className="btn btn-sm btn-outline-primary me-2"><i className="fas fa-bookmark"></i> My Watchlist</Link>
+            <button type="button" className="btn btn-sm btn-primary bi-tooltip me-2" title="Back to Search" onClick={backToSearch}><i className="fas fa-search"></i> Back to Search</button>
+            <button type="button" className="btn btn-sm btn-primary bi-tooltip me-2" onClick={() => { getContacts() }} title="Get Contacts"><i className="fas fa-envelope"></i> Get Contacts</button>
+            <Link to="/radar/people/watchlist" className="btn btn-sm btn-primary me-2"><i className="fas fa-bookmark"></i> My Watchlist</Link>
           </div>
 
           <div className="table-responsive border" style={{ "height": "calc(100vh - 215px)", "overflowY": "scroll" }}>

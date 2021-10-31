@@ -210,8 +210,8 @@ const Table = (props) => {
             </span>
             <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip" title="Refresh" ><i className="fas fa-sync-alt"></i></button>
           </div>
-          <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" title="Back to Search" onClick={backToSearch}><i className="fas fa-search"></i> Back to Search</button>
-          <Link to="/radar/company/watchlist" className="btn btn-sm btn-outline-primary me-2"><i className="fas fa-bookmark"></i> My Watchlist</Link>
+          <button type="button" className="btn btn-sm btn-primary bi-tooltip me-2" title="Back to Search" onClick={backToSearch}><i className="fas fa-search"></i> Back to Search</button>
+          <Link to="/radar/company/watchlist" className="btn btn-sm btn-primary me-2"><i className="fas fa-bookmark"></i> Watchlist</Link>
         </div>
 
         <div className="table-responsive border" style={{ "height": "calc(100vh - 215px)", "overflowY": "scroll" }}>

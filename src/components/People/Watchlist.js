@@ -304,8 +304,8 @@ const Watchlist = () => {
                 <input type="checkbox" className="form-check-input" />
               </button>
               <ul className="dropdown-menu" aria-labelledby="selectDropdown">
-                <li><a className="dropdown-item select_contact" data-select="50" href="/" onClick={(e) => { e.preventDefault(); setSelectAll({ select: true, length: 50 }) }}>Select 50</a></li>
-                <li><a className="dropdown-item select_contact" data-select="100" href="/" onClick={(e) => { e.preventDefault(); setSelectAll({ select: true, length: 100 }) }}>Select 100</a></li>
+                <li><a className="dropdown-item select_contact" data-select="50" href="/" onClick={(e) => { e.preventDefault(); setSelectAll({ select: true, length: 25 }) }}>Select 25</a></li>
+                <li><a className="dropdown-item select_contact" data-select="100" href="/" onClick={(e) => { e.preventDefault(); setSelectAll({ select: true, length: 50 }) }}>Select 50</a></li>
                 <li><a className="dropdown-item select_contact" data-select="0" href="/" onClick={(e) => { e.preventDefault(); setSelectAll({ select: false, length: 100 }) }}>Clear Selection</a></li>
               </ul>
             </span>
@@ -338,8 +338,9 @@ const Watchlist = () => {
             </span>
             <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip" title="Refresh" onClick={() => { window.location.reload() }}><i className="fas fa-sync-alt"></i></button>
           </div>
-          <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip me-2" onClick={() => openModal('searchModal')}><i className="fas fa-filter"></i> Filter Watchlist</button>
-          <Link to="/radar/people" className="btn btn-sm btn-outline-primary bi-tooltip me-2"><i className="fas fa-chevron-left"></i> Back to Result</Link>
+          <button type="button" className="btn btn-sm btn-primary bi-tooltip me-2" onClick={() => openModal('searchModal')}><i className="fas fa-filter"></i> Filter Watchlist</button>
+          <Link to="/radar/people" className="btn btn-sm btn-primary bi-tooltip me-2"><i className="fas fa-chevron-left"></i> Back to Result</Link>
+          <Link to="/radar/people" className="btn btn-sm btn-primary bi-tooltip me-2"><i className="fas fa-search"></i> Back to Search</Link>
 
           <div className="ms-3 d-flex mt-1 position-relative">
 
