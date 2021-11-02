@@ -2,8 +2,13 @@ const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 const fetchuser = require('../middleware/fetchuser');
+const transporter = require('../middleware/mailTransporter');
+const bcrypt = require('bcryptjs');
+
 const User = require('../models/User');
 const { savedSearch, savedCompanySearch } = require('../models/UserData');
+
+const adminEmail = process.env.ADMIN_EMAIL;
 
 router.get('/', fetchuser, async (req, res) => {
   let Check = await User.findOne({ _id: req.user.id })
@@ -236,6 +241,49 @@ router.post('/update/billing', fetchuser, async (req, res) => {
         res.status(200).json({ status: "success" });
       }
     });
+})
+
+router.post('/changepassword', fetchuser, async (req, res) => {
+  const { currentPassword, newPassword } = req.body
+  try {
+    let user = await User.findOne({ _id: req.user.id });
+    if (!user) {
+      return res.status(200).json({ status: "error", error: "Please try to login with correct credentials" });
+    }
+
+    const passwordCompare = await bcrypt.compare(currentPassword, user.password);
+    if (!passwordCompare) {
+      return res.status(200).json({ status: "error", error: "Invalid current password." });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const secPass = await bcrypt.hash(newPassword, salt);
+
+    User.findByIdAndUpdate(
+      { _id: req.user.id },
+      { password: secPass },
+      function (err, data) {
+        if (err) {
+          return res.status(200).json({ status: "error", error: err })
+        } else {
+          res.status(200).json({ status: "success" });
+          transporter.sendMail({
+            from: `"Cloudlead" <${adminEmail}>`,
+            to: user.email,
+            subject: "Confirmation: Password Changed", // Subject line
+            html: `<h6>Dear Customer,</h6>
+              <p>You have successfully change password for your account.</p>
+              <p> </p>
+              <p>Have a wonderful day!</p>
+              <p>Team Cloudlead</p>
+            `,
+          });
+        }
+      });
+  } catch (error) {
+    console.error(error.message);
+    res.status(401).send("Authentication failed.");
+  }
 })
 
 module.exports = router

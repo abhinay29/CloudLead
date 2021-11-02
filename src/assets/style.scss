@@ -606,20 +606,94 @@ table th {
 }
 
 .sideNavbar {
-  .card {
-    padding: 1rem .25rem 1rem 1rem !important;
-    border-radius: 0;
-    border-right: 1px solid #eee;
 
-    .card-body {
-      padding: 5px;
-      margin: 0 !important;
-      height: calc(100vh - 90px);
-      overflow-y: auto;
-      border-radius: 0;
+  position: fixed;
+  height: 100%;
+  width: 80px;
+  background-color: #fff;
+  box-shadow: 0 0 20px 1px rgba(0, 0, 0, .08);
+  z-index: 20;
+  overflow: hidden;
+  transition: all .2s linear;
 
+
+  &:hover {
+    width: 260px;
+  }
+
+  ul {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    color: #363636;
+    padding: 10px;
+    margin-bottom: 0;
+
+    li {
+      position: relative;
+      width: 100%;
+      list-style: none;
+      transition: all .2s linear;
+      border-radius: 8px;
+
+      a {
+        position: relative;
+        display: flex;
+        width: 100%;
+        text-decoration: none;
+        color: #363636;
+        transition: all .2s linear;
+        font-weight: 600;
+
+        .icon {
+          position: relative;
+          min-width: 60px;
+          height: 60px;
+          line-height: 60px;
+          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          i {
+            background-color: #e9ecef;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .1s linear;
+          }
+        }
+
+        .title {
+          position: relative;
+          display: block;
+          padding: 0 10px;
+          height: 60px;
+          line-height: 60px;
+          text-align: start;
+          white-space: nowrap;
+        }
+      }
+
+      &:hover,
+      &.active {
+        background-color: #e6ecff;
+
+        a {
+          color: #7367f0;
+
+          .icon {
+            i {
+              background-color: #7267f025;
+            }
+          }
+        }
+      }
     }
-
   }
 }
 

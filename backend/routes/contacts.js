@@ -274,7 +274,7 @@ router.get('/', fetchuser, async (req, res) => {
   // Role
 
   if (req.query.role_finance && req.query.role_finance.length !== 0) {
-    if (RoleObj instanceof Array) {
+    if (req.query.role_finance instanceof Array) {
       req.query.role_finance.map(fin => {
         RoleObj.push(fin)
       })
@@ -283,7 +283,7 @@ router.get('/', fetchuser, async (req, res) => {
     }
   }
   if (req.query.role_hr && req.query.role_hr.length !== 0) {
-    if (RoleObj instanceof Array) {
+    if (req.query.role_hr instanceof Array) {
       req.query.role_hr.map(hr => {
         RoleObj.push(hr)
       })
@@ -293,7 +293,7 @@ router.get('/', fetchuser, async (req, res) => {
   }
 
   if (req.query.role_marketing && req.query.role_marketing.length !== 0) {
-    if (RoleObj instanceof Array) {
+    if (req.query.role_marketing instanceof Array) {
       req.query.role_marketing.map(marketing => {
         RoleObj.push(marketing)
       })
@@ -303,7 +303,7 @@ router.get('/', fetchuser, async (req, res) => {
   }
 
   if (req.query.role_purchase && req.query.role_purchase.length !== 0) {
-    if (RoleObj instanceof Array) {
+    if (req.query.role_purchase instanceof Array) {
       req.query.role_purchase.map(purchase => {
         RoleObj.push(purchase)
       })
@@ -313,7 +313,7 @@ router.get('/', fetchuser, async (req, res) => {
   }
 
   if (req.query.role_operation && req.query.role_operation.length !== 0) {
-    if (RoleObj instanceof Array) {
+    if (req.query.role_operation instanceof Array) {
       req.query.role_operation.map(operation => {
         RoleObj.push(operation)
       })
@@ -323,7 +323,7 @@ router.get('/', fetchuser, async (req, res) => {
   }
 
   if (req.query.role_corporate && req.query.role_corporate.length !== 0) {
-    if (RoleObj instanceof Array) {
+    if (req.query.role_corporate instanceof Array) {
       req.query.role_corporate.map(corporate => {
         RoleObj.push(corporate)
       })
@@ -333,7 +333,7 @@ router.get('/', fetchuser, async (req, res) => {
   }
 
   if (req.query.role_it && req.query.role_it.length !== 0) {
-    if (RoleObj instanceof Array) {
+    if (req.query.role_it instanceof Array) {
       req.query.role_it.map(it => {
         RoleObj.push(it)
       })
@@ -343,7 +343,7 @@ router.get('/', fetchuser, async (req, res) => {
   }
 
   if (req.query.role_others && req.query.role_others.length !== 0) {
-    if (RoleObj instanceof Array) {
+    if (req.query.role_others instanceof Array) {
       req.query.role_others.map(others => {
         RoleObj.push(others)
       })

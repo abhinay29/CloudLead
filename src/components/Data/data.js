@@ -72,14 +72,14 @@ export const departmentRole = {
     { value: "Materials", label: "Materials" }
   ],
   "operation": [
-    { value: "Quality", lable: "Quality" },
-    { value: "Production", lable: "Production" },
-    { value: "Plant", lable: "Plant" },
-    { value: "PPC", lable: "PPC" },
-    { value: "R&D", lable: "R&D" },
-    { value: "Maintenance", lable: "Maintenance" },
-    { value: "Safety", lable: "Safety" },
-    { value: "Security", lable: "Security" }
+    { value: "Quality", label: "Quality" },
+    { value: "Production", label: "Production" },
+    { value: "Plant", label: "Plant" },
+    { value: "PPC", label: "PPC" },
+    { value: "R&D", label: "R&D" },
+    { value: "Maintenance", label: "Maintenance" },
+    { value: "Safety", label: "Safety" },
+    { value: "Security", label: "Security" }
   ],
   "corporate": [
     { value: "Corporate/HQ", label: "Corporate/HQ" },
@@ -108,6 +108,6 @@ export const departmentRole = {
     { value: "System Admin", label: "System Admin" },
     { value: "DevOps", label: "DevOps" },
     { value: "Web Development", label: "Web Development" },
-    { value: "IT", label: "IT" }
+    { value: "Information Technology", label: "Information Technology" }
   ]
 }

@@ -38,11 +38,9 @@ const RouteWithNavbar = ({ component: Component, ...rest }) => {
     <Route {...rest} render={props => (
       <>
         <Navbar />
-        <div className="row m-0">
-          <Sidebar />
-          <div className="col p-0" style={{ "maxWidth": "calc(100vw - 260px)" }}>
-            <Component {...props} />
-          </div>
+        <Sidebar />
+        <div style={{ "paddingLeft": "80px" }}>
+          <Component {...props} />
         </div>
       </>
     )}

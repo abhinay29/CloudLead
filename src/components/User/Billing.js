@@ -53,77 +53,99 @@ function Billing() {
   }
 
   return (
-    <div className="fullHeightWithNavBar py-4">
-      <div className="container">
-        <div className="row">
-          <div className="col" style={{ "maxWidth": "280px" }}>
-            <UserMenu />
-          </div>
-          <div className="col" style={{ "width": "100%" }}>
-            <div className="card">
-              <div className="card-body">
-                <div className="cardTitle mb-3">
-                  <h5>Billing Information</h5>
-                </div>
-                <form action="" onSubmit={handleSubmit}>
-                  <div className="row">
-                    <div className="col-md-12">
-                      <div className="mb-3">
-                        <label htmlFor="" className="form-label">Billing Address</label>
-                        <input type="text" className="form-control" name="address" onChange={handleInput} value={billingInfo.address} required />
-                      </div>
-                    </div>
+    <>
+      <div className="fullHeightWithNavBar py-4">
+        <div className="container">
+          <div className="row">
+            <div className="col" style={{ "maxWidth": "280px" }}>
+              <UserMenu />
+            </div>
+            <div className="col" style={{ "width": "100%" }}>
+              <div className="card">
+                <div className="card-body">
+                  <div className="cardTitle d-flex justify-content-between align-items-center mb-3">
+                    <h5>Billing Information</h5>
+                    <button type="button" className="btn btn-sm btn-primary">Upgrade Plan</button>
                   </div>
-                  <div className="row">
-                    <div className="col-md-3">
-                      <div className="mb-3">
-                        <label htmlFor="" className="form-label">City</label>
-                        <input type="text" className="form-control" name="city" onChange={handleInput} value={billingInfo.city} required />
-                      </div>
-                    </div>
-                    <div className="col-md-3">
-                      <div className="mb-3">
-                        <label htmlFor="" className="form-label">State</label>
-                        <input type="text" className="form-control" name="state" onChange={handleInput} value={billingInfo.state} required />
-                      </div>
-                    </div>
-                    <div className="col-md-3">
-                      <div className="mb-3">
-                        <label htmlFor="" className="form-label">Country</label>
-                        <input type="text" className="form-control" name="country" onChange={handleInput} value={billingInfo.country} required />
-                      </div>
-                    </div>
-                    <div className="col-md-3">
-                      <div className="mb-3">
-                        <label htmlFor="" className="form-label">Pin Code</label>
-                        <input type="text" className="form-control" name="pin" onChange={handleInput} value={billingInfo.pin} required />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-md-6">
-                      <div className="mb-3">
-                        <div className="form-check form-switch">
-                          <label className="form-check-label" style={{ "fontWeight": "600" }} htmlFor="gstApplicable">GST Applicable?(Optional)</label>
-                          <input className="form-check-input" type="checkbox" role="switch" id="gstApplicable" name="gst" onChange={handleInput} checked={billingInfo.gst} />
+                  <form action="" onSubmit={handleSubmit}>
+                    <div className="row">
+                      <div className="col-md-12">
+                        <div className="mb-3">
+                          <label htmlFor="" className="form-label">Billing Address</label>
+                          <input type="text" className="form-control" name="address" onChange={handleInput} value={billingInfo.address} required />
                         </div>
                       </div>
-                      <div className="mb-3">
-                        <label htmlFor="" className="form-label">GST Number</label>
-                        <input type="text" className="form-control" name="gst_number" onChange={handleInput} value={billingInfo.gst_number} required={billingInfo.gst} />
+                    </div>
+                    <div className="row">
+                      <div className="col-md-3">
+                        <div className="mb-3">
+                          <label htmlFor="" className="form-label">City</label>
+                          <input type="text" className="form-control" name="city" onChange={handleInput} value={billingInfo.city} required />
+                        </div>
+                      </div>
+                      <div className="col-md-3">
+                        <div className="mb-3">
+                          <label htmlFor="" className="form-label">State</label>
+                          <input type="text" className="form-control" name="state" onChange={handleInput} value={billingInfo.state} required />
+                        </div>
+                      </div>
+                      <div className="col-md-3">
+                        <div className="mb-3">
+                          <label htmlFor="" className="form-label">Country</label>
+                          <input type="text" className="form-control" name="country" onChange={handleInput} value={billingInfo.country} required />
+                        </div>
+                      </div>
+                      <div className="col-md-3">
+                        <div className="mb-3">
+                          <label htmlFor="" className="form-label">Pin Code</label>
+                          <input type="text" className="form-control" name="pin" onChange={handleInput} value={billingInfo.pin} required />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="mb-3">
-                    <button type="submit" className="btn btn-primary px-5"><i className="fas fa-save me-2"></i>Save</button>
-                  </div>
-                </form>
+                    <div className="row">
+                      <div className="col-md-6">
+                        <div className="mb-3">
+                          <div className="form-check form-switch">
+                            <label className="form-check-label" style={{ "fontWeight": "600" }} htmlFor="gstApplicable">GST Applicable?(Optional)</label>
+                            <input className="form-check-input" type="checkbox" role="switch" id="gstApplicable" name="gst" onChange={handleInput} checked={billingInfo.gst} />
+                          </div>
+                        </div>
+                        <div className="mb-3">
+                          <label htmlFor="" className="form-label">GST Number</label>
+                          <input type="text" className="form-control" name="gst_number" onChange={handleInput} value={billingInfo.gst_number} required={billingInfo.gst} />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mb-3">
+                      <button type="submit" className="btn btn-primary px-5"><i className="fas fa-save me-2"></i>Save</button>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div >
+
+      <div className="modal" id="upgradePlanModal" tabindex="-1">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Modal title</h5>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" className="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </>
   )
 }
 

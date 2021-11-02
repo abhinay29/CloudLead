@@ -484,18 +484,110 @@ table th {
   height: calc(100vh - 135px);
 }
 
-.sideNavbar .card {
-  padding: 1rem .25rem 1rem 1rem !important;
-  border-radius: 0;
-  border-right: 1px solid #eee;
+.sideNavbar {
+  position: fixed;
+  height: 100%;
+  width: 80px;
+  background-color: #fff;
+  -webkit-box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.08);
+          box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.08);
+  z-index: 20;
+  overflow: hidden;
+  -webkit-transition: all .2s linear;
+  transition: all .2s linear;
 }
 
-.sideNavbar .card .card-body {
-  padding: 5px;
-  margin: 0 !important;
-  height: calc(100vh - 90px);
-  overflow-y: auto;
-  border-radius: 0;
+.sideNavbar:hover {
+  width: 260px;
+}
+
+.sideNavbar ul {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  color: #363636;
+  padding: 10px;
+  margin-bottom: 0;
+}
+
+.sideNavbar ul li {
+  position: relative;
+  width: 100%;
+  list-style: none;
+  -webkit-transition: all .2s linear;
+  transition: all .2s linear;
+  border-radius: 8px;
+}
+
+.sideNavbar ul li a {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+  text-decoration: none;
+  color: #363636;
+  -webkit-transition: all .2s linear;
+  transition: all .2s linear;
+  font-weight: 600;
+}
+
+.sideNavbar ul li a .icon {
+  position: relative;
+  min-width: 60px;
+  height: 60px;
+  line-height: 60px;
+  text-align: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.sideNavbar ul li a .icon i {
+  background-color: #e9ecef;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-transition: all .1s linear;
+  transition: all .1s linear;
+}
+
+.sideNavbar ul li a .title {
+  position: relative;
+  display: block;
+  padding: 0 10px;
+  height: 60px;
+  line-height: 60px;
+  text-align: start;
+  white-space: nowrap;
+}
+
+.sideNavbar ul li:hover, .sideNavbar ul li.active {
+  background-color: #e6ecff;
+}
+
+.sideNavbar ul li:hover a, .sideNavbar ul li.active a {
+  color: #7367f0;
+}
+
+.sideNavbar ul li:hover a .icon i, .sideNavbar ul li.active a .icon i {
+  background-color: #7267f025;
 }
 
 .fullHeightWithNavBar {
