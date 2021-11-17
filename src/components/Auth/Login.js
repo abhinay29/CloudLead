@@ -7,6 +7,8 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 const Login = (props) => {
 
+	let history = useHistory();
+
 	const responseGoogleSuccess = async (response) => {
 		setDisabled(true)
 		const res = await fetch(`${API_URL}/api/auth/googlelogin`, {
@@ -17,7 +19,6 @@ const Login = (props) => {
 			body: JSON.stringify({ tokenId: response.tokenId })
 		});
 		const json = await res.json()
-		console.log(json);
 		if (json.success) {
 			if (localStorage.getItem('searchQuery')) {
 				localStorage.removeItem('searchQuery')
@@ -25,6 +26,9 @@ const Login = (props) => {
 			localStorage.setItem('token', json.authtoken);
 			localStorage.setItem('uname', json.uname);
 			localStorage.setItem('uemail', json.uemail);
+			if (json.lastLogin) {
+				localStorage.setItem('lastLogin', json.lastLogin);
+			}
 			localStorage.removeItem('searchQuery')
 			NotificationManager.success(`Welcome back!!!`)
 			history.push("/");
@@ -41,7 +45,6 @@ const Login = (props) => {
 
 	const [disabled, setDisabled] = useState(false)
 	const [credentials, setCredentials] = useState({ email: "", password: "" })
-	let history = useHistory();
 
 	const handleSubmit = async (e) => {
 		setDisabled(true)
@@ -62,6 +65,9 @@ const Login = (props) => {
 			localStorage.setItem('token', json.authtoken);
 			localStorage.setItem('uname', json.uname);
 			localStorage.setItem('uemail', json.uemail);
+			if (json.lastLogin) {
+				localStorage.setItem('lastLogin', json.lastLogin);
+			}	
 			localStorage.removeItem('searchQuery')
 			NotificationManager.success("Welcome back!!!")
 			history.push("/");
@@ -106,7 +112,7 @@ const Login = (props) => {
 									<span className="me-auto">
 										<Link to="/signup" className="text-decoration-none">Need an Account?</Link>
 									</span>
-									<span className="ms-auto"><a href="/" className="forgot-pass text-decoration-none">Forgot Password?</a></span>
+									<span className="ms-auto"><Link to="/forgot-password" className="forgot-pass text-decoration-none">Forgot Password?</Link></span>
 								</div>
 								<input type="submit" value="Log In" disabled={disabled} className="btn py-3 btn-block w-100 btn-primary" />
 								<span className="d-block text-center my-4 text-muted">— or —</span>

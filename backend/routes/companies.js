@@ -55,10 +55,10 @@ class APIfeatures {
     const page = this.queryString.page * 1 || 1;
     const limit = this.queryString.limit * 1 || 10;
     let newLimit;
-    if (limit === 25 || limit === 50 || limit === 100) {
+    if (limit === 25 || limit === 50) {
       newLimit = limit;
     } else {
-      newLimit = 50;
+      newLimit = 25;
     }
     const skip = (page - 1) * newLimit;
     this.query = this.query.skip(skip).limit(newLimit);
@@ -389,6 +389,28 @@ router.get('/w/watchlist', fetchuser, async (req, res) => {
   } catch (error) {
     console.error(error.message);
     res.status(404).send("Not Found");
+  }
+
+})
+
+router.get('/suggestions/:name', async (req, res) => {
+
+  let name;
+  if (req.params.name) {
+    name = req.params.name;
+  }
+
+  try {
+    const company = await Company.find({ company_name: { $regex: name, $options: 'i' } }).select(['-_id', 'company_name']);
+
+    res.status(200).json({
+      status: 'success',
+      companies: company.map(comp => { return { label: comp.company_name, value: comp.company_name } })
+    });
+
+  } catch (error) {
+    console.error(error.message);
+    res.status(200).json({ status: "error", companies: [] });
   }
 
 })

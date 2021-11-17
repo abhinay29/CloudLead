@@ -4,6 +4,8 @@ export const Routes = {
   Signin: { path: "/login" },
   Signup: { path: "/signup" },
   Verify: { path: "/verify" },
+  ForgotPassword: { path: "/forgot-password" },
+  ResetPassword: { path: "/reset-password" },
   Export: { path: "/download" },
   PeopleSearch: { path: "/radar/people" },
   PeopleWatchlist: { path: "/radar/people/watchlist" },

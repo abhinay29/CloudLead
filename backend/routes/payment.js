@@ -8,6 +8,9 @@ const Payments = require('../models/Payments');
 const User = require('../models/User');
 const crypto = require("crypto");
 const transporter = require('../middleware/mailTransporter');
+const easyinvoice = require('easyinvoice');
+const fs = require('fs');
+
 
 const hostWebsite = process.env.APP_URL;
 const adminEmail = process.env.ADMIN_EMAIL;
@@ -52,6 +55,7 @@ router.post('/success', fetchuser, async (req, res) => {
   if (!req.user.id) {
     return res.status(200).json({ status: "Auth Fail" });
   }
+
   try {
     // getting the details back from our font-end
     const {
@@ -86,8 +90,6 @@ router.post('/success', fetchuser, async (req, res) => {
 
     const digest = shasum.digest("hex");
 
-    // const digest = hmac_sha256(orderCreationId + "|" + razorpayPaymentId, "w2lBtgmeuDUfnJVp43UpcaiT")
-
     if (digest !== razorpaySignature)
       return res.status(400).json({ msg: "Transaction not legit!" });
 
@@ -107,6 +109,7 @@ router.post('/success', fetchuser, async (req, res) => {
     });
 
     if (transaction) {
+
       User.updateOne(
         { _id: req.user.id },
         {
@@ -125,11 +128,59 @@ router.post('/success', fetchuser, async (req, res) => {
           if (err) {
             return res.status(200).json({ status: "error", error: err })
           } else {
-            transporter.sendMail({
-              from: `"Cloudlead" <${adminEmail}>`,
-              to: req.body.email,
-              subject: `Subscription of "${transaction.planName}" plan detail`,
-              html: `
+
+            let date = new Date(transaction.date);
+            date = date.toLocaleString();
+
+            const data = {
+              "currency": "INR",
+              "taxNotation": "GST",
+              "marginTop": 25,
+              "marginRight": 25,
+              "marginLeft": 25,
+              "marginBottom": 25,
+              "logo": "https://beta.cloudlead.in/logoBig.png",
+              // "background": "https://public.easyinvoice.cloud/img/watermark-draft.jpg", //or base64 //img or pdf
+              "sender": {
+                "company": "Cloudlead",
+                "address": "Baner",
+                "zip": "123123",
+                "city": "Pune",
+                "country": "India"
+                //"custom1": "custom value 1",
+                //"custom2": "custom value 2",
+                //"custom3": "custom value 3"
+              },
+              "client": {
+                "company": company,
+                "address": address,
+                "zip": pin,
+                "city": city,
+                "country": country
+                //"custom1": "custom value 1",
+                //"custom2": "custom value 2",
+                //"custom3": "custom value 3"
+              },
+              "invoiceNumber": transaction.orderId,
+              "invoiceDate": date,
+              "products": [
+                {
+                  "quantity": "1",
+                  "description": plan.name,
+                  "tax": 18,
+                  "price": plan.price_inr
+                },
+              ],
+              // "bottomNotice": "Kindly pay your invoice within 15 days.",    
+            };
+
+            easyinvoice.createInvoice(data, function (result) {
+
+              transporter.sendMail({
+                from: `"Cloudlead" <${adminEmail}>`,
+                to: email,
+                subject: `Subscription of "${transaction.planName}" plan detail`,
+                html: `
                 <p>Dear Customer,</p>
                 <p>Thank you for choosing Cloudlead.</p>
                 <p>You have subscribed "${transaction.planName}"</p>
@@ -137,10 +188,21 @@ router.post('/success', fetchuser, async (req, res) => {
                 <p>Have a wonderful day!</p>
                 <p>Team Cloudlead</p>
               `,
+                attachments: [
+                  {
+                    filename: transaction.orderId + ".pdf",
+                    path: "data:application/pdf;base64," + result.pdf,
+                    contentType: 'application/pdf'
+                  }
+                ],
+              });
+
             });
+
             res.status(200).json({ status: "success" });
           }
-        });
+        }
+      );
     } else {
       res.json({ status: "error", error: "Something went wrong" });
     }
@@ -149,6 +211,70 @@ router.post('/success', fetchuser, async (req, res) => {
     console.log(error);
     res.status(500).send(error);
   }
+})
+
+router.post('/invoice', fetchuser, async (req, res) => {
+  if (!req.user.id) {
+    return res.status(200).json({ status: "error", error: "Authentication failed" });
+  }
+
+  let orderId = req.body.orderId;
+
+  const trans = await Payments.findOne({ user: req.user.id, orderId: orderId });
+
+  if (!trans) return res.status(200).json({ status: "error", error: "Transaction not found" });
+
+  let date = new Date(trans.date);
+  date = date.toLocaleString();
+
+  const data = {
+    "currency": "INR",
+    "taxNotation": "GST",
+    "marginTop": 25,
+    "marginRight": 25,
+    "marginLeft": 25,
+    "marginBottom": 25,
+    "logo": "https://beta.cloudlead.in/logoBig.png",
+    // "background": "https://public.easyinvoice.cloud/img/watermark-draft.jpg", //or base64 //img or pdf
+    "sender": {
+      "company": "Cloudlead",
+      "address": "Baner",
+      "zip": "123123",
+      "city": "Pune",
+      "country": "India"
+      //"custom1": "custom value 1",
+      //"custom2": "custom value 2",
+      //"custom3": "custom value 3"
+    },
+    "client": {
+      "company": "Client Corp",
+      "address": "Clientstreet 456",
+      "zip": "4567 CD",
+      "city": "Clientcity",
+      "country": "Clientcountry",
+      "custom1": "+91 1231231234",
+      //"custom2": "custom value 2",
+      //"custom3": "custom value 3"
+    },
+    "invoiceNumber": trans.orderId,
+    "invoiceDate": date,
+    "products": [
+      {
+        "quantity": "1",
+        "description": trans.planName,
+        "tax": 18,
+        "price": trans.amount
+      },
+    ],
+    // "bottomNotice": "Kindly pay your invoice within 15 days.",    
+  };
+
+  easyinvoice.createInvoice(data, async function (result) {
+    return res.status(200).json({ status: "success", pdf: result.pdf })
+  });
+
+
+
 })
 
 module.exports = router

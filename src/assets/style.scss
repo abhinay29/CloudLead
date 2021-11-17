@@ -314,7 +314,7 @@ table th {
       white-space: nowrap;
       padding: .75rem .5rem;
       background-color: #eceff1 !important;
-      font-weight: 600;
+      font-weight: 700;
     }
   }
 
@@ -323,6 +323,10 @@ table th {
     height: 70px;
     border-bottom: 1px solid #dee2e6;
     // line-height: 1.5rem;
+
+    &:hover {
+      --bs-table-accent-bg: rgba(230, 236, 255, 0.5);
+    }
   }
 
   // &.table {

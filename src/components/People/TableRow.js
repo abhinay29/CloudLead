@@ -5,7 +5,7 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 const TableRow = (props) => {
 
-  const { TableData, showCompanyInfo, selectAll } = props;
+  const { TableData, showCompanyInfo, selectAll, showAllContacts } = props;
 
   const toogleSelectAll = (selectAll) => {
     var checkboxes = document.getElementsByClassName('selectContacts')
@@ -62,20 +62,22 @@ const TableRow = (props) => {
                   <input type="checkbox" className="form-check-input mt-0 selectContacts" value={data._id} />
                 </span>
                 <span>
-                  <span className="fw-bold">{data.first_name} {data.last_name}</span><br />
+                  <div className="fw-bold text-capitalize">{data.first_name} {data.last_name}</div>
+                  <div className="text-muted">{data.position}</div>
                   <div className="table_social_link mt-1">
                     <a href={data.linkedin_profile} target="_blank" rel="noreferrer" data-bs-toggle="tooltip" data-bs-placement="top" title="Linkedin Profile"><i className="fab fa-linkedin-in"></i></a>
                   </div>
                 </span>
               </div>
             </td>
-            <td className="title align-middle">{data.position}</td>
+            {/* <td className="title align-middle">{data.position}</td> */}
             <td className="name_of_company align-middle">
               <strong className="show_company" data-name="21st Century Software Solutions Pvt Ltd" style={{ "cursor": "pointer" }} onClick={() => { showCompanyInfo(data.company_name) }} >{data.company_name}</strong>
               <div className="table_social_link mt-1">
-                <a href={data.website} data-bs-toggle="tooltip" data-bs-placement="top" title="Website" target="_blank" rel="noreferrer"><i className="fas fa-globe"></i></a>
+                <a href={`http://${data.website}`} data-bs-toggle="tooltip" data-bs-placement="top" title="Website" target="_blank" rel="noreferrer"><i className="fas fa-globe"></i></a>
                 <a href={data.linkedin_link} data-bs-toggle="tooltip" data-bs-placement="top" title="Linkedin Link" target="_blank" rel="noreferrer"><i className="fab fa-linkedin-in"></i></a>
                 <a href="#" onClick={(e) => { e.preventDefault(); showCompanyInfo(data.company_name) }} title="View Company Profile"><i className="fas fa-eye small"></i></a>
+                <a href="#" title="Show all contacts from this company" onClick={(e) => { e.preventDefault(); showAllContacts(data.company_name) }}><i className="fas fa-user"></i></a>
               </div>
             </td>
             <td className="industry align-middle">{data.industry}</td>

@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { progressLoading } from '../../states/action-creator';
 import TableSkeleton from '../Skeleton/TableSkeleton';
 import NoRecordFound from './NoRecordFound';
-import Sidebar from '../Sidebar';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -265,6 +264,13 @@ const Table = (props) => {
 
   }, [selectAll])
 
+  const showAllContacts = (comp_name) => {
+    let query = 'company_name=' + comp_name;
+    localStorage.removeItem('searchQuery');
+    localStorage.setItem('searchQuery', query);
+    searchPeople();
+  }
+
   return (
 
     <>
@@ -326,7 +332,7 @@ const Table = (props) => {
                   </form>
                 </div>
               </span>
-              <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip" onClick={() => window.location.reload()} title="Refresh"><i className="fas fa-sync-alt"></i></button>
+              <button type="button" className="btn btn-sm btn-outline-primary bi-tooltip" onClick={() => window.location.reload()} title="Refresh"><i className="fas fa-redo-alt"></i></button>
             </div>
             <button type="button" className="btn btn-sm btn-primary bi-tooltip me-2" title="Back to Search" onClick={backToSearch}><i className="fas fa-search"></i> Back to Search</button>
             <button type="button" className="btn btn-sm btn-primary bi-tooltip me-2" onClick={() => { getContacts() }} title="Get Contacts"><i className="fas fa-envelope"></i> Get Contacts</button>
@@ -343,7 +349,7 @@ const Table = (props) => {
                       <span>Person's Name</span>
                     </div>
                   </th>
-                  <th>Title</th>
+                  {/* <th>Title</th> */}
                   <th>Company</th>
                   <th>Industry</th>
                   <th>Head Count</th>
@@ -357,7 +363,7 @@ const Table = (props) => {
               <tbody id="contactTable">
                 {skeletonLoading ? <TableSkeleton /> :
                   peoples.length !== 0 ?
-                    <TableRow TableData={peoples.data.contacts} showCompanyInfo={getCompanyInfo} selectAll={selectAll} />
+                    <TableRow TableData={peoples.data.contacts} showCompanyInfo={getCompanyInfo} selectAll={selectAll} showAllContacts={showAllContacts} />
                     : <NoRecordFound />
                 }
               </tbody>

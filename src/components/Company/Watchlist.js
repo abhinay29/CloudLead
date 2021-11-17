@@ -302,7 +302,7 @@ const Watchlist = () => {
                           <span>Person's Name</span>
                         </div>
                       </th>
-                      <th>Title</th>
+                      {/* <th>Title</th> */}
                       <th>Company</th>
                       <th>Industry</th>
                       <th>Head Count</th>

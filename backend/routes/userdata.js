@@ -6,6 +6,7 @@ const transporter = require('../middleware/mailTransporter');
 const bcrypt = require('bcryptjs');
 
 const User = require('../models/User');
+const Transactions = require('../models/Payments');
 const { savedSearch, savedCompanySearch } = require('../models/UserData');
 
 const adminEmail = process.env.ADMIN_EMAIL;
@@ -243,6 +244,15 @@ router.post('/update/billing', fetchuser, async (req, res) => {
     });
 })
 
+router.post('/billinghistory', fetchuser, async (req, res) => {
+  try {
+    const trans = await Transactions.find({ user: req.user.id }).select(['amount', 'date', 'orderId', 'status']).sort('-date');
+    res.status(200).json({ status: "success", data: trans });
+  } catch (error) {
+    return res.status(200).json({ status: "error", error: error })
+  }
+})
+
 router.post('/changepassword', fetchuser, async (req, res) => {
   const { currentPassword, newPassword } = req.body
   try {
@@ -271,7 +281,7 @@ router.post('/changepassword', fetchuser, async (req, res) => {
             from: `"Cloudlead" <${adminEmail}>`,
             to: user.email,
             subject: "Confirmation: Password Changed", // Subject line
-            html: `<h6>Dear Customer,</h6>
+            html: `<h6>Dear User,</h6>
               <p>You have successfully change password for your account.</p>
               <p> </p>
               <p>Have a wonderful day!</p>

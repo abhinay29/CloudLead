@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import UserMenu from './UserMenu'
 import { useSelector } from 'react-redux';
 import NotificationManager from 'react-notifications/lib/NotificationManager';
+import easyinvoice from 'easyinvoice';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -18,6 +19,27 @@ function Billing() {
     gst: false,
     gst_number: "",
   })
+
+  const [transactions, setTransactions] = useState([])
+
+  const fetchTransactions = async () => {
+    let url = `${API_URL}/api/user/billinghistory`;
+    let data = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'auth-token': localStorage.getItem('token'),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(billingInfo)
+    })
+    let parsedData = await data.json()
+    if (parsedData.status === 'success') {
+      setTransactions(parsedData.data);
+    }
+  }
+  useEffect(() => {
+    fetchTransactions();
+  }, [])
 
   useEffect(() => {
     if (userState.billing_info) {
@@ -52,6 +74,25 @@ function Billing() {
     }
   }
 
+  const downloadInvoice = async (orderId) => {
+    let url = `${API_URL}/api/payment/invoice`;
+    let update = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'auth-token': localStorage.getItem('token'),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ orderId: orderId, email: localStorage.getItem('uemail') })
+    })
+    let parsedData = await update.json()
+    if (parsedData.status === 'success') {
+      // NotificationManager.success('Success', 'Success!');
+      easyinvoice.download(`${orderId}.pdf`, parsedData.pdf);
+    } else {
+      NotificationManager.error(parsedData.error, 'Error!');
+    }
+  }
+
   return (
     <>
       <div className="fullHeightWithNavBar py-4">
@@ -61,7 +102,7 @@ function Billing() {
               <UserMenu />
             </div>
             <div className="col" style={{ "width": "100%" }}>
-              <div className="card">
+              <div className="card mb-3">
                 <div className="card-body">
                   <div className="cardTitle d-flex justify-content-between align-items-center mb-3">
                     <h5>Billing Information</h5>
@@ -122,12 +163,51 @@ function Billing() {
                   </form>
                 </div>
               </div>
+
+              <div className="card mb-5">
+                <div className="card-body">
+                  <div className="cardTitle mb-3">
+                    <h5>Billing History</h5>
+                  </div>
+                  <div className="table-responsive">
+                    <table className="table table-bordered mb-0">
+                      <thead>
+                        <tr>
+                          <th scope="col">Date</th>
+                          <th scope="col">Order ID</th>
+                          <th scope="col">Amount</th>
+                          <th scope="col">Status</th>
+                          <th scope="col">Receipt</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {transactions.length === 0 && <tr><td colSpan="5" className="py-3 text-center fs-6">No history found</td></tr>}
+                        {transactions.length > 0 && transactions.map(trans => {
+                          let date = new Date(trans.date);
+                          date = date.toLocaleDateString('en-UK');
+                          return (
+                            <tr key={trans.orderId}>
+                              <td>{date}</td>
+                              <td>{trans.orderId}</td>
+                              <td className="text-end">₹ {trans.amount}.00</td>
+                              <td>{trans.status}</td>
+                              <td>
+                                {trans.status === 'Completed' &&
+                                  <button className="btn btn-sm btn-primary" onClick={() => { downloadInvoice(trans.orderId) }}>Download Invoice</button>}
+                              </td>
+                            </tr>)
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="modal" id="upgradePlanModal" tabindex="-1">
+      <div className="modal" id="upgradePlanModal" tabIndex="-1">
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">

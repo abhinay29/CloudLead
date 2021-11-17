@@ -26,6 +26,8 @@ import ChangePassword from './components/User/ChangePassword';
 import Export from './components/People/Export';
 import Feedback from './components/User/Feedback';
 import Sidebar from './components/Sidebar';
+import ForgotPassword from './components/Auth/ForgotPassword';
+import ResetPassword from './components/Auth/ResetPassword';
 
 const RouteWithoutNavbar = ({ component: Component, ...rest }) => {
   return (
@@ -66,6 +68,8 @@ function App() {
           <RouteWithNavbar exact path={Routes.Feedback.path} component={Feedback} />
           <RouteWithoutNavbar exact path={Routes.Signup.path} component={Signup} />
           <RouteWithoutNavbar exact path={Routes.Signin.path} component={Login} />
+          <RouteWithoutNavbar exact path={Routes.ForgotPassword.path} component={ForgotPassword} />
+          <RouteWithoutNavbar exact path={`${Routes.ResetPassword.path}/:token`} component={ResetPassword} />
           <RouteWithoutNavbar exact path={`${Routes.Verify.path}/:token`} component={Verify} />
           <RouteWithoutNavbar exact path={`${Routes.Export.path}/:token`} component={Export} />
         </Switch>

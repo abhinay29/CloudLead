@@ -74,7 +74,9 @@ class APIfeatures {
   // }
 }
 
+
 router.get('/', fetchuser, async (req, res) => {
+
   if (
     req.query.first_name ||
     req.query.last_name ||
@@ -104,6 +106,17 @@ router.get('/', fetchuser, async (req, res) => {
       msg: "Invalid query string"
     });
   }
+
+  if (
+    req.query.first_name === "." ||
+    req.query.last_name === '.'
+  ) {
+    return res.status(200).json({
+      status: 'error',
+      msg: "Invalid query string"
+    });
+  }
+
 
   let newQuery = {};
 

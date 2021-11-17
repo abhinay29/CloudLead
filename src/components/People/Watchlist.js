@@ -21,7 +21,7 @@ const Watchlist = () => {
 
   const [page, setPage] = useState(1);
   const [people, setPeople] = useState(0)
-  const [selectAll, setSelectAll] = useState({ select: false, length: 100 });
+  const [selectAll, setSelectAll] = useState({ select: false, len: 100 });
   // eslint-disable-next-line
   const [uniqueComp, setUniqueComp] = useState(0)
   const [disAddBtn, setDisAddBtn] = useState(false)
@@ -268,7 +268,8 @@ const Watchlist = () => {
   }
 
   const changeViewLimit = (e) => {
-    setLimit(e.target.value)
+    setLimit(e.target.value);
+    getWatchlist();
   }
 
   useEffect(() => {
@@ -304,9 +305,13 @@ const Watchlist = () => {
                 <input type="checkbox" className="form-check-input" />
               </button>
               <ul className="dropdown-menu" aria-labelledby="selectDropdown">
-                <li><a className="dropdown-item select_contact" data-select="50" href="/" onClick={(e) => { e.preventDefault(); setSelectAll({ select: true, length: 25 }) }}>Select 25</a></li>
-                <li><a className="dropdown-item select_contact" data-select="100" href="/" onClick={(e) => { e.preventDefault(); setSelectAll({ select: true, length: 50 }) }}>Select 50</a></li>
-                <li><a className="dropdown-item select_contact" data-select="0" href="/" onClick={(e) => { e.preventDefault(); setSelectAll({ select: false, length: 100 }) }}>Clear Selection</a></li>
+                <li><a className="dropdown-item select_contact" data-select="25" href="/" onClick={(e) => { e.preventDefault(); setSelectAll({ select: true, len: 25 }) }}>Select 25</a></li>
+                <li><a className="dropdown-item select_contact" data-select="50" href="/" onClick={(e) => { e.preventDefault(); setSelectAll({ select: true, len: 50 }) }}>Select 50</a></li>
+                <li><a className="dropdown-item select_contact" data-select="100" href="/" onClick={(e) => { e.preventDefault(); setSelectAll({ select: true, len: 100 }) }}>Select 100</a></li>
+                <li><a className="dropdown-item select_contact" data-select="500" href="/" onClick={(e) => { e.preventDefault(); setSelectAll({ select: true, len: 500 }) }}>Select 500</a></li>
+                <li><a className="dropdown-item select_contact" data-select="1000" href="/" onClick={(e) => { e.preventDefault(); setSelectAll({ select: true, len: 1000 }) }}>Select 1000</a></li>
+                <li><a className="dropdown-item select_contact" data-select="2000" href="/" onClick={(e) => { e.preventDefault(); setSelectAll({ select: true, len: 2000 }) }}>Select 2000</a></li>
+                <li><a className="dropdown-item select_contact" data-select="0" href="/" onClick={(e) => { e.preventDefault(); setSelectAll({ select: false, len: 2000 }) }}>Clear Selection</a></li>
               </ul>
             </span>
             <button type="button" className="btn btn-sm btn-outline-primary text-success bi-tooltip" id="export_csv" data-bs-placement="top" title="Export CSV" onClick={handleExportSelectContact}><i className="fas fa-download"></i></button>
@@ -371,20 +376,20 @@ const Watchlist = () => {
               <tr>
                 <th>
                   <div className="d-flex align-items-center">
-                    <input type="checkbox" onClick={(e) => { setSelectAll({ select: e.target.checked, length: 100 }) }} className="form-check-input mt-0 me-3" />
+                    <input type="checkbox" id="selectAllCheckbox" onChange={(e) => { setSelectAll({ select: e.target.checked, len: limit }) }} className="form-check-input mt-0 me-3" />
                     <span>Person's Name</span>
                   </div>
                 </th>
-                <th>Title</th>
+                {/* <th>Title</th> */}
                 <th>Company</th>
                 <th>Industry</th>
                 <th>Head Count</th>
                 <th>Email</th>
-                <th nowrap={true}>Boardline Numbers</th>
-                <th nowrap>Direct Dial</th>
-                <th nowrap>Contact Location</th>
-                <th nowrap>Company Location</th>
-                <th nowrap>Added on</th>
+                <th>Boardline Numbers</th>
+                <th>Direct Dial</th>
+                <th>Contact Location</th>
+                <th>Company Location</th>
+                <th>Added on</th>
               </tr>
             </thead>
             <tbody id="contactTable">

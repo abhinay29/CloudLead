@@ -89,15 +89,6 @@ function SubscribePlan() {
       phoneNumberInput.classList.add('is-invalid');
       return false;
     }
-    // phone: "",
-    //   company: "",
-    //     address: "",
-    //       city: "",
-    //         state: "",
-    //           country: "",
-    //             pin: "",
-    //               gst: false,
-    //                 gst_number: "",
   }
 
   const handleFormSubmit = async (e) => {
@@ -143,7 +134,7 @@ function SubscribePlan() {
       body: JSON.stringify({
         phone: profile.phone,
         plan: selectedPlan.plan_id,
-        company: profile.company_name
+        company: profile.company
       })
     });
     let res = await Subscribe.json()
@@ -198,8 +189,6 @@ function SubscribePlan() {
 
   async function displayRazorpay() {
 
-    console.log("trigger click")
-
     const res = await loadScript(
       "https://checkout.razorpay.com/v1/checkout.js"
     );
@@ -225,15 +214,18 @@ function SubscribePlan() {
       amount: amount.toString(),
       currency: currency,
       name: "TB.net",
-      description: "Transaction for " + selectedPlan.plan_id,
+      description: "Transaction for " + selectedPlan.name,
       image: '/logo.png',
       order_id: order_id,
       handler: async function (response) {
+
+        console.log(response);
+
         const data = {
           name: uname,
           email: uemail,
           contact: profile.phone,
-          company: profile.company_name,
+          company: profile.company,
           country_code: profile.country_code,
           address: profile.address,
           city: profile.city,
@@ -528,7 +520,7 @@ function SubscribePlan() {
                         <div className="col-md-12">
                           <div className="mb-3">
                             <label htmlFor="" className="form-label">Billing Address <span className="text-danger">*</span></label>
-                            <input name="" className="form-control" name="address" onChange={handleInput} value={profile.address} required />
+                            <input className="form-control" name="address" onChange={handleInput} value={profile.address} required />
                           </div>
                         </div>
                       </div>

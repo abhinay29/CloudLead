@@ -100,7 +100,7 @@ const Navbar = () => {
 							</li>
 						</ul> */}
 						<ul className="navbar-nav ms-auto">
-							<li className="nav-item me-3"><a href="https://cloudlead.in" className="nav-link active" target="_blank"><i className="fas fa-globe"></i> Back to WebSite</a></li>
+							<li className="nav-item me-3 d-flex align-items-center"><a href="https://cloudlead.in" className="nav-link active btn-sm px-3" target="_blank"><i className="fas fa-globe me-2"></i> Back to Website</a></li>
 							<li className="nav-item me-3 d-flex align-items-center">
 								<button type="button" className="btn btn-sm btn-warning fw-bold px-3">Get Chrome Extension</button>
 							</li>
@@ -174,6 +174,7 @@ const Navbar = () => {
 										<div className="text-center">
 											<h6 className="fw-bold">{userState.first_name} {userState.last_name}</h6>
 											<button type="button" onClick={handleLogout} className="btn btn-sm btn-danger"><i className="fas fa-power-off"></i> Logout</button>
+											<p className="mt-2 fw-bold" style={{ "fontSize": ".75rem" }}>Last Login: {localStorage.getItem('lastLogin')}</p>
 										</div>
 										<hr />
 										<div className="text-center">

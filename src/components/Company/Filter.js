@@ -33,6 +33,7 @@ const Filter = (props) => {
 
   const [cities, setCities] = useState([]);
   const [states, setStates] = useState([]);
+  const [companySuggestions, setCompanySuggestions] = useState([]);
 
   const handleCity = async (e) => {
     let query = e.target.value;
@@ -57,6 +58,21 @@ const Filter = (props) => {
       const response = await fetch(url)
       const stateRes = await response.json();
       setStates(stateRes);
+    }
+  }
+
+  const getCompanySuggestions = async (e) => {
+    let query = e.target.value;
+    if (!query || query.length < 3) {
+      setCompanySuggestions([])
+      return
+    } else {
+      let url = `${API_URL}/api/companies/suggestions/` + query;
+      const response = await fetch(url)
+      const compSuggRes = await response.json();
+      if (compSuggRes.status === 'success') {
+        setCompanySuggestions(compSuggRes.companies);
+      }
     }
   }
 
@@ -363,12 +379,25 @@ const Filter = (props) => {
               <h6 className="fw-bold">Search by Company</h6>
               <div className="row mb-3">
                 <div className="col-md-4 col-lg-4 position-relative">
-                  <CreatableSelect
+                  {/* <CreatableSelect
                     defaultValue={[]}
                     name="company_name"
                     value={defaultValue.company_name}
                     onChange={handleSelectChange}
                     noOptionsMessage={({ inputValue }) => ""}
+                    isMulti
+                    className="basic-multi-select"
+                    placeholder="Company Name"
+                  /> */}
+                  <Select
+                    defaultValue={[]}
+                    name="company_name"
+                    closeMenuOnSelect={false}
+                    onChange={handleSelectChange}
+                    onKeyDown={getCompanySuggestions}
+                    value={defaultValue.company_name}
+                    options={companySuggestions}
+                    noOptionsMessage={({ inputValue }) => "Type to search..."}
                     isMulti
                     className="basic-multi-select"
                     placeholder="Company Name"

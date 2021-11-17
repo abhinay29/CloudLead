@@ -114,6 +114,23 @@ router.post('/login', [
       return res.status(200).json({ success, error: "Please verify your email address, we have sent you a confirmation email, please check your inbox." });
     }
 
+    let lastLogin = "";
+
+    if (user.loginHistory) {
+      let history = user.loginHistory.length;
+      if (history > 0) {
+        lastLogin = user.loginHistory[history - 1].date;
+        lastLogin = new Date(lastLogin);
+        lastLogin = lastLogin.toLocaleString();
+      }
+    }
+
+    let logLogin = await User.findOneAndUpdate(
+      { _id: user._id },
+      { $push: { loginHistory: { date: Date.now() } } },
+      { new: true }
+    );
+
     const data = {
       user: {
         id: user.id
@@ -123,13 +140,12 @@ router.post('/login', [
     success = true;
     const uemail = email;
     const uname = user.first_name + " " + user.last_name;
-    res.json({ success, authtoken, uemail, uname })
+    res.json({ success, authtoken, uemail, uname, lastLogin })
 
   } catch (error) {
     console.error(error.message);
-    res.status(401).send("Authentication failed.");
+    res.status(401).send({ success: false, error: "Authentication failed." });
   }
-
 
 });
 
@@ -166,6 +182,24 @@ router.post('/googlelogin', async (req, res) => {
           })
         } else {
           if (user) {
+
+            let lastLogin = "";
+
+            if (user.loginHistory) {
+              let history = user.loginHistory.length;
+              if (history > 0) {
+                lastLogin = user.loginHistory[history - 1].date;
+                lastLogin = new Date(lastLogin);
+                lastLogin = lastLogin.toLocaleString();
+              }
+            }
+
+            let logLogin = User.findOneAndUpdate(
+              { _id: user._id },
+              { $push: { loginHistory: { date: Date.now() } } },
+              { new: true }
+            );
+
             const data = {
               user: {
                 id: user.id
@@ -175,7 +209,7 @@ router.post('/googlelogin', async (req, res) => {
             success = true;
             const uemail = email;
             const uname = user.first_name + " " + user.last_name;
-            return res.status(200).json({ success, authtoken, uemail, uname })
+            return res.status(200).json({ success, authtoken, uemail, uname, lastLogin })
           } else {
             let createUser = new User({
               first_name: given_name,
@@ -212,6 +246,60 @@ router.post('/googlelogin', async (req, res) => {
   });
 })
 
+router.post('/forgotpassword', async (req, res) => {
+  try {
+    let user = await User.findOne({ email: req.body.email });
+    if (user) {
+      let token = getToken(64);
+      let UpdateToken = await User.findByIdAndUpdate({ _id: user._id }, { token: token }, { new: true });
+      if (UpdateToken) {
+        let sendMail = await transporter.sendMail({
+          from: `"Cloudlead" <${adminEmail}>`,
+          to: req.body.email,
+          subject: "Reset your cloudlead account password",
+          html: `<p>Dear User,</p>
+            <p>Please click on following link to reset your account password.</p>
+            <p><a href="${hostWebsite}/reset-password/${token}">${hostWebsite}/reset-password/${token}</a></p>
+            <p>Have a wonderful day!</p>
+            <p>Team Cloudlead</p>
+          `,
+        });
+        res.status(200).send({ status: 'success' })
+      }
+    } else {
+      res.status(200).send({ status: 'error' })
+    }
+  } catch (error) {
+    console.error(error.message);
+    res.status(400).send({ status: 'error', error: 'User not found' });
+  }
+})
 
+router.post('/resetpassword', async (req, res) => {
+  let user = await User.findOne({ token: req.body.token });
 
-module.exports = router
+  const salt = await bcrypt.genSalt(10);
+  const secPass = await bcrypt.hash(req.body.password, salt);
+
+  if (user) {
+    let setPassword = await User.findByIdAndUpdate({ _id: user._id }, { password: secPass, token: "" });
+
+    if (!setPassword) { return res.status(200).send({ status: 'error', error: 'Sorry, cannot set password this time.' }); }
+
+    let sendMail = await transporter.sendMail({
+      from: `"Cloudlead" <${adminEmail}>`,
+      to: user.email,
+      subject: "Cloudlead account password reset successfully",
+      html: `<p>Dear User,</p>
+              <p>Your Cloudlead account password has been reset successfully.</p>
+              <p>Have a wonderful day!</p>
+              <p>Team Cloudlead</p>
+            `,
+    });
+    res.status(200).send({ status: 'success' })
+  } else {
+    res.status(200).send({ status: 'error', error: 'Invalid link, please check email and click on link.' });
+  }
+})
+
+module.exports = router;

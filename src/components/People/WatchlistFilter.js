@@ -38,6 +38,7 @@ const WatchFilter = (props) => {
   })
   const [cities, setCities] = useState([]);
   const [states, setStates] = useState([]);
+  const [companySuggestions, setCompanySuggestions] = useState([]);
 
   const handleDepartment = (e) => {
 
@@ -79,6 +80,21 @@ const WatchFilter = (props) => {
       const response = await fetch(url)
       const stateRes = await response.json();
       setStates(stateRes);
+    }
+  }
+
+  const getCompanySuggestions = async (e) => {
+    let query = e.target.value;
+    if (!query || query.length < 3) {
+      setCompanySuggestions([])
+      return
+    } else {
+      let url = `${API_URL}/api/companies/suggestions/` + query;
+      const response = await fetch(url)
+      const compSuggRes = await response.json();
+      if (compSuggRes.status === 'success') {
+        setCompanySuggestions(compSuggRes.companies);
+      }
     }
   }
 
@@ -210,6 +226,39 @@ const WatchFilter = (props) => {
       return createGroup(indGrp.label, indGrp.options, 'industry')
     })
   ]
+
+  const resetFilter = () => {
+    let input = document.getElementsByTagName("input");
+    for (var i = 0, n = input.length; i < n; i++) {
+      input[i].checked = false;
+    }
+    setDefaultValue({
+      ...defaultValue,
+      first_name: [],
+      last_name: [],
+      position: [],
+      person_country: [],
+      person_state: [],
+      person_city: [],
+      company_name: [],
+      company_country: [],
+      company_state: [],
+      company_city: [],
+      role_finance: [],
+      role_hr: [],
+      role_marketing: [],
+      role_purchase: [],
+      role_operation: [],
+      role_corporate: [],
+      role_it: [],
+      role_others: [],
+      company_size_range: [],
+      revenue_range: [],
+      industry: [],
+      domain: [],
+      keyword: [],
+    });
+  }
 
   return (
 
@@ -627,12 +676,15 @@ const WatchFilter = (props) => {
                 <h6 className="fw-bold">Search by Company</h6>
                 <div className="row mb-3">
                   <div className="col-md-4 col-lg-4 position-relative">
-                    <CreatableSelect
+                    <Select
                       defaultValue={[]}
                       name="company_name"
+                      closeMenuOnSelect={false}
                       onChange={handleSelectChange}
+                      onKeyDown={getCompanySuggestions}
                       value={defaultValue.company_name}
-                      noOptionsMessage={({ inputValue }) => "Type to add..."}
+                      options={companySuggestions}
+                      noOptionsMessage={({ inputValue }) => "Type to search..."}
                       isMulti
                       className="basic-multi-select"
                       placeholder="Company Name"
@@ -767,6 +819,7 @@ const WatchFilter = (props) => {
       <div className="modal-footer justify-content-center">
         <button type="button" className="btn btn-secondary" onClick={() => closeModal('searchModal')}>Close</button>
         <button type="submit" className="btn btn-primary"><i className="fas fa-filter"></i> Filter</button>
+        <button type="button" className="btn btn-outline-secondary" onClick={resetFilter}>Reset</button>
       </div>
     </form >
 

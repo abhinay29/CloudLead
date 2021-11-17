@@ -39,6 +39,7 @@ const Filter = (props) => {
   })
   const [cities, setCities] = useState([]);
   const [states, setStates] = useState([]);
+  const [companySuggestions, setCompanySuggestions] = useState([]);
 
   const handleDepartment = (e) => {
 
@@ -80,6 +81,21 @@ const Filter = (props) => {
       const response = await fetch(url)
       const stateRes = await response.json();
       setStates(stateRes);
+    }
+  }
+
+  const getCompanySuggestions = async (e) => {
+    let query = e.target.value;
+    if (!query || query.length < 3) {
+      setCompanySuggestions([])
+      return
+    } else {
+      let url = `${API_URL}/api/companies/suggestions/` + query;
+      const response = await fetch(url)
+      const compSuggRes = await response.json();
+      if (compSuggRes.status === 'success') {
+        setCompanySuggestions(compSuggRes.companies);
+      }
     }
   }
 
@@ -155,6 +171,9 @@ const Filter = (props) => {
       setSkeletonLoading(false)
       dispatch(progressLoading(100))
       dispatch(setPeopleSearchResults(parsedData));
+    } else if (parsedData.status === 'error') {
+      dispatch(progressLoading(100))
+      NotificationManager.error(parsedData.msg);
     }
     setDisSearchBtn(false);
 
@@ -1060,12 +1079,15 @@ const Filter = (props) => {
                 <h6 className="fw-bold">Search by Company</h6>
                 <div className="row mb-3">
                   <div className="col-md-4 col-lg-4 position-relative">
-                    <CreatableSelect
+                    <Select
                       defaultValue={[]}
                       name="company_name"
+                      closeMenuOnSelect={false}
                       onChange={handleSelectChange}
+                      onKeyDown={getCompanySuggestions}
                       value={defaultValue.company_name}
-                      noOptionsMessage={({ inputValue }) => "Type to add..."}
+                      options={companySuggestions}
+                      noOptionsMessage={({ inputValue }) => "Type to search..."}
                       isMulti
                       className="basic-multi-select"
                       placeholder="Company Name"
@@ -1225,7 +1247,7 @@ const Filter = (props) => {
                     </div>
                   </div>
                 </span>
-                <Link to="/radar/people/watchlist" className="btn btn-primary ms-3"><i className="fas fa-bookmark"></i> My Watchlist</Link>
+                <Link to="/radar/people/watchlist" className="btn btn-primary d-flex align-items-center ms-3"><i className="fas fa-bookmark me-2"></i> My Watchlist</Link>
               </div>
             </form>
           </div>

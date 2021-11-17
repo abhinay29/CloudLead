@@ -60,6 +60,9 @@ const UserSchema = new Schema({
         type: String,
         default: null,
         unique: true,
+    },
+    loginHistory: {
+        type: Array
     }
 });
 const User = mongoose.model('users', UserSchema);

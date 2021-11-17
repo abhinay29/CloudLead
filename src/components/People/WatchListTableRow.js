@@ -30,14 +30,14 @@ const WatchListTableRow = (props) => {
     for (var i = 0, n = checkboxes.length; i < n; i++) {
       checkboxes[i].checked = false;
     }
-    let length = selectAll.length;
-    if (length === 50) {
-      length = (checkboxes.length > 50) ? selectAll.length : checkboxes.length;
-    } else if (length === 100) {
-      length = (checkboxes.length < 100) ? checkboxes.length : selectAll.length
+    let length = selectAll.len;
+    if (length === 25) {
+      length = (checkboxes.length > 25) ? selectAll.len : checkboxes.length;
+    } else if (length === 50) {
+      length = (checkboxes.length < 50) ? checkboxes.length : selectAll.len
     }
-    if (length === checkboxes.length) {
-
+    if (length > checkboxes.length) {
+      length = checkboxes.length;
     }
     for (var i = 0, n = length; i < n; i++) {
       checkboxes[i].checked = selectAll.select;
@@ -57,14 +57,15 @@ const WatchListTableRow = (props) => {
                   <input type="checkbox" className="form-check-input mt-0 selectContacts" value={data._id} />
                 </span>
                 <span>
-                  <span className="fw-bold">{data.first_name} {data.last_name}</span><br />
+                  <div className="fw-bold">{data.first_name} {data.last_name}</div>
+                  <div className="text-muted">{data.position}</div>
                   <div className="table_social_link mt-1">
                     <a href={data.linkedin_profile} target="_blank" rel="noreferrer" data-bs-toggle="tooltip" data-bs-placement="top" title="Linkedin Profile"><i className="fab fa-linkedin-in"></i></a>
                   </div>
                 </span>
               </div>
             </td>
-            <td className="title align-middle">{data.position}</td>
+            {/* <td className="title align-middle">{data.position}</td> */}
             <td className="name_of_company align-middle">
               <strong className="show_company" data-name="21st Century Software Solutions Pvt Ltd" style={{ "cursor": "pointer" }} onClick={() => { showCompanyInfo(data.company_name) }} >{data.company_name}</strong>
               <div className="table_social_link mt-1">
@@ -74,8 +75,8 @@ const WatchListTableRow = (props) => {
               </div>
             </td>
             <td className="industry align-middle">{data.industry}</td>
-            <td className="head-count align-middle" nowrap="true">{data.company_size_range}</td>
-            <td className="align-middle" id={`unlock_${data._id}`} nowrap="true">
+            <td className="head-count align-middle">{data.company_size_range}</td>
+            <td className="align-middle" id={`unlock_${data._id}`}>
               {data.primary_email} <br />
               <Badge confidence={data.primary_mai_confidence} />
               <span className="ms-2" style={{ "cursor": "pointer" }}><i className="far fa-copy"></i></span>

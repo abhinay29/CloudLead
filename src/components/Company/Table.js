@@ -313,8 +313,8 @@ const Table = (props) => {
               <button type="button" className="btn-close" onClick={() => closeModal('showContactModal')} aria-label="Close"></button>
             </div>
             <div className="modal-body">
-              <div className="table-responsive border-bottom"
-                style={{ "height": "calc(100vh - 150px)", "overflowY": "scroll", "padding": "0 10px", "margin": "0 -10px" }}
+              <div className="table-responsive border"
+                style={{ "height": "calc(100vh - 150px)", "overflowY": "scroll" }}
               >
                 <table className="table table-borderless tableFixHead mb-0" id="peopleTable">
                   <thead>
@@ -325,7 +325,7 @@ const Table = (props) => {
                           <span>Person's Name</span>
                         </div>
                       </th>
-                      <th>Title</th>
+                      {/* <th>Title</th> */}
                       <th>Company</th>
                       <th>Industry</th>
                       <th>Head Count</th>
