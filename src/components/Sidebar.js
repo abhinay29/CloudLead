@@ -37,8 +37,8 @@ function Sidebar() {
             <span className="title">Companies</span>
           </Link>
         </li>
-        <li>
-          <Link to="lists">
+        <li className={`${location.pathname === '/sequences' ? "active" : ""}`}>
+          <Link to="/sequences">
             <span className="icon"><i className="far fa-list-alt"></i></span>
             <span className="title">Sequences</span>
           </Link>

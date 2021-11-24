@@ -13,7 +13,6 @@ import { countryGroup } from "../Data/countries"
 import { useDispatch } from 'react-redux';
 import { progressLoading, setPeopleSearchResults } from '../../states/action-creator';
 import { NotificationManager } from 'react-notifications';
-import Sidebar from '../Sidebar';
 import { Link } from 'react-router-dom';
 
 const API_URL = process.env.REACT_APP_API_URL;

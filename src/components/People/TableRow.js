@@ -16,11 +16,6 @@ const TableRow = (props) => {
 
   toogleSelectAll(selectAll)
 
-  // const showContact = (res, unlockID) => {
-
-
-  // }
-
   const addToWatchList = async (personId) => {
     const watchList = await fetch(`${API_URL}/api/contacts/unlock`, {
       method: 'POST',
@@ -59,7 +54,7 @@ const TableRow = (props) => {
             <td className="name_of_contact align-middle">
               <div className="d-flex align-items-center">
                 <span className="me-3">
-                  <input type="checkbox" className="form-check-input mt-0 selectContacts" value={data._id} />
+                  <input type="checkbox" className="form-check-input mt-0 selectContacts" value={data._id} data-unlocked={data.unlocked_email} />
                 </span>
                 <span>
                   <div className="fw-bold text-capitalize">{data.first_name} {data.last_name}</div>

@@ -3,7 +3,6 @@ import CompanyContext from '../Context/Company/CompanyContext';
 import Pagination from "react-js-pagination";
 import TableRow from './TableRow'
 import ContactTableRow from '../People/TableRow'
-
 import { NotificationManager } from 'react-notifications';
 import { useDispatch } from 'react-redux';
 import { progressLoading } from '../../states/action-creator';
@@ -75,9 +74,9 @@ const Table = (props) => {
   const [company_info, setCompInfo] = useState({})
 
 
-  const getCompanyInfo = async (comp_name) => {
+  const getCompanyInfo = async (comp_id) => {
     dispatch(progressLoading(40))
-    const data = await fetch(`${API_URL}/api/companies/${comp_name}`)
+    const data = await fetch(`${API_URL}/api/companies/byid/${comp_id}`)
     const CompData = await data.json()
 
     if (CompData.status === 'success') {

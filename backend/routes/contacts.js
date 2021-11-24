@@ -96,8 +96,7 @@ router.get('/', fetchuser, async (req, res) => {
     req.query.company_type ||
     req.query.keyword ||
     req.query.domain ||
-    req.query.revenue_range ||
-    req.query.product_services
+    req.query.revenue_range
   ) {
     // Nothing happen here jump to try {} catch {}
   } else {

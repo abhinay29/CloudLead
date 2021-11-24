@@ -16,4 +16,5 @@ export const Routes = {
   Settings: { path: "/settings" },
   ChangePassword: { path: "/change-password" },
   Feedback: { path: "/feedback" },
+  Sequences: { path: "/sequences" },
 };

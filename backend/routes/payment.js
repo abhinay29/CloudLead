@@ -227,6 +227,9 @@ router.post('/invoice', fetchuser, async (req, res) => {
   let date = new Date(trans.date);
   date = date.toLocaleString();
 
+  let amount = trans.amount;
+  let subTotal = (amount * 100 / 118);
+
   const data = {
     "currency": "INR",
     "taxNotation": "GST",
@@ -263,7 +266,7 @@ router.post('/invoice', fetchuser, async (req, res) => {
         "quantity": "1",
         "description": trans.planName,
         "tax": 18,
-        "price": trans.amount
+        "price": subTotal
       },
     ],
     // "bottomNotice": "Kindly pay your invoice within 15 days.",    

@@ -2,18 +2,19 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const CompanySchema = new Schema({
-  department: {
+  company_id: {
     type: String,
+    unique: true,
+    require: true,
   },
   company_size_range: {
     type: String,
   },
-  Company_type: {
+  company_type: {
     type: String,
   },
   company_name: {
     type: String,
-    unique: true,
   },
   company_city: {
     type: String,
@@ -27,13 +28,7 @@ const CompanySchema = new Schema({
   revenue_range: {
     type: String,
   },
-  industry: {
-    type: String,
-  },
-  seniority_level: {
-    type: String,
-  },
-  position: {
+  linkedin_link: {
     type: String,
   },
   keyword: {
@@ -41,7 +36,10 @@ const CompanySchema = new Schema({
   },
   domain: {
     type: String,
+  },
+  website: {
+    type: String,
   }
 });
 
-module.exports = mongoose.model('companies', CompanySchema);
+module.exports = mongoose.model('data_companies', CompanySchema);

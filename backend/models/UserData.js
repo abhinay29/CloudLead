@@ -50,17 +50,18 @@ const SavedCompanySearch = new Schema({
 const savedCompanySearch = mongoose.model('saved_company_search', SavedCompanySearch);
 
 const List = new Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'users',
+    required: true,
+    unique: false
+  },
   list_name: {
     type: String,
     required: true,
   },
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'users',
-    required: true
-  },
   list_data: {
-    type: Object,
+    type: Array,
     required: true,
   },
   created_at: {
@@ -69,8 +70,10 @@ const List = new Schema({
   },
 })
 
+const sequenceList = mongoose.model('sequences', List);
+
 module.exports = {
   savedSearch: savedSearch,
   savedCompanySearch: savedCompanySearch,
-  List: List
+  sequenceList: sequenceList
 }

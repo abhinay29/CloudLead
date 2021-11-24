@@ -105,100 +105,104 @@ function Billing() {
               <div className="card mb-3">
                 <div className="card-body">
                   <div className="cardTitle d-flex justify-content-between align-items-center mb-3">
-                    <h5>Billing Information</h5>
+                    <h5>Billing</h5>
                     <button type="button" className="btn btn-sm btn-primary">Upgrade Plan</button>
                   </div>
-                  <form action="" onSubmit={handleSubmit}>
-                    <div className="row">
-                      <div className="col-md-12">
-                        <div className="mb-3">
-                          <label htmlFor="" className="form-label">Billing Address</label>
-                          <input type="text" className="form-control" name="address" onChange={handleInput} value={billingInfo.address} required />
-                        </div>
-                      </div>
+                  <nav>
+                    <div className="nav nav-tabs" id="nav-tab" role="tablist">
+                      <button className="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#billingInfo" type="button" role="tab" aria-controls="billingInfo" aria-selected="true">Billing Information</button>
+                      <button className="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#billingHistory" type="button" role="tab" aria-controls="billingHistory" aria-selected="false">Billing History</button>
                     </div>
-                    <div className="row">
-                      <div className="col-md-3">
-                        <div className="mb-3">
-                          <label htmlFor="" className="form-label">City</label>
-                          <input type="text" className="form-control" name="city" onChange={handleInput} value={billingInfo.city} required />
+                  </nav>
+                  <div className="tab-content mt-3" id="nav-tabContent">
+                    <div className="tab-pane fade show active" id="billingInfo" role="tabpanel" aria-labelledby="nbillingInfo-tab">
+                      <form action="" onSubmit={handleSubmit}>
+                        <div className="row">
+                          <div className="col-md-12">
+                            <div className="mb-3">
+                              <label htmlFor="" className="form-label">Billing Address</label>
+                              <input type="text" className="form-control" name="address" onChange={handleInput} value={billingInfo.address} required />
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div className="col-md-3">
-                        <div className="mb-3">
-                          <label htmlFor="" className="form-label">State</label>
-                          <input type="text" className="form-control" name="state" onChange={handleInput} value={billingInfo.state} required />
+                        <div className="row">
+                          <div className="col-md-3">
+                            <div className="mb-3">
+                              <label htmlFor="" className="form-label">City</label>
+                              <input type="text" className="form-control" name="city" onChange={handleInput} value={billingInfo.city} required />
+                            </div>
+                          </div>
+                          <div className="col-md-3">
+                            <div className="mb-3">
+                              <label htmlFor="" className="form-label">State</label>
+                              <input type="text" className="form-control" name="state" onChange={handleInput} value={billingInfo.state} required />
+                            </div>
+                          </div>
+                          <div className="col-md-3">
+                            <div className="mb-3">
+                              <label htmlFor="" className="form-label">Country</label>
+                              <input type="text" className="form-control" name="country" onChange={handleInput} value={billingInfo.country} required />
+                            </div>
+                          </div>
+                          <div className="col-md-3">
+                            <div className="mb-3">
+                              <label htmlFor="" className="form-label">Pin Code</label>
+                              <input type="text" className="form-control" name="pin" onChange={handleInput} value={billingInfo.pin} required />
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div className="col-md-3">
-                        <div className="mb-3">
-                          <label htmlFor="" className="form-label">Country</label>
-                          <input type="text" className="form-control" name="country" onChange={handleInput} value={billingInfo.country} required />
-                        </div>
-                      </div>
-                      <div className="col-md-3">
-                        <div className="mb-3">
-                          <label htmlFor="" className="form-label">Pin Code</label>
-                          <input type="text" className="form-control" name="pin" onChange={handleInput} value={billingInfo.pin} required />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="col-md-6">
-                        <div className="mb-3">
-                          <div className="form-check form-switch">
-                            <label className="form-check-label" style={{ "fontWeight": "600" }} htmlFor="gstApplicable">GST Applicable?(Optional)</label>
-                            <input className="form-check-input" type="checkbox" role="switch" id="gstApplicable" name="gst" onChange={handleInput} checked={billingInfo.gst} />
+                        <div className="row">
+                          <div className="col-md-6">
+                            <div className="mb-3">
+                              <div className="form-check form-switch">
+                                <label className="form-check-label" style={{ "fontWeight": "600" }} htmlFor="gstApplicable">GST Applicable?(Optional)</label>
+                                <input className="form-check-input" type="checkbox" role="switch" id="gstApplicable" name="gst" onChange={handleInput} checked={billingInfo.gst} />
+                              </div>
+                            </div>
+                            <div className="mb-3">
+                              <label htmlFor="" className="form-label">GST Number</label>
+                              <input type="text" className="form-control" name="gst_number" onChange={handleInput} value={billingInfo.gst_number} required={billingInfo.gst} />
+                            </div>
                           </div>
                         </div>
                         <div className="mb-3">
-                          <label htmlFor="" className="form-label">GST Number</label>
-                          <input type="text" className="form-control" name="gst_number" onChange={handleInput} value={billingInfo.gst_number} required={billingInfo.gst} />
+                          <button type="submit" className="btn btn-primary px-5"><i className="fas fa-save me-2"></i>Save</button>
                         </div>
+                      </form>
+                    </div>
+                    <div className="tab-pane fade" id="billingHistory" role="tabpanel" aria-labelledby="billingHistory-tab">
+                      <div className="table-responsive">
+                        <table className="table table-bordered mb-0">
+                          <thead>
+                            <tr>
+                              <th scope="col">Date</th>
+                              <th scope="col">Order ID</th>
+                              <th scope="col">Amount</th>
+                              <th scope="col">Status</th>
+                              <th scope="col">Receipt</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {transactions.length === 0 && <tr><td colSpan="5" className="py-3 text-center fs-6">No history found</td></tr>}
+                            {transactions.length > 0 && transactions.map(trans => {
+                              let date = new Date(trans.date);
+                              date = date.toLocaleDateString('en-UK');
+                              return (
+                                <tr key={trans.orderId}>
+                                  <td>{date}</td>
+                                  <td>{trans.orderId}</td>
+                                  <td className="text-end">₹ {trans.amount}.00</td>
+                                  <td>{trans.status}</td>
+                                  <td>
+                                    {trans.status === 'Completed' &&
+                                      <button className="btn btn-sm btn-primary" onClick={() => { downloadInvoice(trans.orderId) }}>Download Invoice</button>}
+                                  </td>
+                                </tr>)
+                            })}
+                          </tbody>
+                        </table>
                       </div>
                     </div>
-                    <div className="mb-3">
-                      <button type="submit" className="btn btn-primary px-5"><i className="fas fa-save me-2"></i>Save</button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-
-              <div className="card mb-5">
-                <div className="card-body">
-                  <div className="cardTitle mb-3">
-                    <h5>Billing History</h5>
-                  </div>
-                  <div className="table-responsive">
-                    <table className="table table-bordered mb-0">
-                      <thead>
-                        <tr>
-                          <th scope="col">Date</th>
-                          <th scope="col">Order ID</th>
-                          <th scope="col">Amount</th>
-                          <th scope="col">Status</th>
-                          <th scope="col">Receipt</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {transactions.length === 0 && <tr><td colSpan="5" className="py-3 text-center fs-6">No history found</td></tr>}
-                        {transactions.length > 0 && transactions.map(trans => {
-                          let date = new Date(trans.date);
-                          date = date.toLocaleDateString('en-UK');
-                          return (
-                            <tr key={trans.orderId}>
-                              <td>{date}</td>
-                              <td>{trans.orderId}</td>
-                              <td className="text-end">₹ {trans.amount}.00</td>
-                              <td>{trans.status}</td>
-                              <td>
-                                {trans.status === 'Completed' &&
-                                  <button className="btn btn-sm btn-primary" onClick={() => { downloadInvoice(trans.orderId) }}>Download Invoice</button>}
-                              </td>
-                            </tr>)
-                        })}
-                      </tbody>
-                    </table>
                   </div>
                 </div>
               </div>

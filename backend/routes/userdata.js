@@ -7,7 +7,7 @@ const bcrypt = require('bcryptjs');
 
 const User = require('../models/User');
 const Transactions = require('../models/Payments');
-const { savedSearch, savedCompanySearch } = require('../models/UserData');
+const { savedSearch, savedCompanySearch, sequenceList } = require('../models/UserData');
 
 const adminEmail = process.env.ADMIN_EMAIL;
 
@@ -140,57 +140,98 @@ router.get('/savedcompanysearch', fetchuser, async (req, res) => {
 router.post('/add-to-list', fetchuser, async (req, res) => {
 
   const user_id = req.user.id;
-
   try {
 
-    try {
+    let CheckUser = await savedSearch.findOne({ userId: user_id });
+    let data = {
+      name: req.body.name,
+      query: req.body.query
+    }
+    let updateQuery = CheckUser.data;
+    updateQuery.push(data);
 
-      let CheckUser = await savedSearch.findOne({ userId: user_id });
-      let data = {
+    await savedSearch.findByIdAndUpdate(CheckUser._id, { $set: { data: updateQuery } }, { new: true })
+
+    res.status(200).json({ status: "success" })
+
+  } catch {
+    // console.log("Create")
+    let CreateSearch = await savedSearch.create({
+      userId: user_id,
+      data: [{
         name: req.body.name,
         query: req.body.query
-      }
-      let updateQuery = CheckUser.data;
-      updateQuery.push(data);
-
-      await savedSearch.findByIdAndUpdate(CheckUser._id, { $set: { data: updateQuery } }, { new: true })
-
-      res.status(200).json({ status: "success" })
-
-    } catch {
-      // console.log("Create")
-      let CreateSearch = await savedSearch.create({
-        userId: user_id,
-        data: [{
-          name: req.body.name,
-          query: req.body.query
-        }]
-      });
-      res.status(200).json({ status: "success" })
-    }
-
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).send("Internal Server Error");
+      }]
+    });
+    res.status(200).json({ status: "success" })
   }
 })
 
-router.post('/list/create', fetchuser, async (req, res) => {
+router.get('/list', fetchuser, async (req, res) => {
+  let lists = await sequenceList.find({ userId: req.user.id }).select(['list_name', '-_id']);
+  if (lists) {
+    res.status(200).json({
+      status: "success",
+      lists: lists.map(l => { return l.list_name })
+    })
+  } else {
+    res.status(200).send(false)
+  }
+})
 
-  const user_id = req.user.id;
+router.get('/list/detailed', fetchuser, async (req, res) => {
+  let lists = await sequenceList.find({ userId: req.user.id }).select(['list_name', 'list_data', '_id']);
+  if (lists) {
+    res.status(200).json({
+      status: "success",
+      lists: lists.map(l => {
+        return { id: l._id, name: l.list_name, rcptcount: l.list_data.length ? l.list_data.length : 0 }
+      })
+    })
+  } else {
+    res.status(200).send(false)
+  }
+})
 
-  console.log(req.body);
+router.post('/list/add', fetchuser, async (req, res) => {
 
-  res.status(200).json({ status: "success" });
+  const user_id = req.user.id
+  const listName = req.body.name
+  const ids = req.body.ids
 
-  // try {
+  // Check list exist
 
+  let check = await sequenceList.findOne({ userId: user_id, list_name: listName });
+  if (!check) {
+    const addList = await sequenceList.create({
+      userId: user_id,
+      list_name: listName,
+      list_data: ids
+    })
+    if (!addList) return res.status({ status: "error", error: "Cannot add list this time." })
 
+    return res.status(200).json({ status: "success", data: { id: addList._id, name: addList.list_name }, message: "List added to sequences successfully" });
 
-  // } catch (error) {
-  //   console.error(error.message);
-  //   res.status(500).send("Internal Server Error");
-  // }
+  } else {
+
+    let newList = check.list_data;
+    let count = newList.length;
+
+    ids.map(id => {
+      if (newList.indexOf(id) === -1) newList.push(id)
+    })
+
+    count = newList.length - count
+
+    const updateList = await sequenceList.findByIdAndUpdate({ _id: check._id }, {
+      list_data: newList
+    })
+
+    if (!updateList) return res.status(200).json({ status: "error", error: "Cannot update list this time." });
+
+    res.status(200).json({ status: "success", message: `${count} emails added to sequence list.`, count: count });
+  }
+
 })
 
 router.get('/checkphone/:phone', fetchuser, async (req, res) => {

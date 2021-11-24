@@ -33,3 +33,12 @@ export const setPeopleSearchResults = (searchData) => {
     })
   }
 }
+
+export const setSequenceList = (listObj) => {
+  return (dispatch) => {
+    dispatch({
+      type: 'sequenceList',
+      payload: listObj
+    })
+  }
+}

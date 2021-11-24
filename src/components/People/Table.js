@@ -5,9 +5,10 @@ import Pagination from "react-js-pagination";
 import TableRow from './TableRow'
 import { NotificationManager } from 'react-notifications';
 import { useDispatch, useSelector } from 'react-redux';
-import { progressLoading } from '../../states/action-creator';
+import { progressLoading, setSequenceList } from '../../states/action-creator';
 import TableSkeleton from '../Skeleton/TableSkeleton';
 import NoRecordFound from './NoRecordFound';
+import Select from "react-select";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -15,6 +16,7 @@ const Table = (props) => {
 
   const dispatch = useDispatch()
   const peopleSearchResults = useSelector(state => state.peopleSearchResults)
+  const sequences = useSelector(state => state.sequences)
 
   const context = useContext(PeopleContext);
   const { peoples, getPeoples, totalPeople, setTotalPeople, setUniqueComp, uniqueComp, setSkeletonLoading, skeletonLoading } = context;
@@ -187,34 +189,76 @@ const Table = (props) => {
     }
   }
 
+  const [sequenceListName, setSequenceListName] = useState("");
+
+  const handleSelectChange = (inVal) => {
+    setSequenceListName(inVal);
+  }
+
   const handleAddList = async (e) => {
     e.preventDefault();
     let newListName = document.getElementById('newListName');
-    let listName = document.getElementById('listName');
     let list_name = '';
     if (newListName.value) {
       list_name = newListName.value;
+      var check_List = sequences.filter(obj => (obj.label === list_name));
+      if (check_List.length === 0 || sequences.length === 0) {
+        let sl = sequences;
+        sl.push({ label: list_name, value: list_name });
+        dispatch(setSequenceList(sl));
+      }
     } else {
-      if (listName.value) {
-        list_name = listName.value;
+      if (sequenceListName) {
+        list_name = sequenceListName.value;
       } else {
         NotificationManager.error('Please create or select a list to add people');
         return false;
       }
     }
 
-    // console.log(list_name)
-
     let selectedId = []
     var checkboxes = document.getElementsByClassName('selectContacts')
     for (var i = 0, n = checkboxes.length; i < n; i++) {
-      if (checkboxes[i].checked)
-        selectedId.push(checkboxes[i].value);
+      if (checkboxes[i].checked) {
+        if (checkboxes[i].dataset.unlocked === "yes") {
+          selectedId.push(checkboxes[i].value);
+        }
+      }
     }
     if (selectedId.length === 0) {
-      NotificationManager.error("Please select people to add in list");
+      NotificationManager.error("Please select people already moved to watchlist to add in list");
       return false;
     }
+
+    addSequenceList(list_name, selectedId);
+
+  }
+
+  const addSequenceList = async (name, ids) => {
+    const addList = await fetch(`${API_URL}/api/user/list/add`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'auth-token': localStorage.getItem('token')
+      },
+      body: JSON.stringify({
+        ids: ids,
+        name: name,
+      })
+    })
+
+    if (!addList) return NotificationManager.error("Something went wrong.");
+
+    const res = await addList.json();
+
+    if (res.status === 'success') {
+      NotificationManager.success(res.message);
+    } else if (res.status === 'error') {
+      NotificationManager.error(res.error);
+    } else {
+      NotificationManager.error("Something went wrong.");
+    }
+
   }
 
   const getContacts = () => {
@@ -233,12 +277,37 @@ const Table = (props) => {
     return true;
   }
 
+  const getSequenceList = async () => {
+    const List = await fetch(`${API_URL}/api/user/list`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'auth-token': localStorage.getItem('token')
+      }
+    })
+
+    if (!List) {
+      return false;
+    }
+    const res = await List.json();
+
+    if (res.status === "success") {
+      let sl = [];
+      res.lists.map(list => {
+        sl.push({ label: list, value: list });
+      })
+      dispatch(setSequenceList(sl));
+    }
+
+  }
+
   const changeViewLimit = (e) => {
     setLimit(e.target.value)
     searchPeople()
   }
 
   useEffect(() => {
+    getSequenceList();
     if (peopleSearchResults) {
       if (peopleSearchResults.totalResults === 0) {
         searchPeople()
@@ -285,16 +354,6 @@ const Table = (props) => {
           </div>
           <div className="mb-2">
             <div className="btn-group me-2" role="group" aria-label="Menu">
-              {/* <span className="dropdown bi-tooltip" data-bs-placement="top" title="Select">
-                    <button className="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="selectDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                      <input type="checkbox" className="form-check-input" />
-                    </button>
-                    <ul className="dropdown-menu" aria-labelledby="selectDropdown">
-                      <li><a className="dropdown-item select_contact" data-select="50" href="/" onClick={(e) => { e.preventDefault(); setSelectAll(true) }}>Select 50</a></li>
-                      <li><a className="dropdown-item select_contact" data-select="100" href="/" onClick={(e) => { e.preventDefault(); setSelectAll(true) }}>Select 100</a></li>
-                      <li><a className="dropdown-item select_contact" data-select="0" href="/" onClick={(e) => { e.preventDefault(); setSelectAll(false) }}>Clear Selection</a></li>
-                    </ul>
-                  </span> */}
               <span className="dropdown bi-tooltip">
                 <button className="btn btn-sm btn-outline-primary bi-tooltip" title="Save Search" type="button" id="saveSearch" data-bs-toggle="dropdown" aria-expanded="false">
                   <i className="far fa-save"></i>
@@ -311,7 +370,7 @@ const Table = (props) => {
                 </div>
               </span>
               <span className="dropdown bi-tooltip" title="Add to list">
-                <button className="btn btn-sm btn-outline-primary bi-tooltip" type="button" id="saveSearch" data-bs-toggle="dropdown" aria-expanded="false">
+                <button className="btn btn-sm btn-outline-primary bi-tooltip" type="button" data-bs-auto-close="false" data-bs-toggle="dropdown" aria-expanded="false">
                   <i className="fas fa-plus"></i>
                 </button>
                 <div className="dropdown-menu shadow p-3" aria-labelledby="addList">
@@ -323,10 +382,16 @@ const Table = (props) => {
                     </div>
                     <div className="text-center mb-2">-- or --</div>
                     <div className="mb-3">
-                      <label htmlFor="listName" className="form-label small">Select a List</label>
-                      <select name="listName" id="listName" className="form-select">
-                        <option value="">--</option>
-                      </select>
+                      {sequences && <Select
+                        defaultValue={[]}
+                        closeMenuOnSelect={false}
+                        value={sequenceListName}
+                        name="listName"
+                        onChange={handleSelectChange}
+                        options={sequences}
+                        className="basic-multi-select"
+                        placeholder="Select List"
+                      />}
                     </div>
                     <button type="submit" className="btn btn-primary w-100" disabled={disAddBtn && "disabled"}>Save &amp; Add</button>
                   </form>

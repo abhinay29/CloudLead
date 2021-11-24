@@ -19,6 +19,7 @@ app.use(express.json())
 // Available Routes
 app.use('/api/auth', require('./routes/auth'))
 app.use('/api/contacts', require('./routes/contacts'))
+app.use('/api/peoples', require('./routes/peoples'))
 app.use('/api/companies', require('./routes/companies'))
 app.use('/api/cities', require('./routes/cities'))
 app.use('/api/states', require('./routes/states'))

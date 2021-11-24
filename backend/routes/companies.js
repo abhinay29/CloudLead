@@ -168,9 +168,9 @@ router.get('/', async (req, res) => {
   if (req.query.company_type && req.query.company_type !== '') {
     if (req.query.company_type instanceof Array) {
       let regexCompType = new ConvertStringRegex(req.query.company_type).convertStr();
-      newQuery.Company_type = { $regex: regexCompType, $options: 'i' }
+      newQuery.company_type = { $regex: regexCompType, $options: 'i' }
     } else {
-      newQuery.Company_type = { $regex: req.query.company_type, $options: 'i' }
+      newQuery.company_type = { $regex: req.query.company_type, $options: 'i' }
     }
   }
 
@@ -238,6 +238,7 @@ router.get('/', async (req, res) => {
 
   try {
     const features = new APIfeatures(Company.find().select(['_id',
+      'company_id',
       'company_name',
       'website',
       'linkedin_link',
@@ -277,11 +278,42 @@ router.get('/', async (req, res) => {
   }
 })
 
+router.get('/byid/:id', async (req, res) => {
+
+  try {
+
+    const comp_data = await Company.findOne({ company_id: req.params.id }).select(['_id',
+      'company_id',
+      'company_name',
+      'website',
+      'domain',
+      'linkedin_link',
+      'industry',
+      'company_size_range',
+      'boardline_numbers',
+      'company_country',
+      'company_city',
+      'founded',
+      'description',
+      'revenue_range'])
+    res.status(200).json({
+      status: 'success',
+      comp_data
+    });
+
+  } catch (error) {
+    console.error(error.message);
+    res.status(404).send("Company not found");
+  }
+
+})
+
 router.get('/:name', async (req, res) => {
 
   try {
 
     const comp_data = await Company.findOne({ company_name: req.params.name }).select(['_id',
+      'company_id',
       'company_name',
       'website',
       'domain',

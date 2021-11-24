@@ -28,6 +28,7 @@ import Feedback from './components/User/Feedback';
 import Sidebar from './components/Sidebar';
 import ForgotPassword from './components/Auth/ForgotPassword';
 import ResetPassword from './components/Auth/ResetPassword';
+import Sequences from './components/User/Sequences';
 
 const RouteWithoutNavbar = ({ component: Component, ...rest }) => {
   return (
@@ -66,6 +67,7 @@ function App() {
           <RouteWithNavbar exact path={Routes.Settings.path} component={Settings} />
           <RouteWithNavbar exact path={Routes.ChangePassword.path} component={ChangePassword} />
           <RouteWithNavbar exact path={Routes.Feedback.path} component={Feedback} />
+          <RouteWithNavbar exact path={Routes.Sequences.path} component={Sequences} />
           <RouteWithoutNavbar exact path={Routes.Signup.path} component={Signup} />
           <RouteWithoutNavbar exact path={Routes.Signin.path} component={Login} />
           <RouteWithoutNavbar exact path={Routes.ForgotPassword.path} component={ForgotPassword} />
