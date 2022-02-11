@@ -459,9 +459,11 @@ table th {
 // .bg-primary {
 //   background-color: #485fc7 !important;
 // }
+.btn {
+  border: none;
+}
 
 .btn-primary {
-  border: none;
   background: #7367f0 !important;
 }
 
@@ -740,4 +742,9 @@ table th {
       color: #7367f0;
     }
   }
+}
+
+.public-DraftStyleDefault-block {
+  padding-left: 20px;
+  padding-right: 20px;
 }

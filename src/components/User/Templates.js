@@ -12,7 +12,7 @@ function Templates() {
 
   const getTemplates = async () => {
     dispatch(progressLoading(30));
-    const url = `${API_URL}/api/user/list/detailed`;
+    const url = `${API_URL}/api/user/templates`;
     let data = await fetch(url, {
       method: "GET",
       headers: {
@@ -23,7 +23,25 @@ function Templates() {
     dispatch(progressLoading(50));
     let parsedData = await data.json();
     if (parsedData.status === "success") {
-      setTemplates(parsedData.lists);
+      setTemplates(parsedData.template_list);
+    }
+    dispatch(progressLoading(100));
+  };
+
+  const viewList = async (id) => {
+    dispatch(progressLoading(30));
+    const url = `${API_URL}/api/user/templates/list/${id}`;
+    let listView = await fetch(url, {
+      method: "GET",
+      headers: {
+        "auth-token": localStorage.getItem("token"),
+        "Content-Type": "application/json"
+      }
+    });
+    dispatch(progressLoading(50));
+    let res = await listView.json();
+    if (res.status === "success") {
+      setTemplates(res.templateDetails);
     }
     dispatch(progressLoading(100));
   };
@@ -65,10 +83,41 @@ function Templates() {
                 {templates &&
                   templates.map((temp) => {
                     return (
-                      <tr key={temp.id}>
+                      <tr key={temp._id}>
                         <td className="fw-bold">{temp.name}</td>
-                        <td>{temp.rcptcount}</td>
-                        <td>View / Edit / Delete</td>
+                        <td>{temp.subject}</td>
+                        <td>{temp.addedon}</td>
+                        <td>
+                          <a
+                            href="#cloud"
+                            className="text-dark me-2"
+                            onClick={() => viewList(temp._id)}
+                          >
+                            <i className="fas fa-eye"></i>
+                          </a>
+                          <a
+                            href="#cloud"
+                            className="text-blue me-2"
+                            onClick={() => viewList(temp._id)}
+                          >
+                            <i className="fas fa-pen"></i>
+                          </a>
+                          <a
+                            href="#cloud"
+                            className="text-success me-2"
+                            onClick={() => viewList(temp._id)}
+                            title="Send Email Campaign"
+                          >
+                            <i className="fas fa-envelope"></i>
+                          </a>
+                          <a
+                            href="#cloud"
+                            className="text-danger me-2"
+                            onClick={() => viewList(temp._id)}
+                          >
+                            <i className="fas fa-trash"></i>
+                          </a>
+                        </td>
                       </tr>
                     );
                   })}

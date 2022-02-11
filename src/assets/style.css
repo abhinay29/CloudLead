@@ -252,7 +252,7 @@ table th {
 #peopleTable thead th,
 #compTable thead th {
   white-space: nowrap;
-  padding: .75rem .5rem;
+  padding: 0.75rem 0.5rem;
   background-color: #eceff1 !important;
   font-weight: 700;
 }
@@ -327,8 +327,11 @@ table th {
 }
 
 /* ============ small devices .end// ============ */
-.btn-primary {
+.btn {
   border: none;
+}
+
+.btn-primary {
   background: #7367f0 !important;
 }
 
@@ -498,8 +501,8 @@ table th {
           box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.08);
   z-index: 20;
   overflow: hidden;
-  -webkit-transition: all .2s linear;
-  transition: all .2s linear;
+  -webkit-transition: all 0.2s linear;
+  transition: all 0.2s linear;
 }
 
 .sideNavbar:hover {
@@ -520,8 +523,8 @@ table th {
   position: relative;
   width: 100%;
   list-style: none;
-  -webkit-transition: all .2s linear;
-  transition: all .2s linear;
+  -webkit-transition: all 0.2s linear;
+  transition: all 0.2s linear;
   border-radius: 8px;
 }
 
@@ -533,8 +536,8 @@ table th {
   width: 100%;
   text-decoration: none;
   color: #363636;
-  -webkit-transition: all .2s linear;
-  transition: all .2s linear;
+  -webkit-transition: all 0.2s linear;
+  transition: all 0.2s linear;
   font-weight: 600;
 }
 
@@ -569,8 +572,8 @@ table th {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  -webkit-transition: all .1s linear;
-  transition: all .1s linear;
+  -webkit-transition: all 0.1s linear;
+  transition: all 0.1s linear;
 }
 
 .sideNavbar ul li a .title {
@@ -632,12 +635,17 @@ table th {
 }
 
 .selectAllCheckbox span {
-  font-size: .75rem;
+  font-size: 0.75rem;
   margin: 0 3px;
 }
 
 .selectAllCheckbox span.selectBtn {
   cursor: pointer;
   color: #7367f0;
+}
+
+.public-DraftStyleDefault-block {
+  padding-left: 20px;
+  padding-right: 20px;
 }
 /*# sourceMappingURL=style.css.map */
