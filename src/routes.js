@@ -1,4 +1,3 @@
-
 export const Routes = {
   Cockpit: { path: "/" },
   Signin: { path: "/login" },
@@ -17,4 +16,6 @@ export const Routes = {
   ChangePassword: { path: "/change-password" },
   Feedback: { path: "/feedback" },
   Sequences: { path: "/sequences" },
+  Templates: { path: "/templates" },
+  CreateTemplate: { path: "/sequences/template/create" }
 };

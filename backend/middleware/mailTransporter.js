@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 const nodemailer = require("nodemailer");
 
 const adminEmail = process.env.ADMIN_EMAIL;
@@ -8,18 +8,24 @@ const SMTP_PORT = process.env.SMTP_PORT;
 const SMTP_HOST = process.env.SMTP_HOST;
 const hostWebsite = process.env.APP_URL;
 
-let transporter = nodemailer.createTransport({
-  host: SMTP_HOST,
-  port: SMTP_PORT,
-  secure: false,
-  // auth: {
-  //   user: SMTP_USER,
-  //   pass: SMTP_PASS,
-  // },
-  tls: {
-    rejectUnauthorized: false,
-  },
-});
+let transporter;
+
+try {
+  transporter = nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: false,
+    // auth: {
+    //   user: SMTP_USER,
+    //   pass: SMTP_PASS,
+    // },
+    tls: {
+      rejectUnauthorized: false
+    }
+  });
+} catch (e) {
+  console.log(e);
+}
 
 // transporter.verify(function (error, success) {
 //   if (error) {

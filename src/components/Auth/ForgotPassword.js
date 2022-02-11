@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Link, useHistory } from 'react-router-dom'
-import { NotificationManager } from 'react-notifications';
+import { Link } from 'react-router-dom'
+import { toast } from 'react-toastify';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -23,10 +23,10 @@ function ForgotPassword() {
     const json = await res.json()
     setDisabled(false)
     if (json.status === 'success') {
-      NotificationManager.success("Reset password link has been sent to your email.")
+      toast.success("Reset password link has been sent to your email.")
       setEmail("")
     } else {
-      NotificationManager.error("Something went wrong, please try again later")
+      toast.error("Something went wrong, please try again later")
     }
 
   }

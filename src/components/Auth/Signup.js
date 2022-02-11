@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { NotificationManager } from 'react-notifications';
+import { toast } from 'react-toastify';
 import { Link, useHistory } from 'react-router-dom'
 import GoogleLogin from 'react-google-login';
 
@@ -22,7 +22,7 @@ const Signup = (props) => {
 		e.preventDefault();
 		setDisabled(true);
 		if (credentials.password !== credentials.cpassword) {
-			NotificationManager.error('Passsword & Confirmed password does not matched');
+			toast.error('Passsword & Confirmed password does not matched');
 			setDisabled(false);
 			return false;
 		}
@@ -41,13 +41,13 @@ const Signup = (props) => {
 		const json = await response.json()
 		// console.log(json);
 		if (json.status === 'success') {
-			NotificationManager.success('Thank you for create account, please check your email and confirm it.');
+			toast.success('Thank you for create account, please check your email and confirm it.');
 			history.push("/login");
 			return false;
 		} else if (json.status === 'error') {
-			NotificationManager.error(json.error);
+			toast.error(json.error);
 		} else {
-			NotificationManager.error("Something went wrong please try again later.");
+			toast.error("Something went wrong please try again later.");
 		}
 		setDisabled(false);
 	}
@@ -58,7 +58,7 @@ const Signup = (props) => {
 
 	const responseGoogleSuccess = async (response) => {
 		setDisabled(true);
-		const profileObj = response.profileObj;
+		// const profileObj = response.profileObj;
 		const res = await fetch(`${API_URL}/api/auth/googlelogin`, {
 			method: 'POST',
 			headers: {
@@ -76,11 +76,11 @@ const Signup = (props) => {
 			localStorage.setItem('uname', json.uname);
 			localStorage.setItem('uemail', json.uemail);
 			localStorage.removeItem('searchQuery')
-			NotificationManager.success("Welcome uname!!!")
+			toast.success("Welcome uname!!!")
 			history.push("/");
 		}
 		else {
-			NotificationManager.error(json.error, "Error!", 5000)
+			toast.error(json.error, { autoClose: 5000 })
 			setDisabled(false);
 		}
 	}

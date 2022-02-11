@@ -12,7 +12,7 @@ import { industryGrpOpt } from "../Data/industries"
 import { countryGroup } from "../Data/countries"
 import { useDispatch } from 'react-redux';
 import { progressLoading, setPeopleSearchResults } from '../../states/action-creator';
-import { NotificationManager } from 'react-notifications';
+import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -137,7 +137,7 @@ const Filter = (props) => {
     let query = params.toString()
 
     if (query.length === 0) {
-      NotificationManager.error('Please fill at least 1 field');
+      toast.error('Please fill at least 1 field');
       setDisSearchBtn(false);
       return
     }
@@ -157,7 +157,7 @@ const Filter = (props) => {
     if (parsedData.status === 'success') {
       if (parsedData.totalResults === 0) {
         dispatch(progressLoading(100))
-        NotificationManager.error('No result found');
+        toast.error('No result found');
         setDisSearchBtn(false);
         return
       }
@@ -172,7 +172,7 @@ const Filter = (props) => {
       dispatch(setPeopleSearchResults(parsedData));
     } else if (parsedData.status === 'error') {
       dispatch(progressLoading(100))
-      NotificationManager.error(parsedData.msg);
+      toast.error(parsedData.msg);
     }
     setDisSearchBtn(false);
 

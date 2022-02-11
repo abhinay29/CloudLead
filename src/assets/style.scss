@@ -187,7 +187,6 @@ table th {
   font-size: 14px;
 
   tr {
-
     th,
     td {
       vertical-align: middle;
@@ -312,7 +311,7 @@ table th {
 
     th {
       white-space: nowrap;
-      padding: .75rem .5rem;
+      padding: 0.75rem 0.5rem;
       background-color: #eceff1 !important;
       font-weight: 700;
     }
@@ -435,11 +434,11 @@ table th {
     left: auto !important;
   }
 
-  .dropdown-menu>li:hover {
+  .dropdown-menu > li:hover {
     background-color: #f1f1f1;
   }
 
-  .dropdown-menu>li:hover>.submenu {
+  .dropdown-menu > li:hover > .submenu {
     display: block;
   }
 }
@@ -456,7 +455,6 @@ table th {
 }
 
 /* ============ small devices .end// ============ */
-
 
 // .bg-primary {
 //   background-color: #485fc7 !important;
@@ -592,7 +590,6 @@ table th {
         background-color: #7267f025;
       }
     }
-
   }
 }
 
@@ -605,21 +602,18 @@ table th {
       margin: 0 !important;
       height: calc(100vh - 135px);
     }
-
   }
 }
 
 .sideNavbar {
-
   position: fixed;
   height: 100%;
   width: 80px;
   background-color: #fff;
-  box-shadow: 0 0 20px 1px rgba(0, 0, 0, .08);
+  box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.08);
   z-index: 20;
   overflow: hidden;
-  transition: all .2s linear;
-
+  transition: all 0.2s linear;
 
   &:hover {
     width: 260px;
@@ -638,7 +632,7 @@ table th {
       position: relative;
       width: 100%;
       list-style: none;
-      transition: all .2s linear;
+      transition: all 0.2s linear;
       border-radius: 8px;
 
       a {
@@ -647,7 +641,7 @@ table th {
         width: 100%;
         text-decoration: none;
         color: #363636;
-        transition: all .2s linear;
+        transition: all 0.2s linear;
         font-weight: 600;
 
         .icon {
@@ -668,7 +662,7 @@ table th {
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all .1s linear;
+            transition: all 0.1s linear;
           }
         }
 
@@ -738,7 +732,7 @@ table th {
 
 .selectAllCheckbox {
   span {
-    font-size: .75rem;
+    font-size: 0.75rem;
     margin: 0 3px;
 
     &.selectBtn {

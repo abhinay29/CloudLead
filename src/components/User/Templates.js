@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
-// import { useDispatch, useSelector } from 'react-redux';
-import { useDispatch } from "react-redux";
-// import { NotificationManager } from 'react-notifications';
-import { progressLoading } from "../../states/action-creator";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { progressLoading } from "../../states/action-creator";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-function Sequences() {
+function Templates() {
   const dispatch = useDispatch();
 
-  const [sequence, setSequence] = useState([]);
+  const [templates, setTemplates] = useState([]);
 
-  const getSequence = async () => {
+  const getTemplates = async () => {
     dispatch(progressLoading(30));
     const url = `${API_URL}/api/user/list/detailed`;
     let data = await fetch(url, {
@@ -25,13 +23,13 @@ function Sequences() {
     dispatch(progressLoading(50));
     let parsedData = await data.json();
     if (parsedData.status === "success") {
-      setSequence(parsedData.lists);
+      setTemplates(parsedData.lists);
     }
     dispatch(progressLoading(100));
   };
 
   useEffect(() => {
-    getSequence();
+    getTemplates();
     // eslint-disable-next-line
   }, []);
 
@@ -40,27 +38,36 @@ function Sequences() {
       <div className="card">
         <div className="card-body">
           <div className="cardTitle mb-4 d-flex justify-content-between align-items-center">
-            <h5>Sequences</h5>
-            <Link to="/templates" className="btn btn-sm btn-primary">
-              Templates
-            </Link>
+            <h5>Templates</h5>
+            <div>
+              <Link
+                to="/sequences/template/create"
+                className="btn btn-sm btn-primary me-2"
+              >
+                Create Template
+              </Link>
+              <Link to="/sequences" className="btn btn-sm btn-primary">
+                Sequences
+              </Link>
+            </div>
           </div>
           <div className="table-responsive">
             <table className="table">
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Recipients</th>
+                  <th>Template Name</th>
+                  <th>Email Subject</th>
+                  <th>Updated On</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
-                {sequence &&
-                  sequence.map((seq) => {
+                {templates &&
+                  templates.map((temp) => {
                     return (
-                      <tr key={seq.id}>
-                        <td className="fw-bold">{seq.name}</td>
-                        <td>{seq.rcptcount}</td>
+                      <tr key={temp.id}>
+                        <td className="fw-bold">{temp.name}</td>
+                        <td>{temp.rcptcount}</td>
                         <td>View / Edit / Delete</td>
                       </tr>
                     );
@@ -74,4 +81,4 @@ function Sequences() {
   );
 }
 
-export default Sequences;
+export default Templates;
