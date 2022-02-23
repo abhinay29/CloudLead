@@ -1,15 +1,17 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const fetchuser = require('../middleware/fetchuser');
-const Contacts = require('../models/Contacts');
-const Watchlist = require('../models/Watchlist');
-const useExport = require('../models/Export');
-const { body, validationResult } = require('express-validator');
-const User = require('../models/User');
-const Plans = require('../models/Plans');
+const fetchuser = require("../middleware/fetchuser");
+const Contacts = require("../models/Contacts");
+const Company = require("../models/Companies");
+const Watchlist = require("../models/Watchlist");
+const useExport = require("../models/Export");
+const { body, validationResult } = require("express-validator");
+const User = require("../models/User");
+const Plans = require("../models/Plans");
 
 const rand = () => Math.random(0).toString(36).substr(2);
-const getToken = (length = 32) => (rand() + rand() + rand() + rand()).substr(0, length);
+const getToken = (length = 32) =>
+  (rand() + rand() + rand() + rand()).substr(0, length);
 
 class ConvertStringRegex {
   constructor(str) {
@@ -17,15 +19,34 @@ class ConvertStringRegex {
   }
 
   convertStr() {
-    let convertedStr = '';
+    let convertedStr = "";
     for (var x = 0; x < this.str.length; x++) {
-      if ((x + 1) == this.str.length) {
+      if (x + 1 == this.str.length) {
         convertedStr += this.str[x];
       } else {
-        convertedStr += this.str[x] + '|';
+        convertedStr += this.str[x] + "|";
       }
     }
     return convertedStr;
+  }
+}
+
+class Fields {
+  constructor(field) {
+    this.field = field;
+  }
+
+  create() {
+    if (this.field instanceof Array) {
+      if (this.field.length > 0) {
+        let regex = new ConvertStringRegex(this.field).convertStr();
+        return { $regex: regex, $options: "i" };
+      } else {
+        return "";
+      }
+    } else {
+      return { $regex: this.field, $options: "i" };
+    }
   }
 }
 
@@ -36,14 +57,11 @@ class APIfeatures {
   }
   filtering() {
     let queryobj = { ...this.queryString };
-    const excludefields = ['page', 'sort', 'limit'];
-    excludefields.forEach(el => delete queryobj[el]);
+    const excludefields = ["page", "sort", "limit"];
+    excludefields.forEach((el) => delete queryobj[el]);
 
     let querystr = JSON.stringify(queryobj);
-    querystr = querystr.replace(
-      /\b(gte|gt|lt|lte)\b/g,
-      match => `$${match}`
-    );
+    querystr = querystr.replace(/\b(gte|gt|lt|lte)\b/g, (match) => `$${match}`);
 
     this.query.find(JSON.parse(querystr));
     return this;
@@ -74,21 +92,19 @@ class APIfeatures {
   // }
 }
 
-
-router.get('/', fetchuser, async (req, res) => {
-
+router.get("/", fetchuser, async (req, res) => {
   if (
     req.query.first_name ||
     req.query.last_name ||
     req.query.company_name ||
-    req.query.position ||
+    req.query.title ||
     req.query.industry ||
     req.query.company_size_range ||
     req.query.department ||
     req.query.role ||
-    req.query.person_country ||
-    req.query.person_state ||
-    req.query.person_city ||
+    req.query.country ||
+    req.query.state ||
+    req.query.city ||
     req.query.company_country ||
     req.query.company_state ||
     req.query.company_city ||
@@ -96,26 +112,23 @@ router.get('/', fetchuser, async (req, res) => {
     req.query.company_type ||
     req.query.keyword ||
     req.query.domain ||
-    req.query.revenue_range
+    req.query.revenue_range ||
+    req.query.company_id
   ) {
     // Nothing happen here jump to try {} catch {}
   } else {
     return res.status(200).json({
-      status: 'error',
+      status: "error",
       msg: "Invalid query string"
     });
   }
 
-  if (
-    req.query.first_name === "." ||
-    req.query.last_name === '.'
-  ) {
+  if (req.query.first_name === "." || req.query.last_name === ".") {
     return res.status(200).json({
-      status: 'error',
+      status: "error",
       msg: "Invalid query string"
     });
   }
-
 
   let newQuery = {};
 
@@ -129,156 +142,77 @@ router.get('/', fetchuser, async (req, res) => {
     newQuery.limit = req.query.limit;
   }
 
-  if (req.query.first_name && req.query.first_name !== '') {
-    if (req.query.first_name instanceof Array) {
-      if (req.query.first_name.length > 0) {
-        let regexFirstName = new ConvertStringRegex(req.query.first_name).convertStr();
-        newQuery.first_name = { $regex: regexFirstName, $options: 'i' }
-      }
-    } else {
-      newQuery.first_name = { $regex: req.query.first_name, $options: 'i' }
-    }
+  if (req.query.first_name && req.query.first_name !== "") {
+    newQuery.first_name = new Fields(req.query.first_name).create();
   }
 
-  if (req.query.last_name && req.query.last_name !== '') {
-    if (req.query.last_name instanceof Array) {
-      if (req.query.last_name.length > 0) {
-        let regexLastName = new ConvertStringRegex(req.query.last_name).convertStr();
-        newQuery.last_name = { $regex: regexLastName, $options: 'i' }
-      }
-    } else {
-      newQuery.last_name = { $regex: req.query.last_name, $options: 'i' }
-    }
+  if (req.query.last_name && req.query.last_name !== "") {
+    newQuery.last_name = new Fields(req.query.last_name).create();
   }
-  if (req.query.industry && req.query.industry !== '') {
-    if (req.query.industry instanceof Array) {
-      if (req.query.industry.length == 0) {
-        newQuery.industry = { $regex: req.query.industry[0], $options: 'i' }
-      } else {
-        let regexIndustries = new ConvertStringRegex(req.query.industry).convertStr();
-        newQuery.industry = { $regex: regexIndustries, $options: 'i' }
-      }
-    } else {
-      newQuery.industry = { $regex: req.query.industry, $options: 'i' }
-    }
+
+  if (req.query.industry && req.query.industry !== "") {
+    newQuery.industry = new Fields(req.query.industry).create();
   }
-  if (req.query.company_name && req.query.company_name !== '') {
-    if (req.query.company_name instanceof Array) {
-      if (req.query.company_name.length > 0) {
-        let regexCompName = new ConvertStringRegex(req.query.company_name).convertStr();
-        newQuery.company_name = { $regex: regexCompName, $options: 'i' }
-      }
-    } else {
-      newQuery.company_name = { $regex: req.query.company_name, $options: 'i' }
-    }
+
+  if (req.query.company_name && req.query.company_name !== "") {
+    newQuery.company_name = new Fields(req.query.company_name).create();
   }
-  if (req.query.position && req.query.position !== '') {
-    if (req.query.position instanceof Array) {
-      if (req.query.position.length == 1) {
-        newQuery.position = { $regex: req.query.position[0], $options: 'i' }
-      } else {
-        let regexPosition = new ConvertStringRegex(req.query.position).convertStr();
-        newQuery.position = { $regex: regexPosition, $options: 'i' }
-      }
-    } else {
-      newQuery.position = { $regex: req.query.position, $options: 'i' }
-    }
+
+  if (req.query.title && req.query.title !== "") {
+    newQuery.title = new Fields(req.query.title).create();
   }
-  if (req.query.company_size_range && req.query.company_size_range !== '') {
-    if (req.query.company_size_range instanceof Array) {
-      let regexCompSize = new ConvertStringRegex(req.query.company_size_range).convertStr();
-      newQuery.company_size_range = { $regex: regexCompSize, $options: 'i' }
-    } else {
-      newQuery.company_size_range = { $regex: req.query.company_size_range, $options: 'i' }
-    }
+
+  if (req.query.company_size_range && req.query.company_size_range !== "") {
+    newQuery.company_size_range = new Fields(
+      req.query.company_size_range
+    ).create();
   }
-  if (req.query.company_type && req.query.company_type !== '') {
-    if (req.query.company_type instanceof Array) {
-      let regexCompType = new ConvertStringRegex(req.query.company_type).convertStr();
-      newQuery.company_type = { $regex: regexCompType, $options: 'i' }
-    } else {
-      newQuery.company_type = { $regex: req.query.company_type, $options: 'i' }
-    }
+  if (req.query.company_type && req.query.company_type !== "") {
+    newQuery["organization.organization_type"] = new Fields(
+      req.query.company_type
+    ).create();
   }
-  if (req.query.seniority_level && req.query.seniority_level !== '') {
-    if (req.query.seniority_level instanceof Array) {
-      let regexSrLevel = new ConvertStringRegex(req.query.seniority_level).convertStr();
-      newQuery.seniority_level = { $regex: regexSrLevel, $options: 'i' }
-    } else {
-      newQuery.seniority_level = { $regex: req.query.seniority_level, $options: 'i' }
-    }
+  if (req.query.seniority_level && req.query.seniority_level !== "") {
+    newQuery.seniority = new Fields(req.query.seniority_level).create();
   }
-  if (req.query.keyword && req.query.keyword !== '') {
-    if (req.query.keyword instanceof Array) {
-      let regexKeyword = new ConvertStringRegex(req.query.keyword).convertStr();
-      newQuery.keyword = { $regex: regexKeyword, $options: 'i' }
-    } else {
-      newQuery.keyword = { $regex: req.query.keyword, $options: 'i' }
-    }
+  if (req.query.keyword && req.query.keyword !== "") {
+    newQuery["organization.keyword"] = new Fields(req.query.keyword).create();
   }
-  if (req.query.domain && req.query.domain !== '') {
-    if (req.query.domain instanceof Array) {
-      let regexDomain = new ConvertStringRegex(req.query.domain).convertStr();
-      newQuery.domain = { $regex: regexDomain, $options: 'i' }
-    } else {
-      newQuery.domain = { $regex: req.query.domain, $options: 'i' }
-    }
+  if (req.query.domain && req.query.domain !== "") {
+    newQuery["organization.primary_website_domain"] = new Fields(
+      req.query.domain
+    ).create();
   }
-  if (req.query.company_city && req.query.company_city !== '') {
-    if (req.query.company_city instanceof Array) {
-      let regexCompCity = new ConvertStringRegex(req.query.company_city).convertStr();
-      newQuery.company_city = { $regex: regexCompCity, $options: 'i' }
-    } else {
-      newQuery.company_city = { $regex: req.query.company_city, $options: 'i' }
-    }
+  if (req.query.company_city && req.query.company_city !== "") {
+    newQuery["organization.org_city"] = new Fields(
+      req.query.company_city
+    ).create();
   }
-  if (req.query.company_state && req.query.company_state !== '') {
-    if (req.query.company_state instanceof Array) {
-      let regexCompState = new ConvertStringRegex(req.query.company_state).convertStr();
-      newQuery.company_state = { $regex: regexCompState, $options: 'i' }
-    } else {
-      newQuery.company_state = { $regex: req.query.company_state, $options: 'i' }
-    }
+  if (req.query.company_state && req.query.company_state !== "") {
+    newQuery["organization.org_state"] = new Fields(
+      req.query.company_state
+    ).create();
   }
-  if (req.query.company_country && req.query.company_country !== '') {
-    if (req.query.company_country instanceof Array) {
-      let regexCompCountry = new ConvertStringRegex(req.query.company_country).convertStr();
-      newQuery.company_country = { $regex: regexCompCountry, $options: 'i' }
-    } else {
-      newQuery.company_country = { $regex: req.query.company_country, $options: 'i' }
-    }
+  if (req.query.company_country && req.query.company_country !== "") {
+    newQuery["organization.org_country"] = new Fields(
+      req.query.company_country
+    ).create();
   }
-  if (req.query.person_city && req.query.person_city !== '') {
-    if (req.query.person_city instanceof Array) {
-      let regexPersCity = new ConvertStringRegex(req.query.person_city).convertStr();
-      newQuery.person_city = { $regex: regexPersCity, $options: 'i' }
-    } else {
-      newQuery.person_city = { $regex: req.query.person_city, $options: 'i' }
-    }
+  if (req.query.city && req.query.city !== "") {
+    newQuery.city = new Fields(req.query.city).create();
   }
-  if (req.query.person_state && req.query.person_state !== '') {
-    if (req.query.person_state instanceof Array) {
-      let regexPersState = new ConvertStringRegex(req.query.person_state).convertStr();
-      newQuery.person_state = { $regex: regexPersState, $options: 'i' }
-    } else {
-      newQuery.person_state = { $regex: req.query.person_state, $options: 'i' }
-    }
+  if (req.query.state && req.query.state !== "") {
+    newQuery.state = new Fields(req.query.state).create();
   }
-  if (req.query.person_country && req.query.person_country !== '') {
-    if (req.query.person_country instanceof Array) {
-      let regexPersCountry = new ConvertStringRegex(req.query.person_country).convertStr();
-      newQuery.person_country = { $regex: regexPersCountry, $options: 'i' }
-    } else {
-      newQuery.person_country = { $regex: req.query.person_country, $options: 'i' }
-    }
+  if (req.query.country && req.query.country !== "") {
+    newQuery.country = new Fields(req.query.country).create();
   }
-  if (req.query.department && req.query.department !== '') {
-    if (req.query.department instanceof Array) {
-      let regexDepart = new ConvertStringRegex(req.query.department).convertStr();
-      newQuery.department = { $regex: regexDepart, $options: 'i' }
-    } else {
-      newQuery.department = { $regex: req.query.department, $options: 'i' }
-    }
+  if (req.query.department && req.query.department !== "") {
+    newQuery.department = new Fields(req.query.department).create();
+  }
+
+  if (req.query.company_id && req.query.company_id !== "") {
+    newQuery.company_id = new Fields(req.query.company_id).create();
   }
 
   let RoleObj = [];
@@ -287,18 +221,19 @@ router.get('/', fetchuser, async (req, res) => {
 
   if (req.query.role_finance && req.query.role_finance.length !== 0) {
     if (req.query.role_finance instanceof Array) {
-      req.query.role_finance.map(fin => {
-        RoleObj.push(fin)
-      })
+      req.query.role_finance.map((fin) => {
+        RoleObj.push(fin);
+      });
     } else {
       RoleObj.push(req.query.role_finance);
     }
   }
+
   if (req.query.role_hr && req.query.role_hr.length !== 0) {
     if (req.query.role_hr instanceof Array) {
-      req.query.role_hr.map(hr => {
-        RoleObj.push(hr)
-      })
+      req.query.role_hr.map((hr) => {
+        RoleObj.push(hr);
+      });
     } else {
       RoleObj.push(req.query.role_hr);
     }
@@ -306,9 +241,9 @@ router.get('/', fetchuser, async (req, res) => {
 
   if (req.query.role_marketing && req.query.role_marketing.length !== 0) {
     if (req.query.role_marketing instanceof Array) {
-      req.query.role_marketing.map(marketing => {
-        RoleObj.push(marketing)
-      })
+      req.query.role_marketing.map((marketing) => {
+        RoleObj.push(marketing);
+      });
     } else {
       RoleObj.push(req.query.role_marketing);
     }
@@ -316,9 +251,9 @@ router.get('/', fetchuser, async (req, res) => {
 
   if (req.query.role_purchase && req.query.role_purchase.length !== 0) {
     if (req.query.role_purchase instanceof Array) {
-      req.query.role_purchase.map(purchase => {
-        RoleObj.push(purchase)
-      })
+      req.query.role_purchase.map((purchase) => {
+        RoleObj.push(purchase);
+      });
     } else {
       RoleObj.push(req.query.role_purchase);
     }
@@ -326,9 +261,9 @@ router.get('/', fetchuser, async (req, res) => {
 
   if (req.query.role_operation && req.query.role_operation.length !== 0) {
     if (req.query.role_operation instanceof Array) {
-      req.query.role_operation.map(operation => {
-        RoleObj.push(operation)
-      })
+      req.query.role_operation.map((operation) => {
+        RoleObj.push(operation);
+      });
     } else {
       RoleObj.push(req.query.role_operation);
     }
@@ -336,9 +271,9 @@ router.get('/', fetchuser, async (req, res) => {
 
   if (req.query.role_corporate && req.query.role_corporate.length !== 0) {
     if (req.query.role_corporate instanceof Array) {
-      req.query.role_corporate.map(corporate => {
-        RoleObj.push(corporate)
-      })
+      req.query.role_corporate.map((corporate) => {
+        RoleObj.push(corporate);
+      });
     } else {
       RoleObj.push(req.query.role_corporate);
     }
@@ -346,9 +281,9 @@ router.get('/', fetchuser, async (req, res) => {
 
   if (req.query.role_it && req.query.role_it.length !== 0) {
     if (req.query.role_it instanceof Array) {
-      req.query.role_it.map(it => {
-        RoleObj.push(it)
-      })
+      req.query.role_it.map((it) => {
+        RoleObj.push(it);
+      });
     } else {
       RoleObj.push(req.query.role_it);
     }
@@ -356,9 +291,9 @@ router.get('/', fetchuser, async (req, res) => {
 
   if (req.query.role_others && req.query.role_others.length !== 0) {
     if (req.query.role_others instanceof Array) {
-      req.query.role_others.map(others => {
-        RoleObj.push(others)
-      })
+      req.query.role_others.map((others) => {
+        RoleObj.push(others);
+      });
     } else {
       RoleObj.push(req.query.role_others);
     }
@@ -367,87 +302,79 @@ router.get('/', fetchuser, async (req, res) => {
   // Role
 
   if (RoleObj) {
-    if (RoleObj instanceof Array) {
-      regexRole = new ConvertStringRegex(RoleObj).convertStr();
-      newQuery.role = { $regex: regexRole, $options: 'i' }
-    } else {
-      newQuery.role = { $regex: RoleObj, $options: 'i' }
-    }
+    if (RoleObj.length > 0) newQuery.role = new Fields(RoleObj).create();
   }
 
-  if (req.query.product_services && req.query.product_services !== '') {
-    if (req.query.product_services instanceof Array) {
-      let regexServices = new ConvertStringRegex(req.query.product_services).convertStr();
-      newQuery.product_services = { $regex: regexServices, $options: 'i' }
-    } else {
-      newQuery.product_services = { $regex: req.query.product_services, $options: 'i' }
-    }
+  if (req.query.product_services && req.query.product_services !== "") {
+    newQuery.product_services = new Fields(req.query.product_services).create();
   }
-  if (req.query.revenue_range && req.query.revenue_range !== '') {
+  if (req.query.revenue_range && req.query.revenue_range !== "") {
     if (req.query.revenue_range instanceof Array) {
-      // let regexRevenueRange = new ConvertStringRegex(req.query.revenue_range).convertStr();
-      newQuery.revenue_range = { $in: req.query.revenue_range }
+      newQuery.revenue_range = { $in: req.query.revenue_range };
     } else {
-      newQuery.revenue_range = req.query.revenue_range
+      newQuery.revenue_range = req.query.revenue_range;
     }
   }
 
-  // console.log(newQuery)
+  console.log(newQuery);
 
   try {
-    const features = new APIfeatures(Contacts.find().select(['_id',
-      'first_name',
-      'last_name',
-      'linkedin_profile',
-      'company_name',
-      'website',
-      'linkedin_link',
-      'position',
-      'industry',
-      'company_size_range',
-      'boardline_numbers',
-      'person_country',
-      'person_city',
-      'company_country',
-      'company_city',
-      'seniority_level',
-      'product_services']), newQuery)
+    const features = new APIfeatures(
+      Contacts.find().select([
+        "_id",
+        "company_id",
+        "first_name",
+        "last_name",
+        "title",
+        "country",
+        "city",
+        "organization"
+      ]),
+      newQuery
+    )
       .filtering()
       .paginating();
+
     const contacts = await features.query;
     // const totalContacts = await Contacts.count({});
     const totalResults = await Contacts.count(newQuery);
-    const uniqueComp = await Contacts.find(newQuery).distinct('company_name');
+    const uniqueComp = await Contacts.find(newQuery).distinct("company_id");
     // let reqLimit = 50;
     // if (req.query.limit) {
     //   reqLimit = parseInt(req.query.limit);
     // }
 
-
     async function getEmail(cid) {
-      let checkWatchlist = await Watchlist.findOne({ user: req.user.id, contact_id: cid });
+      let checkWatchlist = await Watchlist.findOne({
+        user: req.user.id,
+        contact_id: cid
+      });
       if (checkWatchlist) {
-        return 'yes';
+        return "yes";
       } else {
-        return 'no';
+        return "no";
       }
     }
 
-    const Conts = [];
-    const checkUnlock = contacts.map(async contact => {
-      var temp = JSON.parse(JSON.stringify(contact));
-      // let unlocked_email = getEmail(contact._id);
-      // temp.unlocked_email = unlocked_email.then(function (result) {
-      //   return result;
-      // })
-      temp.unlocked_email = await getEmail(contact._id);
-      Conts.push(temp);
-    })
+    // async function getCompany(comp_id) {
+    //   let company = await Company.findOne({
+    //     company_id: comp_id
+    //   });
+    //   return company;
+    // }
 
-    await Promise.all(checkUnlock)
+    const Conts = [];
+    const checkUnlock = contacts.map(async (contact) => {
+      var temp = JSON.parse(JSON.stringify(contact));
+      temp.unlocked_email = await getEmail(contact._id);
+      // temp.company = await getCompany(contact.company_id);
+      Conts.push(temp);
+    });
+
+    await Promise.all(checkUnlock);
 
     res.status(200).json({
-      status: 'success',
+      status: "success",
       // total: totalContacts,
       totalResults: totalResults,
       limit: contacts.length,
@@ -461,23 +388,22 @@ router.get('/', fetchuser, async (req, res) => {
     console.error(error.message);
     res.status(500).send("Internal Server Error");
   }
-})
+});
 
-
-router.post('/unlock', fetchuser, async (req, res) => {
+router.post("/unlock", fetchuser, async (req, res) => {
   try {
     const { cid } = req.body;
 
-    const userData = await User.findOne({ _id: req.user.id })
+    const userData = await User.findOne({ _id: req.user.id });
 
     if (!userData) {
       res.status(401).json({
-        status: 'error',
-        error: 'Unauthorised access'
+        status: "error",
+        error: "Unauthorised access"
       });
     }
 
-    const Plan = await Plans.findOne({ plan_id: userData.plan_id })
+    const Plan = await Plans.findOne({ plan_id: userData.plan_id });
 
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
@@ -485,12 +411,15 @@ router.post('/unlock', fetchuser, async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    let checkWatchlist = await Watchlist.findOne({ user: req.user.id, contact_id: cid });
+    let checkWatchlist = await Watchlist.findOne({
+      user: req.user.id,
+      contact_id: cid
+    });
 
     if (checkWatchlist !== null) {
       res.status(200).json({
-        status: 'exist',
-        msg: 'Contact is already in your watchlist'
+        status: "exist",
+        msg: "Contact is already in your watchlist"
       });
       return false;
     }
@@ -499,40 +428,43 @@ router.post('/unlock', fetchuser, async (req, res) => {
 
     if (Plan.unlock_daily < checkWatchlistCount) {
       res.status(200).json({
-        status: 'limit_reached',
-        msg: 'Your daily unlock limit is reached, upgrade your plan or visit again tomorrow'
+        status: "limit_reached",
+        msg: "Your daily unlock limit is reached, upgrade your plan or visit again tomorrow"
       });
       return false;
     }
 
     const watchlist = new Watchlist({
-      user: req.user.id, contact_id: cid
-    })
+      user: req.user.id,
+      contact_id: cid
+    });
 
     const savedWatchlist = await watchlist.save();
 
-    const query = { "_id": cid }
+    const query = { _id: cid };
 
     try {
-      const data = await Contacts.findOne(query).select(['-_id', 'primary_mai_confidence', 'primary_email'])
+      const data = await Contacts.findOne(query).select([
+        "-_id",
+        "email_confidence_level",
+        "email"
+      ]);
 
       res.status(200).json({
-        status: 'success',
+        status: "success",
         data: data
       });
     } catch (error) {
       console.error(error.message);
       res.status(200).send(error.message);
     }
-
   } catch (error) {
     console.error(error.message);
     res.status(200).send(error.message);
   }
-})
+});
 
-router.post('/unlockbulk', fetchuser, async (req, res) => {
-
+router.post("/unlockbulk", fetchuser, async (req, res) => {
   // if (!req.body.ids) {
   //   res.status(200).json({
   //     status: 'error',
@@ -540,25 +472,25 @@ router.post('/unlockbulk', fetchuser, async (req, res) => {
   //   });
   // }
 
-  const userData = await User.findOne({ _id: req.user.id })
+  const userData = await User.findOne({ _id: req.user.id });
 
   if (!userData) {
     res.status(401).json({
-      status: 'error',
-      error: 'Unauthorised access'
+      status: "error",
+      error: "Unauthorised access"
     });
   }
 
-  const Plan = await Plans.findOne({ plan_id: userData.plan_id })
+  const Plan = await Plans.findOne({ plan_id: userData.plan_id });
 
   try {
     const { ids } = req.body;
 
     if (!ids || ids.length === 0) {
       res.status(200).json({
-        status: 'error',
-        message: 'Invalid access of blank data'
-      })
+        status: "error",
+        message: "Invalid access of blank data"
+      });
     }
 
     let checkWatchlistCount = await Watchlist.count({ user: req.user.id });
@@ -566,15 +498,15 @@ router.post('/unlockbulk', fetchuser, async (req, res) => {
     if (Plan.unlock_daily > checkWatchlistCount) {
       if (ids.length > Plan.unlock_daily) {
         res.status(200).json({
-          status: 'limit_reached',
+          status: "limit_reached",
           msg: `You can only get contact '${Plan.unlock_daily}' in a day`
         });
         return false;
       }
     } else {
       res.status(200).json({
-        status: 'limit_reached',
-        msg: 'Your daily unlock limit is reached, upgrade your plan or visit again tomorrow'
+        status: "limit_reached",
+        msg: "Your daily unlock limit is reached, upgrade your plan or visit again tomorrow"
       });
       return false;
     }
@@ -584,24 +516,33 @@ router.post('/unlockbulk', fetchuser, async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
     let watchlist;
-    let count = 0
+    let count = 0;
     let check;
     for (var x = 0; x < ids.length; x++) {
-      check = await Watchlist.findOne({ user: req.user.id, contact_id: ids[x] });
+      check = await Watchlist.findOne({
+        user: req.user.id,
+        contact_id: ids[x]
+      });
       if (!check) {
-        watchlist = await Watchlist.create({ user: req.user.id, contact_id: ids[x] });
+        watchlist = await Watchlist.create({
+          user: req.user.id,
+          contact_id: ids[x]
+        });
         if (watchlist) {
           count++;
         }
       }
     }
 
-    const query = { "_id": { $in: ids } }
+    const query = { _id: { $in: ids } };
 
     try {
-      const data = await Contacts.find(query).select(['primary_mai_confidence', 'primary_email'])
+      const data = await Contacts.find(query).select([
+        "email_confidence_level",
+        "email"
+      ]);
       res.status(200).json({
-        status: 'success',
+        status: "success",
         data: data,
         unlocked: count
       });
@@ -609,51 +550,67 @@ router.post('/unlockbulk', fetchuser, async (req, res) => {
       console.error(error.message);
       res.status(200).send(error.message);
     }
-
   } catch (error) {
     console.error(error.message);
     res.status(200).send(error.message);
   }
-})
+});
 
-router.get('/watchlist', fetchuser, async (req, res) => {
-
-  let query = {}
-  let page = 1
+router.get("/watchlist", fetchuser, async (req, res) => {
+  let query = {};
+  let page = 1;
   if (req.query.page) {
-    page = parseInt(req.query.page)
+    page = parseInt(req.query.page);
   }
 
   let newLimit = 50;
   if (req.query.limit) {
-    newLimit = parseInt(req.query.limit)
+    newLimit = parseInt(req.query.limit);
   }
   const skip = (page - 1) * newLimit;
 
   try {
     // const watchlist = await Watchlist.find({ user: req.user.id }).skip(skip).limit(newLimit);
 
-    let watchlist = ''
+    let watchlist = "";
 
     if (req.query.from && req.query.to) {
-      watchlist = await Watchlist.find({ user: req.user.id, date: { $gte: new Date(req.query.from), $lte: new Date(req.query.to) } });
+      watchlist = await Watchlist.find({
+        user: req.user.id,
+        date: { $gte: new Date(req.query.from), $lte: new Date(req.query.to) }
+      });
     } else {
       watchlist = await Watchlist.find({ user: req.user.id });
     }
 
     // console.log(req.query)
 
-    let search = {}
-    search._id = { $in: watchlist.map(cid => { return cid.contact_id }) }
+    let search = {};
+    search._id = {
+      $in: watchlist.map((cid) => {
+        return cid.contact_id;
+      })
+    };
 
-    if (req.query.primary_mai_confidence && req.query.primary_mai_confidence !== '') {
-      if (req.query.primary_mai_confidence instanceof Array) {
-        if (req.query.primary_mai_confidence.length > 0) {
-          let regexConfidence = new ConvertStringRegex(req.query.primary_mai_confidence).convertStr();
-          search.primary_mai_confidence = { $regex: regexConfidence, $options: 'i' }
+    if (
+      req.query.email_confidence_level &&
+      req.query.email_confidence_level !== ""
+    ) {
+      if (req.query.email_confidence_level instanceof Array) {
+        if (req.query.email_confidence_level.length > 0) {
+          let regexConfidence = new ConvertStringRegex(
+            req.query.email_confidence_level
+          ).convertStr();
+          search.email_confidence_level = {
+            $regex: regexConfidence,
+            $options: "i"
+          };
         }
       } else {
-        search.primary_mai_confidence = { $regex: req.query.primary_mai_confidence, $options: 'i' }
+        search.email_confidence_level = {
+          $regex: req.query.email_confidence_level,
+          $options: "i"
+        };
       }
     }
 
@@ -667,161 +624,204 @@ router.get('/watchlist', fetchuser, async (req, res) => {
       search.limit = req.query.limit;
     }
 
-    if (req.query.first_name && req.query.first_name !== '') {
+    if (req.query.first_name && req.query.first_name !== "") {
       if (req.query.first_name instanceof Array) {
         if (req.query.first_name.length > 0) {
           //   // search.first_name = { $regex: req.query.first_name[0], $options: 'i' }
           // } else {
-          let regexFirstName = new ConvertStringRegex(req.query.first_name).convertStr();
-          search.first_name = { $regex: regexFirstName, $options: 'i' }
+          let regexFirstName = new ConvertStringRegex(
+            req.query.first_name
+          ).convertStr();
+          search.first_name = { $regex: regexFirstName, $options: "i" };
         }
       } else {
-        search.first_name = { $regex: req.query.first_name, $options: 'i' }
+        search.first_name = { $regex: req.query.first_name, $options: "i" };
       }
     }
 
-    if (req.query.last_name && req.query.last_name !== '') {
+    if (req.query.last_name && req.query.last_name !== "") {
       if (req.query.last_name instanceof Array) {
         if (req.query.last_name.length > 0) {
           //   search.last_name = { $regex: req.query.last_name[0], $options: 'i' }
           // } else {
-          let regexLastName = new ConvertStringRegex(req.query.last_name).convertStr();
-          search.last_name = { $regex: regexLastName, $options: 'i' }
+          let regexLastName = new ConvertStringRegex(
+            req.query.last_name
+          ).convertStr();
+          search.last_name = { $regex: regexLastName, $options: "i" };
         }
       } else {
-        search.last_name = { $regex: req.query.last_name, $options: 'i' }
+        search.last_name = { $regex: req.query.last_name, $options: "i" };
       }
     }
-    if (req.query.industry && req.query.industry !== '') {
+    if (req.query.industry && req.query.industry !== "") {
       if (req.query.industry instanceof Array) {
         if (req.query.industry.length == 0) {
-          search.industry = { $regex: req.query.industry[0], $options: 'i' }
+          search.industry = { $regex: req.query.industry[0], $options: "i" };
         } else {
-          let regexIndustries = new ConvertStringRegex(req.query.industry).convertStr();
-          search.industry = { $regex: regexIndustries, $options: 'i' }
+          let regexIndustries = new ConvertStringRegex(
+            req.query.industry
+          ).convertStr();
+          search.industry = { $regex: regexIndustries, $options: "i" };
         }
       } else {
-        search.industry = { $regex: req.query.industry, $options: 'i' }
+        search.industry = { $regex: req.query.industry, $options: "i" };
       }
     }
-    if (req.query.company_name && req.query.company_name !== '') {
+    if (req.query.company_name && req.query.company_name !== "") {
       if (req.query.company_name instanceof Array) {
         if (req.query.company_name.length > 0) {
           //   search.company_name = { $regex: req.query.company_name[0], $options: 'i' }
           // } else {
-          let regexCompName = new ConvertStringRegex(req.query.company_name).convertStr();
-          search.company_name = { $regex: regexCompName, $options: 'i' }
+          let regexCompName = new ConvertStringRegex(
+            req.query.company_name
+          ).convertStr();
+          search.company_name = { $regex: regexCompName, $options: "i" };
         }
       } else {
-        search.company_name = { $regex: req.query.company_name, $options: 'i' }
+        search.company_name = { $regex: req.query.company_name, $options: "i" };
       }
     }
-    if (req.query.position && req.query.position !== '') {
-      if (req.query.position instanceof Array) {
-        if (req.query.position.length == 1) {
-          search.position = { $regex: req.query.position[0], $options: 'i' }
+    if (req.query.title && req.query.title !== "") {
+      if (req.query.title instanceof Array) {
+        if (req.query.title.length == 1) {
+          search.title = { $regex: req.query.title[0], $options: "i" };
         } else {
-          let regexPosition = new ConvertStringRegex(req.query.position).convertStr();
-          search.position = { $regex: regexPosition, $options: 'i' }
+          let regexTitle = new ConvertStringRegex(req.query.title).convertStr();
+          search.title = { $regex: regexTitle, $options: "i" };
         }
       } else {
-        search.position = { $regex: req.query.position, $options: 'i' }
+        search.title = { $regex: req.query.title, $options: "i" };
       }
     }
-    if (req.query.company_size_range && req.query.company_size_range !== '') {
+    if (req.query.company_size_range && req.query.company_size_range !== "") {
       if (req.query.company_size_range instanceof Array) {
-        let regexCompSize = new ConvertStringRegex(req.query.company_size_range).convertStr();
-        search.company_size_range = { $regex: regexCompSize, $options: 'i' }
+        let regexCompSize = new ConvertStringRegex(
+          req.query.company_size_range
+        ).convertStr();
+        search.company_size_range = { $regex: regexCompSize, $options: "i" };
       } else {
-        search.company_size_range = { $regex: req.query.company_size_range, $options: 'i' }
+        search.company_size_range = {
+          $regex: req.query.company_size_range,
+          $options: "i"
+        };
       }
     }
-    if (req.query.company_type && req.query.company_type !== '') {
+    if (req.query.company_type && req.query.company_type !== "") {
       if (req.query.company_type instanceof Array) {
-        let regexCompType = new ConvertStringRegex(req.query.company_type).convertStr();
-        search.company_type = { $regex: regexCompType, $options: 'i' }
+        let regexCompType = new ConvertStringRegex(
+          req.query.company_type
+        ).convertStr();
+        search.company_type = { $regex: regexCompType, $options: "i" };
       } else {
-        search.company_type = { $regex: req.query.company_type, $options: 'i' }
+        search.company_type = { $regex: req.query.company_type, $options: "i" };
       }
     }
-    if (req.query.seniority_level && req.query.seniority_level !== '') {
+    if (req.query.seniority_level && req.query.seniority_level !== "") {
       if (req.query.seniority_level instanceof Array) {
-        let regexSrLevel = new ConvertStringRegex(req.query.seniority_level).convertStr();
-        search.seniority_level = { $regex: regexSrLevel, $options: 'i' }
+        let regexSrLevel = new ConvertStringRegex(
+          req.query.seniority_level
+        ).convertStr();
+        search.seniority_level = { $regex: regexSrLevel, $options: "i" };
       } else {
-        search.seniority_level = { $regex: req.query.seniority_level, $options: 'i' }
+        search.seniority_level = {
+          $regex: req.query.seniority_level,
+          $options: "i"
+        };
       }
     }
-    if (req.query.keyword && req.query.keyword !== '') {
+    if (req.query.keyword && req.query.keyword !== "") {
       if (req.query.keyword instanceof Array) {
-        let regexKeyword = new ConvertStringRegex(req.query.keyword).convertStr();
-        search.keyword = { $regex: regexKeyword, $options: 'i' }
+        let regexKeyword = new ConvertStringRegex(
+          req.query.keyword
+        ).convertStr();
+        search.keyword = { $regex: regexKeyword, $options: "i" };
       } else {
-        search.keyword = { $regex: req.query.keyword, $options: 'i' }
+        search.keyword = { $regex: req.query.keyword, $options: "i" };
       }
     }
-    if (req.query.domain && req.query.domain !== '') {
+    if (req.query.domain && req.query.domain !== "") {
       if (req.query.domain instanceof Array) {
         let regexDomain = new ConvertStringRegex(req.query.domain).convertStr();
-        search.domain = { $regex: regexDomain, $options: 'i' }
+        search.domain = { $regex: regexDomain, $options: "i" };
       } else {
-        search.domain = { $regex: req.query.domain, $options: 'i' }
+        search.domain = { $regex: req.query.domain, $options: "i" };
       }
     }
-    if (req.query.company_city && req.query.company_city !== '') {
+    if (req.query.company_city && req.query.company_city !== "") {
       if (req.query.company_city instanceof Array) {
-        let regexCompCity = new ConvertStringRegex(req.query.company_city).convertStr();
-        search.company_city = { $regex: regexCompCity, $options: 'i' }
+        let regexCompCity = new ConvertStringRegex(
+          req.query.company_city
+        ).convertStr();
+        search.company_city = { $regex: regexCompCity, $options: "i" };
       } else {
-        search.company_city = { $regex: req.query.company_city, $options: 'i' }
+        search.company_city = { $regex: req.query.company_city, $options: "i" };
       }
     }
-    if (req.query.company_state && req.query.company_state !== '') {
+    if (req.query.company_state && req.query.company_state !== "") {
       if (req.query.company_state instanceof Array) {
-        let regexCompState = new ConvertStringRegex(req.query.company_state).convertStr();
-        search.company_state = { $regex: regexCompState, $options: 'i' }
+        let regexCompState = new ConvertStringRegex(
+          req.query.company_state
+        ).convertStr();
+        search.company_state = { $regex: regexCompState, $options: "i" };
       } else {
-        search.company_state = { $regex: req.query.company_state, $options: 'i' }
+        search.company_state = {
+          $regex: req.query.company_state,
+          $options: "i"
+        };
       }
     }
-    if (req.query.company_country && req.query.company_country !== '') {
+    if (req.query.company_country && req.query.company_country !== "") {
       if (req.query.company_country instanceof Array) {
-        let regexCompCountry = new ConvertStringRegex(req.query.company_country).convertStr();
-        search.company_country = { $regex: regexCompCountry, $options: 'i' }
+        let regexCompCountry = new ConvertStringRegex(
+          req.query.company_country
+        ).convertStr();
+        search.company_country = { $regex: regexCompCountry, $options: "i" };
       } else {
-        search.company_country = { $regex: req.query.company_country, $options: 'i' }
+        search.company_country = {
+          $regex: req.query.company_country,
+          $options: "i"
+        };
       }
     }
-    if (req.query.person_city && req.query.person_city !== '') {
-      if (req.query.person_city instanceof Array) {
-        let regexPersCity = new ConvertStringRegex(req.query.person_city).convertStr();
-        search.person_city = { $regex: regexPersCity, $options: 'i' }
+    if (req.query.city && req.query.city !== "") {
+      if (req.query.city instanceof Array) {
+        let regexPersCity = new ConvertStringRegex(req.query.city).convertStr();
+        search.city = { $regex: regexPersCity, $options: "i" };
       } else {
-        search.person_city = { $regex: req.query.person_city, $options: 'i' }
+        search.city = { $regex: req.query.city, $options: "i" };
       }
     }
-    if (req.query.person_state && req.query.person_state !== '') {
-      if (req.query.person_state instanceof Array) {
-        let regexPersState = new ConvertStringRegex(req.query.person_state).convertStr();
-        search.person_state = { $regex: regexPersState, $options: 'i' }
+    if (req.query.state && req.query.state !== "") {
+      if (req.query.state instanceof Array) {
+        let regexPersState = new ConvertStringRegex(
+          req.query.state
+        ).convertStr();
+        search.state = { $regex: regexPersState, $options: "i" };
       } else {
-        search.person_state = { $regex: req.query.person_state, $options: 'i' }
+        search.state = { $regex: req.query.state, $options: "i" };
       }
     }
-    if (req.query.person_country && req.query.person_country !== '') {
-      if (req.query.person_country instanceof Array) {
-        let regexPersCountry = new ConvertStringRegex(req.query.person_country).convertStr();
-        search.person_country = { $regex: regexPersCountry, $options: 'i' }
+    if (req.query.country && req.query.country !== "") {
+      if (req.query.country instanceof Array) {
+        let regexPersCountry = new ConvertStringRegex(
+          req.query.country
+        ).convertStr();
+        search.country = { $regex: regexPersCountry, $options: "i" };
       } else {
-        search.person_country = { $regex: req.query.person_country, $options: 'i' }
+        search.country = {
+          $regex: req.query.country,
+          $options: "i"
+        };
       }
     }
-    if (req.query.department && req.query.department !== '') {
+    if (req.query.department && req.query.department !== "") {
       if (req.query.department instanceof Array) {
-        let regexDepart = new ConvertStringRegex(req.query.department).convertStr();
-        search.department = { $regex: regexDepart, $options: 'i' }
+        let regexDepart = new ConvertStringRegex(
+          req.query.department
+        ).convertStr();
+        search.department = { $regex: regexDepart, $options: "i" };
       } else {
-        search.department = { $regex: req.query.department, $options: 'i' }
+        search.department = { $regex: req.query.department, $options: "i" };
       }
     }
 
@@ -831,18 +831,18 @@ router.get('/watchlist', fetchuser, async (req, res) => {
 
     if (req.query.role_finance && req.query.role_finance.length !== 0) {
       if (RoleObj instanceof Array) {
-        req.query.role_finance.map(fin => {
-          RoleObj.push(fin)
-        })
+        req.query.role_finance.map((fin) => {
+          RoleObj.push(fin);
+        });
       } else {
         RoleObj.push(req.query.role_finance);
       }
     }
     if (req.query.role_hr && req.query.role_hr.length !== 0) {
       if (RoleObj instanceof Array) {
-        req.query.role_hr.map(hr => {
-          RoleObj.push(hr)
-        })
+        req.query.role_hr.map((hr) => {
+          RoleObj.push(hr);
+        });
       } else {
         RoleObj.push(req.query.role_hr);
       }
@@ -850,9 +850,9 @@ router.get('/watchlist', fetchuser, async (req, res) => {
 
     if (req.query.role_marketing && req.query.role_marketing.length !== 0) {
       if (RoleObj instanceof Array) {
-        req.query.role_marketing.map(marketing => {
-          RoleObj.push(marketing)
-        })
+        req.query.role_marketing.map((marketing) => {
+          RoleObj.push(marketing);
+        });
       } else {
         RoleObj.push(req.query.role_marketing);
       }
@@ -860,9 +860,9 @@ router.get('/watchlist', fetchuser, async (req, res) => {
 
     if (req.query.role_purchase && req.query.role_purchase.length !== 0) {
       if (RoleObj instanceof Array) {
-        req.query.role_purchase.map(purchase => {
-          RoleObj.push(purchase)
-        })
+        req.query.role_purchase.map((purchase) => {
+          RoleObj.push(purchase);
+        });
       } else {
         RoleObj.push(req.query.role_purchase);
       }
@@ -870,9 +870,9 @@ router.get('/watchlist', fetchuser, async (req, res) => {
 
     if (req.query.role_operation && req.query.role_operation.length !== 0) {
       if (RoleObj instanceof Array) {
-        req.query.role_operation.map(operation => {
-          RoleObj.push(operation)
-        })
+        req.query.role_operation.map((operation) => {
+          RoleObj.push(operation);
+        });
       } else {
         RoleObj.push(req.query.role_operation);
       }
@@ -880,9 +880,9 @@ router.get('/watchlist', fetchuser, async (req, res) => {
 
     if (req.query.role_corporate && req.query.role_corporate.length !== 0) {
       if (RoleObj instanceof Array) {
-        req.query.role_corporate.map(corporate => {
-          RoleObj.push(corporate)
-        })
+        req.query.role_corporate.map((corporate) => {
+          RoleObj.push(corporate);
+        });
       } else {
         RoleObj.push(req.query.role_corporate);
       }
@@ -890,9 +890,9 @@ router.get('/watchlist', fetchuser, async (req, res) => {
 
     if (req.query.role_it && req.query.role_it.length !== 0) {
       if (RoleObj instanceof Array) {
-        req.query.role_it.map(it => {
-          RoleObj.push(it)
-        })
+        req.query.role_it.map((it) => {
+          RoleObj.push(it);
+        });
       } else {
         RoleObj.push(req.query.role_it);
       }
@@ -900,9 +900,9 @@ router.get('/watchlist', fetchuser, async (req, res) => {
 
     if (req.query.role_others && req.query.role_others.length !== 0) {
       if (RoleObj instanceof Array) {
-        req.query.role_others.map(others => {
-          RoleObj.push(others)
-        })
+        req.query.role_others.map((others) => {
+          RoleObj.push(others);
+        });
       } else {
         RoleObj.push(req.query.role_others);
       }
@@ -913,26 +913,31 @@ router.get('/watchlist', fetchuser, async (req, res) => {
     if (RoleObj) {
       if (RoleObj instanceof Array) {
         regexRole = new ConvertStringRegex(RoleObj).convertStr();
-        search.role = { $regex: regexRole, $options: 'i' }
+        search.role = { $regex: regexRole, $options: "i" };
       } else {
-        search.role = { $regex: RoleObj, $options: 'i' }
+        search.role = { $regex: RoleObj, $options: "i" };
       }
     }
 
-    if (req.query.product_services && req.query.product_services !== '') {
+    if (req.query.product_services && req.query.product_services !== "") {
       if (req.query.product_services instanceof Array) {
-        let regexServices = new ConvertStringRegex(req.query.product_services).convertStr();
-        search.product_services = { $regex: regexServices, $options: 'i' }
+        let regexServices = new ConvertStringRegex(
+          req.query.product_services
+        ).convertStr();
+        search.product_services = { $regex: regexServices, $options: "i" };
       } else {
-        search.product_services = { $regex: req.query.product_services, $options: 'i' }
+        search.product_services = {
+          $regex: req.query.product_services,
+          $options: "i"
+        };
       }
     }
-    if (req.query.revenue_range && req.query.revenue_range !== '') {
+    if (req.query.revenue_range && req.query.revenue_range !== "") {
       if (req.query.revenue_range instanceof Array) {
         // let regexRevenueRange = new ConvertStringRegex(req.query.revenue_range).convertStr();
-        search.revenue_range = { $in: req.query.revenue_range }
+        search.revenue_range = { $in: req.query.revenue_range };
       } else {
-        search.revenue_range = req.query.revenue_range
+        search.revenue_range = req.query.revenue_range;
       }
     }
 
@@ -940,27 +945,31 @@ router.get('/watchlist', fetchuser, async (req, res) => {
 
     // search.page = page;
 
-
     try {
-      const wlcontact = new APIfeatures(Contacts.find().select(['_id',
-        'first_name',
-        'last_name',
-        'primary_mai_confidence',
-        'primary_email',
-        'linkedin_profile',
-        'company_name',
-        'website',
-        'linkedin_link',
-        'position',
-        'industry',
-        'company_size_range',
-        'boardline_numbers',
-        'person_country',
-        'person_city',
-        'company_country',
-        'company_city',
-        'seniority_level',
-        'product_services']), search)
+      const wlcontact = new APIfeatures(
+        Contacts.find().select([
+          "_id",
+          "first_name",
+          "last_name",
+          "email_confidence_level",
+          "email",
+          "linkedin_profile",
+          "company_name",
+          "website",
+          "linkedin_link",
+          "position",
+          "industry",
+          "company_size_range",
+          "boardline_numbers",
+          "country",
+          "city",
+          "company_country",
+          "company_city",
+          "seniority_level",
+          "product_services"
+        ]),
+        search
+      )
         .filtering()
         .paginating();
 
@@ -968,43 +977,46 @@ router.get('/watchlist', fetchuser, async (req, res) => {
       const totalResults = await Contacts.count(search);
 
       res.status(200).json({
-        status: 'success',
+        status: "success",
         totalResults: totalResults,
         limit: peoples.length ? peoples.length : 0,
         page: req.query.page,
         peoples
       });
-
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Internal Server Error");
     }
-
   } catch (error) {
     console.error(error.message);
     res.status(404).send("Not Found");
   }
+});
 
-})
+router.post("/watchlist/export", fetchuser, require("./Contacts/export"));
+router.get("/watchlist/download", require("./Contacts/downloadcsv"));
 
-router.post('/watchlist/export', fetchuser, require('./Contacts/export'));
-router.get('/watchlist/download', require('./Contacts/downloadcsv'));
-
-router.delete('/deletewatchlist', fetchuser, async (req, res) => {
-
+router.delete("/deletewatchlist", fetchuser, async (req, res) => {
   if (req.body.ids.length === 0) {
-    return res.status(404).json({ status: "error", msg: "Please select people to remove from watchlist" })
+    return res.status(404).json({
+      status: "error",
+      msg: "Please select people to remove from watchlist"
+    });
   }
 
   try {
-
     let watchlist = await Watchlist.find({ user: req.user.id });
-    if (!watchlist) { return res.status(404).json({ status: "error", msg: "Not Found" }) }
-
-    // if (watchlist.contact.toString() !== req.user.id) {
-    //   return res.status(401).json({ status: "error", msg: "Not Found" });
-    // }
-    watchlist = await Watchlist.deleteMany({ user: req.user.id, contact_id: { $in: req.body.ids.map(cid => { return cid }) } })
+    if (!watchlist) {
+      return res.status(404).json({ status: "error", msg: "Not Found" });
+    }
+    watchlist = await Watchlist.deleteMany({
+      user: req.user.id,
+      contact_id: {
+        $in: req.body.ids.map((cid) => {
+          return cid;
+        })
+      }
+    });
     res.status(200).json({
       status: "success",
       deletedCount: watchlist.deletedCount
@@ -1013,6 +1025,6 @@ router.delete('/deletewatchlist', fetchuser, async (req, res) => {
     console.error(error.message);
     res.status(500).send("Internal Server Error");
   }
-})
+});
 
-module.exports = router
+module.exports = router;

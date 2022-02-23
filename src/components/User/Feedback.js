@@ -17,6 +17,7 @@ function Feedback() {
 
     // await axios({
     //   method: 'POST',
+    //   mode: 'no-cors',
     //   url: `${API_URL}/api/feedback`,
     //   data: JSON.stringify(formJSON),
     //   headers: {

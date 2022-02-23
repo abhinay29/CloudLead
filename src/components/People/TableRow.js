@@ -48,7 +48,7 @@ const TableRow = (props) => {
       }
 
       let unlockContainer = document.getElementById("unlock_" + personId);
-      unlockContainer.innerHTML = `${res.data.primary_email} <br>${badge} <span class="ms-2" style="cursor: pointer"><i class="far fa-copy"></i></span>`;
+      unlockContainer.innerHTML = `${res.data.email.toLowerCase()} <br>${badge} <span class="ms-2" style="cursor: pointer"><i class="far fa-copy"></i></span>`;
       NotificationManager.success(
         "Contact added to watchlist",
         "Success!",
@@ -80,10 +80,10 @@ const TableRow = (props) => {
                   <div className="fw-bold text-capitalize">
                     {data.first_name} {data.last_name}
                   </div>
-                  <div className="text-muted">{data.position}</div>
+                  <div className="text-muted">{data.title}</div>
                   <div className="table_social_link mt-1">
                     <a
-                      href={data.linkedin_profile}
+                      href={data.linkedin_id}
                       target="_blank"
                       rel="noreferrer"
                       data-bs-toggle="tooltip"
@@ -96,21 +96,22 @@ const TableRow = (props) => {
                 </span>
               </div>
             </td>
-            {/* <td className="title align-middle">{data.position}</td> */}
             <td className="name_of_company align-middle">
               <strong
                 className="show_company"
                 data-name="21st Century Software Solutions Pvt Ltd"
                 style={{ cursor: "pointer" }}
                 onClick={() => {
-                  showCompanyInfo(data.company_name);
+                  showCompanyInfo(data.company_id);
                 }}
               >
-                {data.company_name}
+                {data.organization.organization_name
+                  ? data.organization.organization_name
+                  : ""}
               </strong>
               <div className="table_social_link mt-1">
                 <a
-                  href={`http://${data.website}`}
+                  href={`http://${data.organization.website_link}`}
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   title="Website"
@@ -120,7 +121,7 @@ const TableRow = (props) => {
                   <i className="fas fa-globe"></i>
                 </a>
                 <a
-                  href={data.linkedin_link}
+                  href={data.organization.org_linkedin_url}
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   title="Linkedin Link"
@@ -133,7 +134,7 @@ const TableRow = (props) => {
                   href="#cloud"
                   onClick={(e) => {
                     e.preventDefault();
-                    showCompanyInfo(data.company_name);
+                    showCompanyInfo(data.company_id);
                   }}
                   title="View Company Profile"
                 >
@@ -144,16 +145,18 @@ const TableRow = (props) => {
                   title="Show all contacts from this company"
                   onClick={(e) => {
                     e.preventDefault();
-                    showAllContacts(data.company_name);
+                    showAllContacts(data.organization.company_id);
                   }}
                 >
                   <i className="fas fa-user"></i>
                 </a>
               </div>
             </td>
-            <td className="industry align-middle">{data.industry}</td>
+            <td className="industry align-middle text-capitalize">
+              {data.organization.industry}
+            </td>
             <td className="head-count align-middle">
-              {data.company_size_range}
+              {data.organization.size_range}
             </td>
             <td
               className="align-middle email"
@@ -178,21 +181,21 @@ const TableRow = (props) => {
             </td>
             <td className="align-middle">
               <div style={{ height: "45px", overflow: "hidden" }}>
-                {data.boardline_numbers}
+                {data.organization.primary_phone}
               </div>
             </td>
             <td className="align-middle">
               <span className="badge bg-primary">Contact Us</span>
             </td>
             <td className="align-middle">
-              <strong>{data.person_country}</strong>
+              <strong>{data.country}</strong>
               <br />
-              {data.person_city}
+              {data.city}
             </td>
             <td className="align-middle">
-              <strong>{data.company_country}</strong>
+              <strong>{data.organization.org_country}</strong>
               <br />
-              {data.company_city}
+              {data.organization.org_city}
             </td>
           </tr>
         );

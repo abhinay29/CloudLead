@@ -4,7 +4,7 @@ import CreatableSelect from "react-select/creatable";
 import Select from "react-select";
 // import PeopleContext from '../Context/People/PeopleContext';
 import {
-  positionOptions,
+  titleOptions,
   departmentRole,
   compSizeRangeOpt,
   revenueRange
@@ -868,7 +868,7 @@ const WatchFilter = (props) => {
                       name="position"
                       onChange={handleSelectChange}
                       value={defaultValue.position}
-                      options={positionOptions}
+                      options={titleOptions}
                       className="basic-multi-select"
                       placeholder="Select Title"
                     />

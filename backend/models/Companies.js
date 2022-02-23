@@ -1,45 +1,48 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const CompanySchema = new Schema({
   company_id: {
     type: String,
     unique: true,
-    require: true,
+    require: true
   },
-  company_size_range: {
-    type: String,
+  organization_name: {
+    type: String
   },
-  company_type: {
-    type: String,
+  primary_website_domain: {
+    type: String
   },
-  company_name: {
-    type: String,
+  website_link: {
+    type: String
   },
-  company_city: {
-    type: String,
+  industry: {
+    type: String
   },
-  company_state: {
-    type: String,
+  org_city: {
+    type: String
   },
-  company_country: {
-    type: String,
+  org_state: {
+    type: String
   },
-  revenue_range: {
-    type: String,
+  org_country: {
+    type: String
   },
-  linkedin_link: {
-    type: String,
+  annual_revenue: {
+    type: String
   },
-  keyword: {
-    type: String,
+  estimated_employees_headcount: {
+    type: String
   },
-  domain: {
-    type: String,
+  org_linkedin_url: {
+    type: String
   },
-  website: {
-    type: String,
+  organization_type: {
+    type: String
+  },
+  keywords: {
+    type: String
   }
 });
 
-module.exports = mongoose.model('data_companies', CompanySchema);
+module.exports = mongoose.model("data_companies", CompanySchema);

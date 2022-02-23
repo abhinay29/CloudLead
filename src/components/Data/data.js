@@ -1,4 +1,4 @@
-export const positionOptions = [
+export const titleOptions = [
   { value: "Business Manager", label: "Business Manager" },
   { value: "Senior Manager", label: "Senior Manager" },
   { value: "Co Manager", label: "Co Manager" },
@@ -30,7 +30,7 @@ export const revenueRange = [
 ];
 
 export const departmentRole = {
-  "finance": [
+  finance: [
     { value: "Finance", label: "Finance" },
     { value: "Accounts", label: "Accounts" },
     { value: "Legal", label: "Legal" },
@@ -41,9 +41,9 @@ export const departmentRole = {
     { value: "Controller", label: "Controller" },
     { value: "Company secretory", label: "Company secretory" },
     { value: "M&A", label: "M&A" },
-    { value: "Risk", label: "Risk" },
+    { value: "Risk", label: "Risk" }
   ],
-  "hr": [
+  hr: [
     { value: "T&D", label: "T&D" },
     { value: "L&D", label: "L&D" },
     { value: "Organization Development", label: "Organization Development" },
@@ -56,14 +56,14 @@ export const departmentRole = {
     { value: "IR", label: "IR" },
     { value: "Compensation", label: "Compensation" }
   ],
-  "marketing": [
+  marketing: [
     { value: "Business Development", label: "Business Development" },
     { value: "Sales", label: "Sales" },
     { value: "Marketing", label: "Marketing" },
     { value: "Service", label: "Service" }
   ],
-  "purchase": [
-    { value: "Purchase", label: "Purchase", },
+  purchase: [
+    { value: "Purchase", label: "Purchase" },
     { value: "Procurement", label: "Procurement" },
     { value: "Logistics", label: "Logistics" },
     { value: "Transportation", label: "Transportation" },
@@ -71,7 +71,7 @@ export const departmentRole = {
     { value: "Warehousing", label: "Warehousing" },
     { value: "Materials", label: "Materials" }
   ],
-  "operation": [
+  operation: [
     { value: "Quality", label: "Quality" },
     { value: "Production", label: "Production" },
     { value: "Plant", label: "Plant" },
@@ -81,7 +81,7 @@ export const departmentRole = {
     { value: "Safety", label: "Safety" },
     { value: "Security", label: "Security" }
   ],
-  "corporate": [
+  corporate: [
     { value: "Corporate/HQ", label: "Corporate/HQ" },
     { value: "EA", label: "EA" },
     { value: "Personal Secretory", label: "Personal Secretory" },
@@ -93,14 +93,17 @@ export const departmentRole = {
     { value: "Operations/Delivery", label: "Operations/Delivery" },
     { value: "Project", label: "Project" }
   ],
-  "others": [
+  others: [
     { value: "Data Science", label: "Data Science" },
-    { value: "Professor, Lecturer, Education, Dean", label: "Professor, Lecturer, Education, Dean" },
+    {
+      value: "Professor, Lecturer, Education, Dean",
+      label: "Professor, Lecturer, Education, Dean"
+    },
     { value: "Facility", label: "Facility" },
     { value: "Infrastructure", label: "Infrastructure" },
     { value: "Medical", label: "Medical" }
   ],
-  "it": [
+  it: [
     { value: "Testing", label: "Testing" },
     { value: "Cloud", label: "Cloud" },
     { value: "Softweare Developer", label: "Softweare Developer" },
@@ -110,4 +113,4 @@ export const departmentRole = {
     { value: "Web Development", label: "Web Development" },
     { value: "Information Technology", label: "Information Technology" }
   ]
-}
+};

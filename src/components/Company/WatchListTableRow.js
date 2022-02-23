@@ -14,14 +14,14 @@ const WatchListTableRow = (props) => {
                 data-name="21st Century Software Solutions Pvt Ltd"
                 style={{ cursor: "pointer" }}
                 onClick={() => {
-                  showCompanyInfo(data.company_name);
+                  showCompanyInfo(data.organization_name);
                 }}
               >
-                {data.company_name}
+                {data.organization_name}
               </strong>
               <div className="table_social_link mt-1">
                 <a
-                  href={`//${data.website}`}
+                  href={`//${data.website_link}`}
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   title="Website"
@@ -31,7 +31,7 @@ const WatchListTableRow = (props) => {
                   <i className="fas fa-globe"></i>
                 </a>
                 <a
-                  href={data.linkedin_link}
+                  href={data.org_linkedin_url}
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   title="Linkedin Link"
@@ -46,7 +46,7 @@ const WatchListTableRow = (props) => {
                   title="Show Contacts"
                   onClick={(e) => {
                     e.preventDefault();
-                    showContacts(data.company_name);
+                    showContacts(data.organization_name);
                   }}
                 >
                   <i className="fas fa-user"></i>
@@ -55,7 +55,7 @@ const WatchListTableRow = (props) => {
                   href="#cloud"
                   onClick={(e) => {
                     e.preventDefault();
-                    showCompanyInfo(data.company_name);
+                    showCompanyInfo(data.organization_name);
                   }}
                   title="View Company Profile"
                 >
@@ -73,12 +73,12 @@ const WatchListTableRow = (props) => {
             </td>
             <td className="industry align-middle">{data.industry}</td>
             <td className="head-count align-middle">
-              {data.company_size_range}
+              {data.estimated_employees_headcount}
             </td>
             <td className="align-middle">
-              <strong>{data.company_country}</strong>
+              <strong>{data.org_country}</strong>
               <br />
-              {data.company_city}
+              {data.org_city}
             </td>
           </tr>
         );

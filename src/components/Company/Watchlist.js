@@ -299,7 +299,7 @@ const Watchlist = () => {
           <div className="modal-content shadow-lg">
             <div className="modal-header">
               <h5 className="modal-title" id="mod_comp_name">
-                {company_info.company_name}
+                {company_info.organization_name}
               </h5>
               <button
                 type="button"
@@ -315,23 +315,23 @@ const Watchlist = () => {
                   <p className="fw-bold mb-1">Website</p>
                   <p className="text-break">
                     <a
-                      href={`//${company_info.domain}`}
+                      href={`//${company_info.website_link}`}
                       rel="noreferrer"
                       id="ext_website"
                       target="_blank"
                     >
-                      {company_info.domain}
+                      {company_info.website_link}
                     </a>
                   </p>
                   <p className="fw-bold mb-1">Linkedin</p>
                   <p className="text-break">
                     <a
-                      href={company_info.linkedin_link}
+                      href={company_info.org_linkedin_url}
                       rel="noreferrer"
                       id="ext_linkedin_link"
                       target="_blank"
                     >
-                      {company_info.linkedin_link}
+                      {company_info.org_linkedin_url}
                     </a>
                   </p>
                   <p className="fw-bold mb-1">Founded</p>
@@ -343,16 +343,16 @@ const Watchlist = () => {
                   <p className="fw-bold mb-1">Size</p>
                   <p id="ext_size">{company_info.company_size_range}</p>
                   <p className="fw-bold mb-1">Revenue</p>
-                  <p id="ext_revenue">{company_info.revenue_range}</p>
+                  <p id="ext_revenue">{company_info.annual_revenue}</p>
                 </div>
               </div>
               <div className="row">
                 <div className="col-md-12 col-lg-12">
                   <p className="fw-bold mb-1">Company Description</p>
-                  <p id="ext_description">{company_info.description}</p>
+                  <p id="ext_description">{company_info.company_description}</p>
                   <p className="fw-bold mb-1">Location</p>
                   <p id="ext_location">
-                    {company_info.company_city},{" "}
+                    {company_info.org_city},{" "}
                     <strong>{company_info.company_country}</strong>
                   </p>
                 </div>

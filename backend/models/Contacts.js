@@ -1,10 +1,9 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const ContactSchema = new Schema({
-  _id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'person_watchlists',
+  person_id: {
+    type: String,
     required: true
   },
   first_name: {
@@ -15,67 +14,43 @@ const ContactSchema = new Schema({
     type: String,
     required: true
   },
-  person_city: {
-    type: String,
+  title: {
+    type: String
   },
-  person_state: {
-    type: String,
+  city: {
+    type: String
   },
-  person_country: {
-    type: String,
+  state: {
+    type: String
+  },
+  country: {
+    type: String
   },
   department: {
-    type: String,
+    type: String
   },
   role: {
-    type: String,
+    type: String
   },
-  company_size_range: {
+  company_id: {
     type: String,
+    ref: "data_companies",
+    required: true
   },
-  company_type: {
-    type: String,
+  seniority: {
+    type: String
   },
-  company_name: {
-    type: String,
+  email_confidence_level: {
+    type: String
   },
-  company_city: {
-    type: String,
+  email: {
+    type: String
   },
-  company_state: {
-    type: String,
-  },
-  company_country: {
-    type: String,
-  },
-  revenue_range: {
-    type: String,
-  },
-  industry: {
-    type: String,
-  },
-  seniority_level: {
-    type: String,
-  },
-  position: {
-    type: String,
-  },
-  keyword: {
-    type: String,
-  },
-  domain: {
-    type: String,
-  },
-  product_services: {
-    type: String,
-  },
-  primary_mai_confidence: {
-    type: String,
-  },
-  primary_email: {
-    type: String,
+  organization: {
+    organization_type: {
+      type: String
+    }
   }
-
 });
 
-module.exports = mongoose.model('contacts', ContactSchema);
+module.exports = mongoose.model("peoples", ContactSchema);

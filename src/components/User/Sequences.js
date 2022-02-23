@@ -61,7 +61,26 @@ function Sequences() {
                       <tr key={seq.id}>
                         <td className="fw-bold">{seq.name}</td>
                         <td>{seq.rcptcount}</td>
-                        <td>View / Edit / Delete</td>
+                        <td>
+                          <a
+                            href="#cloud"
+                            className="btn btn-sm btn-secondary me-2"
+                          >
+                            View
+                          </a>
+                          <a
+                            href="#cloud"
+                            className="btn btn-sm btn-primary me-2"
+                          >
+                            Edit
+                          </a>
+                          <a
+                            href="#cloud"
+                            className="btn btn-sm btn-danger me-2"
+                          >
+                            Delete
+                          </a>
+                        </td>
                       </tr>
                     );
                   })}

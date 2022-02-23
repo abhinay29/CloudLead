@@ -315,6 +315,25 @@ router.post("/template/create", fetchuser, async (req, res) => {
   });
 });
 
+router.post("/template/delete", fetchuser, async (req, res) => {
+  const user_id = req.user.id;
+  const { temp_id } = req.body;
+
+  const addTemplate = await templates.deleteOne({
+    _id: temp_id
+  });
+  if (!addTemplate)
+    return res.status(200).json({
+      status: "error",
+      error: "Cannot delete template this time, please try again later."
+    });
+
+  return res.status(200).json({
+    status: "success",
+    message: "Template Deleted successfully."
+  });
+});
+
 router.get("/checkphone/:phone", fetchuser, async (req, res) => {
   let user = await User.findOne({ phone: req.params.phone });
   if (user) {

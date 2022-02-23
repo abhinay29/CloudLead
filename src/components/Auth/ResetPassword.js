@@ -29,6 +29,7 @@ function ResetPassword(props) {
     try {
       const res = await fetch(`${API_URL}/api/auth/resetpassword`, {
         method: "POST",
+        mode: "no-cors",
         headers: {
           "Content-Type": "application/json"
         },

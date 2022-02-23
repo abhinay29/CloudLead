@@ -41,6 +41,7 @@ function CreateTemplate() {
       let url = `${API_URL}/api/user/template/create`;
       let createTemplate = await fetch(url, {
         method: "POST",
+        mode: "no-cors",
         headers: {
           "auth-token": localStorage.getItem("token"),
           "Content-Type": "application/json"
