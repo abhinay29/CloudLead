@@ -1456,7 +1456,7 @@ const Filter = (props) => {
                       name="revenue_range"
                       options={revenueRange}
                       className="basic-multi-select"
-                      placeholder="Select Company Size"
+                      placeholder="Select Revenue Range"
                     />
                   </div>
                 </div>

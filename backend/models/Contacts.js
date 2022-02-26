@@ -49,7 +49,31 @@ const ContactSchema = new Schema({
   organization: {
     organization_type: {
       type: String
-    }
+    },
+    organization_name: {
+      type: String
+    },
+    org_city: {
+      type: String
+    },
+    org_state: {
+      type: String
+    },
+    org_country: {
+      type: String
+    },
+    industry: {
+      type: String
+    },
+    primary_website_domain: {
+      type: String
+    },
+    keywords: {
+      type: String
+    },
+    revenue_range: {
+      type: String
+    },
   }
 });
 

@@ -9,7 +9,7 @@ const WatchlistSchema = new Schema({
   },
   contact_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "contacts",
+    ref: "peoples",
     required: true
   },
   date: {

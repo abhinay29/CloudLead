@@ -22,11 +22,12 @@ export const compSizeRangeOpt = [
 
 export const revenueRange = [
   { value: "< 1M", label: "< 1M" },
-  { value: "1M - 10M", label: "1M-10M" },
-  { value: "11M - 100M", label: "11M-100M" },
-  { value: "101M - 500M", label: "101M-500M" },
-  { value: "501M - 1B", label: "501M-1B" },
-  { value: "1B+", label: "1B+" }
+  { value: "1M - 10M", label: "1M - 10M" },
+  { value: "11M - 100M", label: "11M - 100M" },
+  { value: "101M - 500M", label: "101M - 500M" },
+  { value: "501M - 1B", label: "501M - 1B" },
+  { value: "1B+", label: "1B+" },
+  { value: "10B+", label: "10B+" }
 ];
 
 export const departmentRole = {
