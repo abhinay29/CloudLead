@@ -176,25 +176,25 @@ const Table = (props) => {
         res.data.map((data) => {
           var badge = "";
           if (
-            data.primary_mai_confidence === "High" ||
-            data.primary_mai_confidence === "Verified"
+            data.email_confidence_level === "valid" ||
+            data.email_confidence_level === "Valid"
           ) {
             badge =
               '<span class="badge text-white bg-success small"><i class="fas fa-check-circle me-1" title="Verified"></i> Verified</span>';
           } else if (
-            data.primary_mai_confidence === "Low" ||
-            data.primary_mai_confidence === "Catchall/Accept_all"
+            data.email_confidence_level === "catchall" ||
+            data.email_confidence_level === "Catchall/Accept_all"
           ) {
             badge =
               '<span class="badge bg-secondary">Catch all / Accept all</span>';
           } else if (
-            data.primary_mai_confidence === "Guessed" ||
-            data.primary_mai_confidence === "Guessed/Recommended"
+            data.email_confidence_level === "guessed" ||
+            data.email_confidence_level === ""
           ) {
             badge = `<span class="badge" style="background: #f57c00"> Guessed / Recommended</span>`;
           }
           var unlockContainer = document.getElementById("unlock_" + data._id);
-          unlockContainer.innerHTML = `${data.primary_email} <br>${badge} <span class="ms-2" style="cursor: pointer"><i class="far fa-copy"></i></span>`;
+          unlockContainer.innerHTML = `${data.email} <br>${badge} <span class="ms-2" style="cursor: pointer"><i class="far fa-copy"></i></span>`;
           return true;
         });
       }

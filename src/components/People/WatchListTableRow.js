@@ -4,11 +4,14 @@ import React from "react";
 const Badge = (props) => {
   const { confidence } = props;
   let badge = "";
-  if (confidence === "High" || confidence === "Verified") {
+  if (confidence === "valid" || confidence === "Valid") {
     badge = "high";
-  } else if (confidence === "Low" || confidence === "Catchall/Accept_all") {
+  } else if (
+    confidence === "catchall" ||
+    confidence === "Catchall/Accept_all"
+  ) {
     badge = "low";
-  } else if (confidence === "Guessed" || confidence === "Guessed/Recommended") {
+  } else if (confidence === "guessed" || confidence === "") {
     badge = "guessed";
   }
 
@@ -20,11 +23,16 @@ const Badge = (props) => {
         </span>
       )}
       {badge === "low" && (
-        <span className="badge bg-secondary">Catch all / Accept all</span>
+        <span className="badge bg-secondary" title="Catch all / Accept all">
+          Catch all / Accept all
+        </span>
       )}
       {badge === "guessed" && (
-        <span className="badge" style={{ background: "#f57c00" }}>
-          {" "}
+        <span
+          className="badge"
+          style={{ background: "#f57c00" }}
+          title="Guessed"
+        >
           Guessed / Recommended
         </span>
       )}
@@ -75,10 +83,10 @@ const WatchListTableRow = (props) => {
                     <div className="fw-bold">
                       {data.first_name} {data.last_name}
                     </div>
-                    <div className="text-muted">{data.position}</div>
+                    <div className="text-muted">{data.title}</div>
                     <div className="table_social_link mt-1">
                       <a
-                        href={data.linkedin_profile}
+                        href={data.linkedin_id}
                         target="_blank"
                         rel="noreferrer"
                         data-bs-toggle="tooltip"
@@ -91,21 +99,20 @@ const WatchListTableRow = (props) => {
                   </span>
                 </div>
               </td>
-              {/* <td className="title align-middle">{data.position}</td> */}
               <td className="name_of_company align-middle">
                 <strong
                   className="show_company"
                   data-name="21st Century Software Solutions Pvt Ltd"
                   style={{ cursor: "pointer" }}
                   onClick={() => {
-                    showCompanyInfo(data.company_name);
+                    showCompanyInfo(data.organization.organization_name);
                   }}
                 >
-                  {data.company_name}
+                  {data.organization.organization_name}
                 </strong>
                 <div className="table_social_link mt-1">
                   <a
-                    href={data.website}
+                    href={data.organization.website_url}
                     data-bs-toggle="tooltip"
                     data-bs-placement="top"
                     title="Website"
@@ -115,7 +122,7 @@ const WatchListTableRow = (props) => {
                     <i className="fas fa-globe"></i>
                   </a>
                   <a
-                    href={data.linkedin_link}
+                    href={data.organization.linkedin_url}
                     data-bs-toggle="tooltip"
                     data-bs-placement="top"
                     title="Linkedin Link"
@@ -128,7 +135,7 @@ const WatchListTableRow = (props) => {
                     href="#cloud"
                     onClick={(e) => {
                       e.preventDefault();
-                      showCompanyInfo(data.company_name);
+                      showCompanyInfo(data.company_id);
                     }}
                     title="View Company Profile"
                   >
@@ -136,34 +143,36 @@ const WatchListTableRow = (props) => {
                   </a>
                 </div>
               </td>
-              <td className="industry align-middle">{data.industry}</td>
+              <td className="industry align-middle text-capitalize">
+                {data.organization.industry}
+              </td>
               <td className="head-count align-middle">
-                {data.company_size_range}
+                {data.organization.employee_range}
               </td>
               <td className="align-middle" id={`unlock_${data._id}`}>
-                {data.primary_email} <br />
-                <Badge confidence={data.primary_mai_confidence} />
+                {data.email} <br />
+                <Badge confidence={data.email_confidence_level} />
                 <span className="ms-2" style={{ cursor: "pointer" }}>
                   <i className="far fa-copy"></i>
                 </span>
               </td>
               <td className="align-middle">
                 <div style={{ height: "45px", overflow: "hidden" }}>
-                  {data.boardline_numbers}
+                  {data.organization.primary_phone_number}
                 </div>
               </td>
               <td className="align-middle">
                 <span className="badge bg-primary">Contact Us</span>
               </td>
               <td className="align-middle">
-                <strong>{data.person_country}</strong>
+                <strong>{data.country}</strong>
                 <br />
-                {data.person_city}
+                {data.city}
               </td>
               <td className="align-middle">
-                <strong>{data.company_country}</strong>
+                <strong>{data.organization.country}</strong>
                 <br />
-                {data.company_city}
+                {data.organization.city}
               </td>
               <td className="align-middle">{data.date}</td>
             </tr>

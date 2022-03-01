@@ -57,6 +57,7 @@ const Watchlist = () => {
       if (parsedData.totalResults !== 0) {
         setPeople(parsedData.totalResults);
         setWatchList(parsedData);
+        setUniqueComp(parsedData.totalCompanies);
       } else {
         setPeople(0);
         setWatchList([]);
@@ -87,7 +88,7 @@ const Watchlist = () => {
     let query = "";
     for (var i = 0, n = confidence_checkbox.length; i < n; i++) {
       if (confidence_checkbox[i].checked) {
-        query += `&primary_mai_confidence=${confidence_checkbox[i].value}`;
+        query += `&email_confidence_level=${confidence_checkbox[i].value}`;
       }
     }
     getWatchlist(1, query);
@@ -561,7 +562,7 @@ const Watchlist = () => {
                 id="high_confidence"
                 className="form-check-input me-1 confidence_level"
                 onChange={() => filterConfidence()}
-                value="High"
+                value="Valid"
               />
               <label htmlFor="high_confidence" className="form-check-label">
                 Verified
@@ -574,7 +575,7 @@ const Watchlist = () => {
                 id="low_confidence"
                 className="form-check-input me-1 confidence_level"
                 onChange={() => filterConfidence()}
-                value="Catchall/Accept_all"
+                value="catchall"
               />
               <label htmlFor="low_confidence" className="form-check-label">
                 Catch all / Accept all
@@ -587,7 +588,7 @@ const Watchlist = () => {
                 id="guessed_confidence"
                 className="form-check-input me-1 confidence_level"
                 onChange={() => filterConfidence()}
-                value="Guessed/Recommended"
+                value="guessed"
               />
               <label htmlFor="guessed_confidence" className="form-check-label">
                 Guessed / Recommended

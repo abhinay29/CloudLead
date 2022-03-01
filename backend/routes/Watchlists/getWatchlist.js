@@ -202,10 +202,12 @@ module.exports = async (req, res) => {
 
       const peoples = await wlcontact.query;
       const totalResults = await Contacts.count(search);
+      const uniqueComp = await Contacts.find(search).distinct("company_id");
 
       res.status(200).json({
         status: "success",
         totalResults: totalResults,
+        totalCompanies: uniqueComp.length,
         limit: peoples.length ? peoples.length : 0,
         page: req.query.page,
         peoples

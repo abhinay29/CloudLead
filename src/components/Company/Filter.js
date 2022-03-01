@@ -1,35 +1,31 @@
 // eslint-disable-next-line
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import CreatableSelect from 'react-select/creatable';
+import React, { useContext, useEffect, useRef, useState } from "react";
+import CreatableSelect from "react-select/creatable";
 import Select from "react-select";
-import 'react-select-plus/dist/react-select-plus.css';
-import CompanyContext from '../Context/Company/CompanyContext';
-import {
-  compSizeRangeOpt,
-  revenueRange,
-} from "../Data/data";
-import { industryGrpOpt } from "../Data/industries"
-import { countryGroup } from "../Data/countries"
-import { useDispatch } from 'react-redux';
-import { progressLoading } from '../../states/action-creator';
-import { Link } from 'react-router-dom';
+import "react-select-plus/dist/react-select-plus.css";
+import CompanyContext from "../Context/Company/CompanyContext";
+import { compSizeRangeOpt, revenueRange } from "../Data/data";
+import { industryGrpOpt } from "../Data/industries";
+import { countryGroup } from "../Data/countries";
+import { useDispatch } from "react-redux";
+import { progressLoading } from "../../states/action-creator";
+import { Link } from "react-router-dom";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const Filter = (props) => {
-
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(progressLoading(40))
+    dispatch(progressLoading(40));
     setTimeout(() => {
-      dispatch(progressLoading(100))
+      dispatch(progressLoading(100));
     }, 500);
-  }, [dispatch])
+  }, [dispatch]);
 
   const context = useContext(CompanyContext);
   const { getCompanies, setTotalComp } = context;
-  const { showFilter, setShowFilter, setShowTable } = props
-  const [disSearchBtn, setDisSearchBtn] = useState(false)
+  const { showFilter, setShowFilter, setShowTable } = props;
+  const [disSearchBtn, setDisSearchBtn] = useState(false);
 
   const [cities, setCities] = useState([]);
   const [states, setStates] = useState([]);
@@ -38,55 +34,54 @@ const Filter = (props) => {
   const handleCity = async (e) => {
     let query = e.target.value;
     if (!query || query.length < 3) {
-      setCities([])
-      return
+      setCities([]);
+      return;
     } else {
       let url = `${API_URL}/api/cities/` + query;
-      const response = await fetch(url)
+      const response = await fetch(url);
       const cityRes = await response.json();
       setCities(cityRes);
     }
-  }
+  };
 
   const handleState = async (e) => {
     let query = e.target.value;
     if (!query || query.length < 3) {
-      setStates([])
-      return
+      setStates([]);
+      return;
     } else {
       let url = `${API_URL}/api/states/` + query;
-      const response = await fetch(url)
+      const response = await fetch(url);
       const stateRes = await response.json();
       setStates(stateRes);
     }
-  }
+  };
 
   const getCompanySuggestions = async (e) => {
     let query = e.target.value;
     if (!query || query.length < 3) {
-      setCompanySuggestions([])
-      return
+      setCompanySuggestions([]);
+      return;
     } else {
       let url = `${API_URL}/api/companies/suggestions/` + query;
-      const response = await fetch(url)
+      const response = await fetch(url);
       const compSuggRes = await response.json();
-      if (compSuggRes.status === 'success') {
+      if (compSuggRes.status === "success") {
         setCompanySuggestions(compSuggRes.companies);
       }
     }
-  }
+  };
 
   const searchCompany = async (e) => {
-    e.preventDefault()
-    let form = document.getElementById('search_form');
-    let formData = new FormData(form)
+    e.preventDefault();
+    let form = document.getElementById("search_form");
+    let formData = new FormData(form);
     let params = new URLSearchParams(formData);
     let keysForDel = [];
     params.forEach((v, k) => {
-      if (v === '')
-        keysForDel.push(k);
+      if (v === "") keysForDel.push(k);
     });
-    keysForDel.forEach(k => {
+    keysForDel.forEach((k) => {
       params.delete(k);
     });
 
@@ -103,136 +98,164 @@ const Filter = (props) => {
         }
       }
       return obj;
-    }
+    };
 
-    localStorage.setItem('currentCompanyQuery', JSON.stringify(serialize(formData)));
+    localStorage.setItem(
+      "currentCompanyQuery",
+      JSON.stringify(serialize(formData))
+    );
 
-    let query = params.toString()
+    let query = params.toString();
 
     if (query.length === 0) {
-      alert('Please fill at least 1 field');
+      alert("Please fill at least 1 field");
       setDisSearchBtn(false);
-      return
+      return;
     }
 
     setDisSearchBtn(true);
-    dispatch(progressLoading(40))
+    dispatch(progressLoading(40));
     const url = `${API_URL}/api/companies?${query}`;
     let data = await fetch(url, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'auth-token': localStorage.getItem('token'),
-        'Content-Type': 'application/json'
+        "auth-token": localStorage.getItem("token"),
+        "Content-Type": "application/json"
       }
     });
-    dispatch(progressLoading(60))
-    let parsedData = await data.json()
-    if (parsedData.status === 'success') {
+    dispatch(progressLoading(60));
+    let parsedData = await data.json();
+    if (parsedData.status === "success") {
       if (parsedData.totalResults === 0) {
-        alert('No result found');
+        alert("No result found");
         setDisSearchBtn(false);
-        return
+        return;
       }
-      localStorage.setItem('companySearchQuery', query)
-      getCompanies(parsedData)
-      setTotalComp(parsedData.totalResults)
-      setShowFilter(false)
-      setShowTable(true)
+      localStorage.setItem("companySearchQuery", query);
+      getCompanies(parsedData);
+      setTotalComp(parsedData.totalResults);
+      setShowFilter(false);
+      setShowTable(true);
     }
     setDisSearchBtn(false);
-    dispatch(progressLoading(100))
+    dispatch(progressLoading(100));
+  };
 
-  }
-
-  const [savedSearches, setsavedSearches] = useState({})
+  const [savedSearches, setsavedSearches] = useState({});
 
   // eslint-disable-next-line
   useEffect(async () => {
     let savedSearch = await fetch(`${API_URL}/api/user/savedcompanysearch`, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json',
-        'auth-token': localStorage.getItem('token')
+        "Content-Type": "application/json",
+        "auth-token": localStorage.getItem("token")
       }
-    })
-    let res = await savedSearch.json()
-    if (res.status === 'success') {
-      if (res.result === null) { return false }
-      const searchData = []
-      localStorage.setItem('savedCompanySearches', JSON.stringify(res.result.data))
-      let pushSearch = res.result.data.map(src => {
-        searchData.push({ value: src._id, label: src.name })
-        return true
-      })
+    });
+    let res = await savedSearch.json();
+    if (res.status === "success") {
+      if (res.result === null) {
+        return false;
+      }
+      const searchData = [];
+      localStorage.setItem(
+        "savedCompanySearches",
+        JSON.stringify(res.result.data)
+      );
+      let pushSearch = res.result.data.map((src) => {
+        searchData.push({ value: src._id, label: src.name });
+        return true;
+      });
       if (pushSearch) {
         setsavedSearches(searchData);
       }
     } else {
-      setsavedSearches({})
+      setsavedSearches({});
     }
-  }, [showFilter])
+  }, [showFilter]);
 
   const [defaultValue, setDefaultValue] = useState({
     company_name: [],
     company_country: [],
     company_state: [],
-    company_city: [],
-  })
+    company_city: []
+  });
 
   const handleSelectChange = (inputValue, actionMeta) => {
-    setDefaultValue({ ...defaultValue, [actionMeta.name]: inputValue })
-  }
+    setDefaultValue({ ...defaultValue, [actionMeta.name]: inputValue });
+  };
 
   const onSelectSavedSearch = async (e) => {
-    const savedSearches = await JSON.parse(localStorage.getItem("savedCompanySearches"));
-    savedSearches.map(svd => {
+    const savedSearches = await JSON.parse(
+      localStorage.getItem("savedCompanySearches")
+    );
+    savedSearches.map((svd) => {
       if (svd._id === e.value) {
-
-        let company_name = []
-        if (svd.query['company_name'] !== "") {
-          if (svd.query['company_name'] instanceof Array) {
-            svd.query['company_name'].map(v => {
-              company_name.push({ value: v, label: v })
+        let company_name = [];
+        if (svd.query["company_name"] !== "") {
+          if (svd.query["company_name"] instanceof Array) {
+            svd.query["company_name"].map((v) => {
+              company_name.push({ value: v, label: v });
               return true;
-            })
+            });
           } else {
-            company_name = [{ value: svd.query['company_name'], label: svd.query['company_name'] }]
+            company_name = [
+              {
+                value: svd.query["company_name"],
+                label: svd.query["company_name"]
+              }
+            ];
           }
         }
 
-        let company_country = []
-        if (svd.query['company_country'] !== "") {
-          if (svd.query['company_country'] instanceof Array) {
-            svd.query['company_country'].map(v => {
-              company_country.push({ value: v, label: v })
+        let company_country = [];
+        if (svd.query["company_country"] !== "") {
+          if (svd.query["company_country"] instanceof Array) {
+            svd.query["company_country"].map((v) => {
+              company_country.push({ value: v, label: v });
               return true;
-            })
+            });
           } else {
-            company_country = [{ value: svd.query['company_country'], label: svd.query['company_country'] }]
+            company_country = [
+              {
+                value: svd.query["company_country"],
+                label: svd.query["company_country"]
+              }
+            ];
           }
         }
 
-        let company_state = []
-        if (svd.query['company_state'] !== "") {
-          if (svd.query['company_state'] instanceof Array) {
-            svd.query['company_state'].map(v => {
-              company_state.push({ value: v, label: v })
+        let company_state = [];
+        if (svd.query["company_state"] !== "") {
+          if (svd.query["company_state"] instanceof Array) {
+            svd.query["company_state"].map((v) => {
+              company_state.push({ value: v, label: v });
               return true;
-            })
+            });
           } else {
-            company_state = [{ value: svd.query['company_state'], label: svd.query['company_state'] }]
+            company_state = [
+              {
+                value: svd.query["company_state"],
+                label: svd.query["company_state"]
+              }
+            ];
           }
         }
 
-        let company_city = []
-        if (svd.query['company_city'] !== "") {
-          if (svd.query['company_city'] instanceof Array) {
-            svd.query['company_city'].map(v => {
-              company_city.push({ value: v, label: v })
+        let company_city = [];
+        if (svd.query["company_city"] !== "") {
+          if (svd.query["company_city"] instanceof Array) {
+            svd.query["company_city"].map((v) => {
+              company_city.push({ value: v, label: v });
               return true;
-            })
+            });
           } else {
-            company_city = [{ value: svd.query['company_city'], label: svd.query['company_city'] }]
+            company_city = [
+              {
+                value: svd.query["company_city"],
+                label: svd.query["company_city"]
+              }
+            ];
           }
         }
 
@@ -241,108 +264,154 @@ const Filter = (props) => {
           company_name: company_name,
           company_country: company_country,
           company_state: company_state,
-          company_city: company_city,
-        })
+          company_city: company_city
+        });
 
         let x = 0;
 
-        if (svd.query['company_type'] !== "") {
-          if (svd.query['company_type'] instanceof Array) {
-            let company_type = document.getElementsByName('company_type')
-            svd.query['company_type'].map(v => {
+        if (svd.query["company_type"] !== "") {
+          if (svd.query["company_type"] instanceof Array) {
+            let company_type = document.getElementsByName("company_type");
+            svd.query["company_type"].map((v) => {
               for (x = 0; x < company_type.length; x++) {
                 if (company_type[x].value === v) {
                   company_type[x].checked = true;
                 }
               }
-              return true
-            })
+              return true;
+            });
           }
         } else {
-          let company_type = document.getElementsByName('company_type')
+          let company_type = document.getElementsByName("company_type");
           if (company_type) {
             for (x = 0; x < company_type.length; x++) {
               company_type[x].checked = false;
             }
           }
         }
-
       }
       return true;
-    })
-  }
-
+    });
+  };
 
   const selectAllCheckbox = (inputName) => {
     let input = document.getElementsByName(inputName);
     for (var i = 0, n = input.length; i < n; i++) {
       input[i].checked = true;
     }
-  }
+  };
 
   const selectNoneCheckbox = (inputName) => {
     let input = document.getElementsByName(inputName);
     for (var i = 0, n = input.length; i < n; i++) {
       input[i].checked = false;
     }
-  }
+  };
 
   const setDefaultValueGroupFunction = (options, name) => {
-    setDefaultValue({ ...defaultValue, [name]: options })
-  }
+    setDefaultValue({ ...defaultValue, [name]: options });
+  };
 
   const createGroup = (groupName, options, name) => {
     return {
       label: (() => {
         return (
           <div>
-            <input type="checkbox" className="form-check-input me-2" onClick={(e) => { if (e.target.checked) setDefaultValueGroupFunction(options, name) }} />
+            <input
+              type="checkbox"
+              className="form-check-input me-2"
+              onClick={(e) => {
+                if (e.target.checked)
+                  setDefaultValueGroupFunction(options, name);
+              }}
+            />
             {groupName}
           </div>
         );
       })(),
-      options: options,
+      options: options
     };
   };
 
   let countryOptionsCompany = [
-    countryGroup.map(countryGrp => {
-      return createGroup(countryGrp.label, countryGrp.options, 'company_country')
+    countryGroup.map((countryGrp) => {
+      return createGroup(
+        countryGrp.label,
+        countryGrp.options,
+        "company_country"
+      );
     })
   ];
 
   let industryGroupOptions = [
-    industryGrpOpt.map(indGrp => {
-      return createGroup(indGrp.label, indGrp.options, 'industry')
+    industryGrpOpt.map((indGrp) => {
+      return createGroup(indGrp.label, indGrp.options, "industry");
     })
-  ]
-
+  ];
 
   return (
-
-    <div className="card border-0 shadow-none" style={{ "height": "calc(100vh - 56px)", "overflow": "hidden" }}>
+    <div
+      className="card border-0 shadow-none"
+      style={{ height: "calc(100vh - 56px)", overflow: "hidden" }}
+    >
       <div className="card-body">
-        <h4 className="fw-lighter text-center mb-2">Search Potential Companies.</h4>
-        <div className="container mt-3" style={{ "maxWidth": "992px" }}>
+        <h4 className="fw-lighter text-center mb-2">
+          Search Potential Companies.
+        </h4>
+        <div className="container mt-3" style={{ maxWidth: "992px" }}>
           <form id="search_form" onSubmit={searchCompany}>
-            <div style={{ "height": "calc(100vh - 240px)", "overflowY": "scroll" }} className="p-3">
-
+            <div
+              style={{ height: "calc(100vh - 240px)", overflowY: "scroll" }}
+              className="p-3"
+            >
               <div className="d-flex selectAllCheckbox align-items-center mb-2">
                 <h6 className="fw-bold me-3 mb-0">Search By Company Type</h6>
-                <span>Select</span> <span className="selectBtn" onClick={() => { selectAllCheckbox('company_type') }}>All</span> <span>/</span> <span className="selectBtn" onClick={() => { selectNoneCheckbox('company_type') }} >None</span>
+                <span>Select</span>{" "}
+                <span
+                  className="selectBtn"
+                  onClick={() => {
+                    selectAllCheckbox("company_type");
+                  }}
+                >
+                  All
+                </span>{" "}
+                <span>/</span>{" "}
+                <span
+                  className="selectBtn"
+                  onClick={() => {
+                    selectNoneCheckbox("company_type");
+                  }}
+                >
+                  None
+                </span>
               </div>
               <div className="row mb-1">
                 <div className="col-lg-4 col-md-4">
                   <div className="form-check">
-                    <input className="form-check-input" type="checkbox" name="company_type" value="India" id="indias-top-1000" />
-                    <label className="form-check-label" htmlFor="indias-top-1000">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      name="company_type"
+                      value="India"
+                      id="indias-top-1000"
+                    />
+                    <label
+                      className="form-check-label"
+                      htmlFor="indias-top-1000"
+                    >
                       India's Top 1000
                     </label>
                   </div>
                 </div>
                 <div className="col-lg-4 col-md-4">
                   <div className="form-check">
-                    <input className="form-check-input" type="checkbox" name="company_type" value="MNC" id="mnc" />
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      name="company_type"
+                      value="MNC"
+                      id="mnc"
+                    />
                     <label className="form-check-label" htmlFor="mnc">
                       MNC
                     </label>
@@ -350,7 +419,13 @@ const Filter = (props) => {
                 </div>
                 <div className="col-lg-4 col-md-4">
                   <div className="form-check">
-                    <input className="form-check-input" type="checkbox" name="company_type" value="Industry Top" id="industry-top" />
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      name="company_type"
+                      value="Industry Top"
+                      id="industry-top"
+                    />
                     <label className="form-check-label" htmlFor="industry-top">
                       Industry Leaders
                     </label>
@@ -360,7 +435,13 @@ const Filter = (props) => {
               <div className="row mb-3">
                 <div className="col-lg-4 col-md-4">
                   <div className="form-check">
-                    <input className="form-check-input" type="checkbox" name="company_type" value="SMEs" id="smes" />
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      name="company_type"
+                      value="SMEs"
+                      id="smes"
+                    />
                     <label className="form-check-label" htmlFor="smes">
                       SMEs/MSMEs
                     </label>
@@ -368,7 +449,13 @@ const Filter = (props) => {
                 </div>
                 <div className="col-lg-4 col-md-4">
                   <div className="form-check">
-                    <input className="form-check-input" type="checkbox" name="company_type" value="Startups" id="startups" />
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      name="company_type"
+                      value="Startups"
+                      id="startups"
+                    />
                     <label className="form-check-label" htmlFor="startups">
                       Startups
                     </label>
@@ -402,7 +489,9 @@ const Filter = (props) => {
                     className="basic-multi-select"
                     placeholder="Company Name"
                   />
-                  <p style={{ "fontSize": "12px" }} className="mb-0 mt-1">Use tab/enter for multi selection.</p>
+                  <p style={{ fontSize: "12px" }} className="mb-0 mt-1">
+                    Use tab/enter for multi selection.
+                  </p>
                 </div>
                 <div className="col-md-4 col-lg-4 position-relative">
                   <Select
@@ -429,7 +518,6 @@ const Filter = (props) => {
               </div>
 
               <div className="row mb-3">
-
                 <div className="col-md-4 col-lg-4 position-relative">
                   <Select
                     defaultValue={[]}
@@ -451,7 +539,9 @@ const Filter = (props) => {
                     className="basic-multi-select"
                     placeholder="Product/Services"
                   />
-                  <p style={{ "fontSize": "12px" }} className="mb-0 mt-1">Use tab/enter for multi selection.</p>
+                  <p style={{ fontSize: "12px" }} className="mb-0 mt-1">
+                    Use tab/enter for multi selection.
+                  </p>
                 </div>
               </div>
 
@@ -505,7 +595,9 @@ const Filter = (props) => {
                     className="basic-multi-select"
                     placeholder="Domain/Website"
                   />
-                  <p style={{ "fontSize": "12px" }} className="mb-0 mt-1">Use tab/enter for multi selection.</p>
+                  <p style={{ fontSize: "12px" }} className="mb-0 mt-1">
+                    Use tab/enter for multi selection.
+                  </p>
                 </div>
                 <div className="col-md-4 col-lg-4 position-relative">
                   <CreatableSelect
@@ -516,19 +608,57 @@ const Filter = (props) => {
                     className="basic-multi-select"
                     placeholder="Keyword"
                   />
-                  <p style={{ "fontSize": "12px" }} className="mb-0 mt-1">Use tab/enter for multi selection.</p>
+                  <p style={{ fontSize: "12px" }} className="mb-0 mt-1">
+                    Use tab/enter for multi selection.
+                  </p>
                 </div>
               </div>
             </div>
 
             <div
               className="d-flex justify-content-center align-items-center position-absolute py-4 border-top"
-              style={{ "bottom": "0", "left": "0", "right": "0", "background": "#fff", "width": "100%", "zIndex": "10" }}>
-              <button type="reset" id="reset_search" onClick={() => { window.location.reload(false); }} className="btn btn-outline-secondary">Reset</button>
-              <button type="submit" className="btn btn-primary mx-3" id="search_btn" style={{ "width": "160px" }} disabled={disSearchBtn && "disabled"} >Run Search Query</button>
+              style={{
+                bottom: "0",
+                left: "0",
+                right: "0",
+                background: "#fff",
+                width: "100%",
+                zIndex: "10"
+              }}
+            >
+              <button
+                type="reset"
+                id="reset_search"
+                onClick={() => {
+                  window.location.reload(false);
+                }}
+                className="btn btn-outline-secondary"
+              >
+                Reset
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary mx-3"
+                id="search_btn"
+                style={{ width: "160px" }}
+                disabled={disSearchBtn && "disabled"}
+              >
+                Run Search Query
+              </button>
               <span className="dropup">
-                <button type="button" className="btn btn-outline-secondary" data-bs-auto-close="false" data-bs-toggle="dropdown" aria-expanded="false">Saved Search</button>
-                <div className="dropdown-menu shadow p-3" style={{ "width": "260px" }}>
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  data-bs-auto-close="false"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Saved Search
+                </button>
+                <div
+                  className="dropdown-menu shadow p-3"
+                  style={{ width: "260px" }}
+                >
                   <h6 className="fw-bold">Saved/Recent Searches</h6>
                   <hr />
                   <h6 className="fw-bold">Saved Seaches</h6>
@@ -551,14 +681,18 @@ const Filter = (props) => {
                   </div>
                 </div>
               </span>
-              <Link to="/radar/company/watchlist" className="btn btn-primary ms-3"><i className="fas fa-bookmark"></i> Watchlist</Link>
+              <Link
+                to="/radar/company/watchlist"
+                className="btn btn-primary ms-3"
+              >
+                <i className="fas fa-bookmark"></i> Watchlist
+              </Link>
             </div>
           </form>
         </div>
-      </div >
+      </div>
     </div>
-
-  )
-}
+  );
+};
 
 export default Filter;

@@ -63,6 +63,18 @@ const UserSchema = new Schema({
   },
   loginHistory: {
     type: Array
+  },
+  dailyUnlock: {
+    type: Number,
+    default: 0
+  },
+  monthlyUnlock: {
+    type: Number,
+    default: 0
+  },
+  dateUnlockDaily: {
+    type: String,
+    default: null
   }
 });
 const User = mongoose.model("users", UserSchema);

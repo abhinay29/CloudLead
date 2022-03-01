@@ -14,11 +14,11 @@ const TableRow = (props) => {
               showCompanyInfo(data.company_id);
             }}
           >
-            {data.organization_name}
+            {data.organization_name ? data.organization_name : "Not Found"}
           </strong>
           <div className="table_social_link mt-1">
             <a
-              href={`//${data.website_link}`}
+              href={`//${data.website_url}`}
               data-bs-toggle="tooltip"
               data-bs-placement="top"
               title="Website"
@@ -28,7 +28,7 @@ const TableRow = (props) => {
               <i className="fas fa-globe"></i>
             </a>
             <a
-              href={data.org_linkedin_url}
+              href={data.linkedin_url}
               data-bs-toggle="tooltip"
               data-bs-placement="top"
               title="Linkedin Link"
@@ -42,7 +42,7 @@ const TableRow = (props) => {
               title="Show Contacts"
               onClick={(e) => {
                 e.preventDefault();
-                showContacts(data.organization_name);
+                showContacts(data.company_id);
               }}
             >
               <i className="fas fa-user"></i>
@@ -68,14 +68,14 @@ const TableRow = (props) => {
             </a>
           </div>
         </td>
-        <td className="industry align-middle">{data.industry}</td>
-        <td className="head-count align-middle">
-          {data.estimated_employees_headcount}
+        <td className="industry align-middle text-capitalize">
+          {data.industry}
         </td>
+        <td className="head-count align-middle">{data.employee_range}</td>
         <td className="align-middle">
-          <strong>{data.org_country}</strong>
+          <strong>{data.country ? data.country : "--"}</strong>
           <br />
-          {data.org_city}
+          {data.city ? data.city : "--"}
         </td>
       </tr>
     </>

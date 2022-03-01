@@ -10,28 +10,28 @@ const CompanySchema = new Schema({
   organization_name: {
     type: String
   },
-  primary_website_domain: {
+  primary_domain: {
     type: String
   },
-  website_link: {
+  website_url: {
     type: String
   },
   industry: {
     type: String
   },
-  org_city: {
+  city: {
     type: String
   },
-  org_state: {
+  state: {
     type: String
   },
-  org_country: {
+  country: {
     type: String
   },
-  annual_revenue: {
+  revenue: {
     type: String
   },
-  estimated_employees_headcount: {
+  employee_range: {
     type: String
   },
   org_linkedin_url: {
@@ -45,4 +45,4 @@ const CompanySchema = new Schema({
   }
 });
 
-module.exports = mongoose.model("data_companies", CompanySchema);
+module.exports = mongoose.model("companies", CompanySchema);

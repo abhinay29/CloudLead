@@ -14,7 +14,15 @@ class APIfeatures {
     this.query.find(JSON.parse(querystr));
     return this;
   }
-  // sorting() { }
+  sorting() {
+    if (this.query.sort) {
+      const sortby = this.queryString.sort.split(",").join(" ");
+      this.query = this.query.sort(sortby);
+    } else {
+      this.query = this.query.sort({ first_name: 1, last_name: 1 });
+    }
+    return this;
+  }
   paginating() {
     const page = this.queryString.page * 1 || 1;
     const limit = this.queryString.limit * 1 || 10;

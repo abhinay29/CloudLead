@@ -10,15 +10,16 @@ export const titleOptions = [
 // { value: "", label: "" },
 
 export const compSizeRangeOpt = [
-  { value: "0 - 1", label: "0-1" },
-  { value: "2 - 10", label: "2-10" },
-  { value: "11 - 50", label: "11-50" },
-  { value: "51 - 200", label: "51-200" },
-  { value: "201 - 500", label: "201-500" },
-  { value: "501 - 1000", label: "501-1000" },
-  { value: "1001 - 5000", label: "1001-5000" },
+  { value: "0-1", label: "0-1" },
+  { value: "2-10", label: "2-10" },
+  { value: "11-50", label: "11-50" },
+  { value: "51-200", label: "51-200" },
+  { value: "201-500", label: "201-500" },
+  { value: "501-1000", label: "501-1000" },
+  { value: "1001-5000", label: "1001-5000" },
   { value: "10000+", label: "10000+" }
 ];
+
 
 export const revenueRange = [
   { value: "< 1M", label: "< 1M" },

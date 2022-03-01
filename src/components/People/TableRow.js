@@ -28,20 +28,20 @@ const TableRow = (props) => {
     if (res.status === "success") {
       let badge = "";
       if (
-        res.data.primary_mai_confidence === "High" ||
-        res.data.primary_mai_confidence === "Verified"
+        res.data.email_confidence_level === "valid" ||
+        res.data.email_confidence_level === "Valid"
       ) {
         badge =
           '<span class="badge text-white bg-success small"><i class="fas fa-check-circle me-1" title="Verified"></i> Verified</span>';
       } else if (
-        res.data.primary_mai_confidence === "Low" ||
-        res.data.primary_mai_confidence === "Catchall/Accept_all"
+        res.data.email_confidence_level === "catchall" ||
+        res.data.email_confidence_level === "Catchall/Accept_all"
       ) {
         badge =
           '<span class="badge bg-secondary">Catch all / Accept all</span>';
       } else if (
-        res.data.primary_mai_confidence === "Guessed" ||
-        res.data.primary_mai_confidence === "Guessed/Recommended"
+        res.data.email_confidence_level === "guessed" ||
+        res.data.email_confidence_level === ""
       ) {
         badge =
           '<span class="badge" style="background: #f57c00"> Guessed / Recommended</span>';
@@ -111,7 +111,7 @@ const TableRow = (props) => {
               </strong>
               <div className="table_social_link mt-1">
                 <a
-                  href={`http://${data.organization.website_link}`}
+                  href={`${data.organization.website_url}`}
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   title="Website"
@@ -121,7 +121,7 @@ const TableRow = (props) => {
                   <i className="fas fa-globe"></i>
                 </a>
                 <a
-                  href={data.organization.org_linkedin_url}
+                  href={data.organization.linkedin_url}
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   title="Linkedin Link"
@@ -156,7 +156,7 @@ const TableRow = (props) => {
               {data.organization.industry}
             </td>
             <td className="head-count align-middle">
-              {data.organization.size_range}
+              {data.organization.employee_range}
             </td>
             <td
               className="align-middle email"
@@ -181,7 +181,7 @@ const TableRow = (props) => {
             </td>
             <td className="align-middle">
               <div style={{ height: "45px", overflow: "hidden" }}>
-                {data.organization.primary_phone}
+                {data.organization.primary_phone_number}
               </div>
             </td>
             <td className="align-middle">
@@ -193,9 +193,9 @@ const TableRow = (props) => {
               {data.city}
             </td>
             <td className="align-middle">
-              <strong>{data.organization.org_country}</strong>
+              <strong>{data.organization.country}</strong>
               <br />
-              {data.organization.org_city}
+              {data.organization.city}
             </td>
           </tr>
         );

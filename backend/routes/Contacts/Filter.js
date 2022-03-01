@@ -75,12 +75,12 @@ module.exports = async (req, res) => {
   }
 
   if (req.query.company_size_range && req.query.company_size_range !== "") {
-    newQuery.company_size_range = new Fields(
+    newQuery["organization.employee_range"] = new Fields(
       req.query.company_size_range
     ).create();
   }
   if (req.query.company_type && req.query.company_type !== "") {
-    newQuery["organization.organization_type"] = new Fields(
+    newQuery["organization.company_type"] = new Fields(
       req.query.company_type
     ).create();
   }
@@ -91,22 +91,20 @@ module.exports = async (req, res) => {
     newQuery["organization.keywords"] = new Fields(req.query.keyword).create();
   }
   if (req.query.domain && req.query.domain !== "") {
-    newQuery["organization.primary_website_domain"] = new Fields(
+    newQuery["organization.primary_domain"] = new Fields(
       req.query.domain
     ).create();
   }
   if (req.query.company_city && req.query.company_city !== "") {
-    newQuery["organization.org_city"] = new Fields(
-      req.query.company_city
-    ).create();
+    newQuery["organization.city"] = new Fields(req.query.company_city).create();
   }
   if (req.query.company_state && req.query.company_state !== "") {
-    newQuery["organization.org_state"] = new Fields(
+    newQuery["organization.state"] = new Fields(
       req.query.company_state
     ).create();
   }
   if (req.query.company_country && req.query.company_country !== "") {
-    newQuery["organization.org_country"] = new Fields(
+    newQuery["organization.country"] = new Fields(
       req.query.company_country
     ).create();
   }
@@ -174,11 +172,13 @@ module.exports = async (req, res) => {
   }
   if (req.query.revenue_range && req.query.revenue_range !== "") {
     if (req.query.revenue_range instanceof Array) {
-      newQuery["organization.revenue_range"] = { $in: req.query.revenue_range };
+      newQuery["organization.revenue"] = { $in: req.query.revenue_range };
     } else {
-      newQuery["organization.revenue_range"] = req.query.revenue_range;
+      newQuery["organization.revenue"] = req.query.revenue_range;
     }
   }
+
+  newQuery.sort = "first_name, last_name";
 
   console.log(newQuery);
 
@@ -197,6 +197,7 @@ module.exports = async (req, res) => {
       newQuery
     )
       .filtering()
+      .sorting()
       .paginating();
 
     const contacts = await features.query;
