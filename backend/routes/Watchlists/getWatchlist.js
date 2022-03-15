@@ -193,7 +193,8 @@ module.exports = async (req, res) => {
           "title",
           "country",
           "city",
-          "organization"
+          "organization",
+          "linkedin_id"
         ]),
         search
       )

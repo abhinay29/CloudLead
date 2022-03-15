@@ -1,9 +1,14 @@
 import React from "react";
-import { NotificationManager } from "react-notifications";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import axios from "axios";
+import { watchList } from "../../states/action-creator";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const TableRow = (props) => {
+  const dispatch = useDispatch();
+
   const { TableData, showCompanyInfo, selectAll, showAllContacts } = props;
 
   const toogleSelectAll = (selectAll) => {
@@ -14,6 +19,28 @@ const TableRow = (props) => {
   };
 
   toogleSelectAll(selectAll);
+
+  const refreshWatchlist = async () => {
+    console.log("Refresh watchlist");
+    await axios({
+      method: "GET",
+      url: `${API_URL}/api/contacts/watchlist?page=1&limit=25`,
+      headers: {
+        "auth-token": localStorage.getItem("token"),
+        "Content-Type": "application/json"
+      }
+    })
+      .then(function (response) {
+        if (response.data.status === "success") {
+          dispatch(watchList(response.data));
+        } else {
+          console.log(response);
+        }
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+  };
 
   const addToWatchList = async (personId) => {
     const watchList = await fetch(`${API_URL}/api/contacts/unlock`, {
@@ -26,6 +53,7 @@ const TableRow = (props) => {
     });
     const res = await watchList.json();
     if (res.status === "success") {
+      refreshWatchlist();
       let badge = "";
       if (
         res.data.email_confidence_level === "valid" ||
@@ -48,16 +76,14 @@ const TableRow = (props) => {
       }
 
       let unlockContainer = document.getElementById("unlock_" + personId);
-      unlockContainer.innerHTML = `${res.data.email.toLowerCase()} <br>${badge} <span class="ms-2" style="cursor: pointer"><i class="far fa-copy"></i></span>`;
-      NotificationManager.success(
-        "Contact added to watchlist",
-        "Success!",
-        2000
-      );
+      unlockContainer.innerHTML = `${res.data.email.toLowerCase()} <br>${badge} <span class="ms-2" style="cursor: pointer" onClick="copyEmail(${
+        res.data.email
+      })"><i class="far fa-copy"></i></span>`;
+      toast.success("Contact added to watchlist");
     } else if (res.status === "exist") {
-      NotificationManager.warning(res.msg);
+      toast.warning(res.msg);
     } else if (res.status === "limit_reached") {
-      NotificationManager.error(res.msg);
+      toast.error(res.msg);
     }
   };
 
@@ -79,57 +105,41 @@ const TableRow = (props) => {
                 <span>
                   <div className="fw-bold text-capitalize">
                     {data.first_name} {data.last_name}
+                    <div className="table_social_link ms-2 d-inline">
+                      {data.linkedin_id && (
+                        <a
+                          href={data.linkedin_id}
+                          target="_blank"
+                          rel="noreferrer"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          title="Linkedin Profile"
+                        >
+                          <i className="fab fa-linkedin-in"></i>
+                        </a>
+                      )}
+                    </div>
                   </div>
                   <div className="text-muted">{data.title}</div>
-                  <div className="table_social_link mt-1">
-                    <a
-                      href={data.linkedin_id}
-                      target="_blank"
-                      rel="noreferrer"
-                      data-bs-toggle="tooltip"
-                      data-bs-placement="top"
-                      title="Linkedin Profile"
-                    >
-                      <i className="fab fa-linkedin-in"></i>
-                    </a>
-                  </div>
                 </span>
               </div>
             </td>
             <td className="name_of_company align-middle">
-              <strong
-                className="show_company"
-                data-name="21st Century Software Solutions Pvt Ltd"
-                style={{ cursor: "pointer" }}
-                onClick={() => {
-                  showCompanyInfo(data.company_id);
-                }}
-              >
-                {data.organization.organization_name
-                  ? data.organization.organization_name
-                  : ""}
-              </strong>
+              {data.organization.organization_name && (
+                <strong
+                  className="show_company"
+                  data-name=""
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    showCompanyInfo(data.company_id);
+                  }}
+                >
+                  {data.organization.organization_name}
+                </strong>
+              )}
               <div className="table_social_link mt-1">
-                <a
-                  href={`${data.organization.website_url}`}
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="top"
-                  title="Website"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <i className="fas fa-globe"></i>
-                </a>
-                <a
-                  href={data.organization.linkedin_url}
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="top"
-                  title="Linkedin Link"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <i className="fab fa-linkedin-in"></i>
-                </a>
+                {websiteCorrection(data.organization.website_link)}
+                {linkedCorrection(data.organization.org_linkedin_url)}
                 <a
                   href="#cloud"
                   onClick={(e) => {
@@ -156,7 +166,7 @@ const TableRow = (props) => {
               {data.organization.industry}
             </td>
             <td className="head-count align-middle">
-              {data.organization.employee_range}
+              {data.organization.size_range}
             </td>
             <td
               className="align-middle email"
@@ -181,7 +191,7 @@ const TableRow = (props) => {
             </td>
             <td className="align-middle">
               <div style={{ height: "45px", overflow: "hidden" }}>
-                {data.organization.primary_phone_number}
+                {data.organization.primary_phone}
               </div>
             </td>
             <td className="align-middle">
@@ -193,9 +203,9 @@ const TableRow = (props) => {
               {data.city}
             </td>
             <td className="align-middle">
-              <strong>{data.organization.country}</strong>
+              <strong>{data.organization.org_country}</strong>
               <br />
-              {data.organization.city}
+              {data.organization.org_city}
             </td>
           </tr>
         );
@@ -203,5 +213,53 @@ const TableRow = (props) => {
     </>
   );
 };
+
+function websiteCorrection(link) {
+  var c;
+  if (link) {
+    c = link.replace(/http\/\//g, "");
+    if (!c.match(/^[a-zA-Z]+:\/\//)) {
+      c = "http://" + c;
+    }
+    return (
+      <a
+        href={c}
+        data-bs-toggle="tooltip"
+        data-bs-placement="top"
+        title="Website"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <i className="fas fa-globe"></i>
+      </a>
+    );
+  }
+  return "";
+}
+
+function linkedCorrection(link) {
+  var c;
+  if (link) {
+    c = link.replace(/http\/\//g, "");
+    if (!c.match(/^[a-zA-Z]+:\/\//)) {
+      c = "http://" + c;
+    }
+    if (c.match(/linkedin\.com/)) {
+      return (
+        <a
+          href={c}
+          data-bs-toggle="tooltip"
+          data-bs-placement="top"
+          title="Linkedin Link"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <i className="fab fa-linkedin-in"></i>
+        </a>
+      );
+    }
+  }
+  return "";
+}
 
 export default TableRow;

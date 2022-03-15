@@ -7,14 +7,45 @@ const bcrypt = require("bcryptjs");
 
 const User = require("../models/User");
 const Transactions = require("../models/Payments");
+const Contacts = require("../models/Contacts");
 const {
   savedSearch,
   savedCompanySearch,
   sequenceList,
-  templates
+  templates,
+  campaign
 } = require("../models/UserData");
 
+const EmailSetup = require("./UserData/EmailSetup");
+
 const adminEmail = process.env.ADMIN_EMAIL;
+
+class APIPeople {
+  constructor(id) {
+    this.id = id;
+  }
+
+  async getDetails() {
+    try {
+      const seqContact = await Contacts.findOne({ _id: this.id }).select([
+        "_id",
+        "company_id",
+        "email_confidence_level",
+        "email",
+        "first_name",
+        "last_name",
+        "title",
+        "country",
+        "city",
+        "organization",
+        "linkedin_id"
+      ]);
+      return seqContact;
+    } catch (err) {
+      return "none";
+    }
+  }
+}
 
 router.get("/", fetchuser, async (req, res) => {
   let Check = await User.findOne({ _id: req.user.id });
@@ -217,6 +248,48 @@ router.get("/list/detailed", fetchuser, async (req, res) => {
   }
 });
 
+router.get("/list/view/:id", fetchuser, async (req, res) => {
+  let seqId = req.params.id;
+  let lists = await sequenceList
+    .findOne({ _id: seqId })
+    .select(["list_name", "list_data", "-_id"]);
+  if (lists) {
+    var list = [];
+    list = await Promise.all(
+      lists.list_data.map((l) => {
+        var retVal = new APIPeople(l).getDetails();
+        return retVal;
+      })
+    );
+    res.status(200).json({
+      status: "success",
+      list: list,
+      list_name: lists.list_name
+    });
+  } else {
+    res.status(200).send(false);
+  }
+});
+
+router.delete("/list/:id", fetchuser, async (req, res) => {
+  let seqId = req.params.id;
+  try {
+    let lists = await sequenceList.deleteOne({
+      _id: seqId,
+      userId: req.user.id
+    });
+    if (lists) {
+      res.status(200).json({
+        status: "success"
+      });
+    } else {
+      res.status(200).json({ status: "error" });
+    }
+  } catch (err) {
+    res.status(200).json({ status: "error", msg: err });
+  }
+});
+
 router.post("/list/add", fetchuser, async (req, res) => {
   const user_id = req.user.id;
   const listName = req.body.name;
@@ -275,6 +348,39 @@ router.post("/list/add", fetchuser, async (req, res) => {
   }
 });
 
+router.post("/sendemail", fetchuser, async (req, res) => {
+  const user_id = req.user.id;
+  const { listId, template_id } = req.body;
+
+  let check = await campaign.findOne({
+    userId: user_id,
+    list_id: listId,
+    template_id: template_id
+  });
+  if (!check) {
+    const addList = await campaign.create({
+      userId: user_id,
+      list_id: listId,
+      template_id: template_id
+    });
+    if (!addList)
+      return res.status({
+        status: "error",
+        error: "Cannot add list to queue, please try again later."
+      });
+
+    return res.status(200).json({
+      status: "success",
+      message: "List added to sending list, email will send soon."
+    });
+  } else {
+    res.status(200).json({
+      status: "success",
+      message: "List is already in queue"
+    });
+  }
+});
+
 router.get("/templates", fetchuser, async (req, res) => {
   let template_list = await templates.find({ userId: req.user.id });
   if (template_list) {
@@ -282,6 +388,7 @@ router.get("/templates", fetchuser, async (req, res) => {
       status: "success",
       template_list: template_list.map((l) => {
         return {
+          _id: l._id,
           name: l.template_name,
           subject: l.template_subject,
           addedon: l.created_at
@@ -456,5 +563,7 @@ router.post("/changepassword", fetchuser, async (req, res) => {
     res.status(401).send("Authentication failed.");
   }
 });
+
+router.post("/update/smtp", fetchuser, EmailSetup);
 
 module.exports = router;

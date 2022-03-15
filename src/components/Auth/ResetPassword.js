@@ -29,7 +29,6 @@ function ResetPassword(props) {
     try {
       const res = await fetch(`${API_URL}/api/auth/resetpassword`, {
         method: "POST",
-        mode: "no-cors",
         headers: {
           "Content-Type": "application/json"
         },
@@ -88,7 +87,7 @@ function ResetPassword(props) {
                   to reset your cloudlead account password.
                 </p>
               </div>
-              <form action="#" method="post" onSubmit={handleSubmit}>
+              <form method="post" onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label htmlFor="password" className="form-label">
                     New Password

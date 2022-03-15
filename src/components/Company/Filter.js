@@ -57,17 +57,24 @@ const Filter = (props) => {
     }
   };
 
+  let timer;
+
   const getCompanySuggestions = async (e) => {
     let query = e.target.value;
-    if (!query || query.length < 3) {
+    clearTimeout(timer);
+    timer = setTimeout(fetchCompSuggestions(query), 1000);
+  };
+
+  const fetchCompSuggestions = async (q) => {
+    if (!q || q.length < 3) {
       setCompanySuggestions([]);
       return;
     } else {
-      let url = `${API_URL}/api/companies/suggestions/` + query;
-      const response = await fetch(url);
-      const compSuggRes = await response.json();
-      if (compSuggRes.status === "success") {
-        setCompanySuggestions(compSuggRes.companies);
+      let url = `${API_URL}/api/companies/suggestions/` + q;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.status === "success") {
+        setCompanySuggestions(data.companies);
       }
     }
   };
@@ -476,7 +483,7 @@ const Filter = (props) => {
                     className="basic-multi-select"
                     placeholder="Company Name"
                   /> */}
-                  <Select
+                  <CreatableSelect
                     defaultValue={[]}
                     name="company_name"
                     closeMenuOnSelect={false}

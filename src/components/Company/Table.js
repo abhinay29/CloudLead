@@ -21,6 +21,7 @@ const Table = (props) => {
   // eslint-disable-next-line
   const [limit, setLimit] = useState(25);
   const { setShowFilter, setShowTable } = props;
+  // eslint-disable-next-line
   const [companyName, setCompanyName] = useState("");
 
   const backToSearch = () => {
@@ -157,11 +158,11 @@ const Table = (props) => {
 
   const [totalContacts, setTotalContacts] = useState(0);
 
-  const showContacts = async (company_name, pageNumber = 1) => {
+  const showContacts = async (comp_id, pageNumber = 1) => {
     setPageContact(pageNumber);
     dispatch(progressLoading(10));
     let query;
-    query = "company_name=" + company_name;
+    query = "company_id=" + comp_id;
     const url = `${API_URL}/api/contacts?${query}&page=${pageNumber}`;
     const watchList = await fetch(url, {
       method: "GET",
@@ -179,7 +180,7 @@ const Table = (props) => {
       }
       setTotalContacts(res.totalResults);
       getPeoples(res.data.contacts);
-      setCompanyName(company_name);
+      // setCompanyName(company_name);
       openModal("showContactModal");
     }
     dispatch(progressLoading(100));
@@ -335,7 +336,7 @@ const Table = (props) => {
           <div className="modal-content shadow-lg">
             <div className="modal-header">
               <h5 className="modal-title" id="mod_comp_name">
-                {company_info.company_name}
+                {company_info.organization_name}
               </h5>
               <button
                 type="button"
@@ -350,46 +351,32 @@ const Table = (props) => {
                 <div className="col-md-6 col-lg-6">
                   <p className="fw-bold mb-1">Website</p>
                   <p className="text-break">
-                    <a
-                      href={`//${company_info.domain}`}
-                      rel="noreferrer"
-                      id="ext_website"
-                      target="_blank"
-                    >
-                      {company_info.domain}
-                    </a>
+                    {websiteCorrection(company_info.website_link)}
                   </p>
                   <p className="fw-bold mb-1">Linkedin</p>
                   <p className="text-break">
-                    <a
-                      href={company_info.linkedin_link}
-                      rel="noreferrer"
-                      id="ext_linkedin_link"
-                      target="_blank"
-                    >
-                      {company_info.linkedin_link}
-                    </a>
+                    {linkedCorrection(company_info.org_linkedin_url)}
                   </p>
                   <p className="fw-bold mb-1">Founded</p>
-                  <p id="ext_founded">{company_info.founded}</p>
+                  <p id="ext_founded">{company_info.founded_year}</p>
                 </div>
                 <div className="col-md-6 col-lg-6">
                   <p className="fw-bold mb-1">Industry</p>
                   <p id="ext_industry">{company_info.industry}</p>
                   <p className="fw-bold mb-1">Size</p>
-                  <p id="ext_size">{company_info.company_size_range}</p>
+                  <p id="ext_size">{company_info.size_range}</p>
                   <p className="fw-bold mb-1">Revenue</p>
-                  <p id="ext_revenue">{company_info.revenue_range}</p>
+                  <p id="ext_revenue">{company_info.annual_revenue}</p>
                 </div>
               </div>
               <div className="row">
                 <div className="col-md-12 col-lg-12">
                   <p className="fw-bold mb-1">Company Description</p>
-                  <p id="ext_description">{company_info.description}</p>
+                  <p id="ext_description">{company_info.company_description}</p>
                   <p className="fw-bold mb-1">Location</p>
                   <p id="ext_location">
-                    {company_info.company_city},{" "}
-                    <strong>{company_info.company_country}</strong>
+                    {company_info.org_city},{" "}
+                    <strong>{company_info.org_country}</strong>
                   </p>
                 </div>
               </div>
@@ -417,7 +404,7 @@ const Table = (props) => {
               <p className="text-primary position-absolute">
                 Total Contacts: {totalContacts}
               </p>
-              <h5 className="modal-title w-100 text-center">{companyName}</h5>
+              {/* <h5 className="modal-title w-100 text-center">{companyName}</h5> */}
               <button
                 type="button"
                 className="btn-close"
@@ -508,5 +495,39 @@ const Table = (props) => {
     </div>
   );
 };
+
+function websiteCorrection(link) {
+  var c;
+  if (link) {
+    c = link.replace(/http\/\//g, "");
+    if (!c.match(/^[a-zA-Z]+:\/\//)) {
+      c = "http://" + c;
+    }
+    return (
+      <a href={c} rel="noreferrer" id="ext_website" target="_blank">
+        {c}
+      </a>
+    );
+  }
+  return "";
+}
+
+function linkedCorrection(link) {
+  var c;
+  if (link) {
+    c = link.replace(/http\/\//g, "");
+    if (!c.match(/^[a-zA-Z]+:\/\//)) {
+      c = "http://" + c;
+    }
+    if (c.match(/linkedin\.com/)) {
+      return (
+        <a href={c} rel="noreferrer" id="ext_linkedin_link" target="_blank">
+          {c}
+        </a>
+      );
+    }
+  }
+  return "";
+}
 
 export default Table;

@@ -85,17 +85,24 @@ const Filter = (props) => {
     }
   };
 
+  var timer;
+
   const getCompanySuggestions = async (e) => {
     let query = e.target.value;
-    if (!query || query.length < 3) {
+    clearTimeout(timer);
+    timer = setTimeout(fetchCompSuggestions(query), 1000);
+  };
+
+  const fetchCompSuggestions = async (q) => {
+    if (!q || q.length < 3) {
       setCompanySuggestions([]);
       return;
     } else {
-      let url = `${API_URL}/api/companies/suggestions/` + query;
-      const response = await fetch(url);
-      const compSuggRes = await response.json();
-      if (compSuggRes.status === "success") {
-        setCompanySuggestions(compSuggRes.companies);
+      let url = `${API_URL}/api/companies/suggestions/` + q;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.status === "success") {
+        setCompanySuggestions(data.companies);
       }
     }
   };
@@ -745,7 +752,19 @@ const Filter = (props) => {
   };
 
   const setDefaultValueGroupFunction = (options, name) => {
-    setDefaultValue({ ...defaultValue, [name]: options });
+    var opt = [];
+    if (defaultValue.industry.length > 0) {
+      opt = defaultValue.industry;
+      options.map((o) => {
+        return opt.push(o);
+      });
+    } else {
+      opt = options;
+    }
+
+    console.log(opt);
+
+    setDefaultValue({ ...defaultValue, [name]: opt });
   };
 
   const createGroup = (groupName, options, name) => {
@@ -1418,7 +1437,7 @@ const Filter = (props) => {
                 <h6 className="fw-bold">Search by Company</h6>
                 <div className="row mb-3">
                   <div className="col-md-4 col-lg-4 title-relative">
-                    <Select
+                    <CreatableSelect
                       defaultValue={[]}
                       name="company_name"
                       closeMenuOnSelect={false}

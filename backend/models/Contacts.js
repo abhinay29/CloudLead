@@ -34,7 +34,7 @@ const ContactSchema = new Schema({
   },
   company_id: {
     type: String,
-    ref: "data_companies",
+    ref: "companies",
     required: true
   },
   seniority: {
@@ -44,6 +44,9 @@ const ContactSchema = new Schema({
     type: String
   },
   email: {
+    type: String
+  },
+  linkedin_id: {
     type: String
   },
   organization: {

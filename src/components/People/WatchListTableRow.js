@@ -85,16 +85,7 @@ const WatchListTableRow = (props) => {
                     </div>
                     <div className="text-muted">{data.title}</div>
                     <div className="table_social_link mt-1">
-                      <a
-                        href={data.linkedin_id}
-                        target="_blank"
-                        rel="noreferrer"
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="top"
-                        title="Linkedin Profile"
-                      >
-                        <i className="fab fa-linkedin-in"></i>
-                      </a>
+                      {linkedCorrection(data.linkedin_id)}
                     </div>
                   </span>
                 </div>
@@ -105,32 +96,14 @@ const WatchListTableRow = (props) => {
                   data-name="21st Century Software Solutions Pvt Ltd"
                   style={{ cursor: "pointer" }}
                   onClick={() => {
-                    showCompanyInfo(data.organization.organization_name);
+                    showCompanyInfo(data.company_id);
                   }}
                 >
                   {data.organization.organization_name}
                 </strong>
                 <div className="table_social_link mt-1">
-                  <a
-                    href={data.organization.website_url}
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    title="Website"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <i className="fas fa-globe"></i>
-                  </a>
-                  <a
-                    href={data.organization.linkedin_url}
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    title="Linkedin Link"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <i className="fab fa-linkedin-in"></i>
-                  </a>
+                  {websiteCorrection(data.organization.website_link)}
+                  {linkedCorrection(data.organization.org_linkedin_url)}
                   <a
                     href="#cloud"
                     onClick={(e) => {
@@ -147,7 +120,7 @@ const WatchListTableRow = (props) => {
                 {data.organization.industry}
               </td>
               <td className="head-count align-middle">
-                {data.organization.employee_range}
+                {data.organization.size_range}
               </td>
               <td className="align-middle" id={`unlock_${data._id}`}>
                 {data.email} <br />
@@ -158,7 +131,7 @@ const WatchListTableRow = (props) => {
               </td>
               <td className="align-middle">
                 <div style={{ height: "45px", overflow: "hidden" }}>
-                  {data.organization.primary_phone_number}
+                  {data.organization.primary_phone}
                 </div>
               </td>
               <td className="align-middle">
@@ -170,9 +143,9 @@ const WatchListTableRow = (props) => {
                 {data.city}
               </td>
               <td className="align-middle">
-                <strong>{data.organization.country}</strong>
+                <strong>{data.organization.org_country}</strong>
                 <br />
-                {data.organization.city}
+                {data.organization.org_city}
               </td>
               <td className="align-middle">{data.date}</td>
             </tr>
@@ -181,5 +154,53 @@ const WatchListTableRow = (props) => {
     </>
   );
 };
+
+function websiteCorrection(link) {
+  var c;
+  if (link) {
+    c = link.replace(/http\/\//g, "");
+    if (!c.match(/^[a-zA-Z]+:\/\//)) {
+      c = "http://" + c;
+    }
+    return (
+      <a
+        href={c}
+        data-bs-toggle="tooltip"
+        data-bs-placement="top"
+        title="Website"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <i className="fas fa-globe"></i>
+      </a>
+    );
+  }
+  return "";
+}
+
+function linkedCorrection(link) {
+  var c;
+  if (link) {
+    c = link.replace(/http\/\//g, "");
+    if (!c.match(/^[a-zA-Z]+:\/\//)) {
+      c = "http://" + c;
+    }
+    if (c.match(/linkedin\.com/)) {
+      return (
+        <a
+          href={c}
+          data-bs-toggle="tooltip"
+          data-bs-placement="top"
+          title="Linkedin Link"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <i className="fab fa-linkedin-in"></i>
+        </a>
+      );
+    }
+  }
+  return "";
+}
 
 export default WatchListTableRow;

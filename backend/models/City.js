@@ -1,12 +1,9 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const CitySchema = new Schema({
-  value: {
-    type: String,
-  },
-  label: {
-    type: String,
-  },
+  name: {
+    type: String
+  }
 });
-module.exports = mongoose.model('cities', CitySchema);
+module.exports = mongoose.model("cities", CitySchema);

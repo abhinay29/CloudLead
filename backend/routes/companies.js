@@ -11,6 +11,7 @@ const {
   RoleFields
 } = require("./Classes/clsGlobal");
 const Filter = require("./Companies/Filter");
+const companyById = require("./Companies/companyById");
 
 // class APIfeatures {
 //   constructor(query, queryString) {
@@ -66,36 +67,7 @@ const Filter = require("./Companies/Filter");
 // router.get('/', fetchuser, async (req, res) => {
 router.get("/", fetchuser, Filter);
 
-router.get("/byid/:id", async (req, res) => {
-  try {
-    const comp_data = await Company.findOne({
-      company_id: req.params.id
-    }).select([
-      "_id",
-      "company_id",
-      "organization_name",
-      "website_url",
-      "primary_domain",
-      "linkedin_url",
-      "industry",
-      "estimated_employees_headcount",
-      "primary_phone_number",
-      "country",
-      "city",
-      "founded_year",
-      "company_description",
-      "annual_revenue",
-      "employee_range"
-    ]);
-    res.status(200).json({
-      status: "success",
-      comp_data
-    });
-  } catch (error) {
-    console.error(error.message);
-    res.status(404).send("Company not found");
-  }
-});
+router.get("/byid/:id", companyById);
 
 router.get("/:id", async (req, res) => {
   try {
@@ -109,12 +81,11 @@ router.get("/:id", async (req, res) => {
       "primary_website_domain",
       "org_linkedin_url",
       "industry",
-      "estimated_employees_headcount",
-      "primary_phone",
+      "primary_phone_number",
       "org_country",
       "org_city",
       "founded_year",
-      "company_description",
+      "short_description",
       "annual_revenue",
       "size_range"
     ]);
@@ -225,7 +196,9 @@ router.get("/suggestions/:name", async (req, res) => {
   try {
     const company = await Company.find({
       organization_name: { $regex: name, $options: "i" }
-    }).select(["-_id", "organization_name"]);
+    })
+      .select(["-_id", "organization_name"])
+      .limit(20);
 
     res.status(200).json({
       status: "success",

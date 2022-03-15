@@ -119,7 +119,7 @@ const Navbar = () => {
 							</li>
 						</ul> */}
             <ul className="navbar-nav ms-auto">
-              <li className="nav-item me-3 d-flex align-items-center">
+              {/* <li className="nav-item me-3 d-flex align-items-center">
                 <a
                   href="https://cloudlead.in"
                   className="nav-link active btn-sm px-3"
@@ -128,17 +128,17 @@ const Navbar = () => {
                 >
                   <i className="fas fa-globe me-2"></i> Back to Website
                 </a>
-              </li>
-              <li className="nav-item me-3 d-flex align-items-center">
+              </li> */}
+              {/* <li className="nav-item me-3 d-flex align-items-center">
                 <button
                   type="button"
                   className="btn btn-sm btn-warning fw-bold px-3"
                 >
                   Get Chrome Extension
                 </button>
-              </li>
+              </li> */}
 
-              <li className="nav-item dropdown">
+              {/* <li className="nav-item dropdown">
                 <Link
                   className="nav-link"
                   to="/"
@@ -147,7 +147,6 @@ const Navbar = () => {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  {" "}
                   Products <i className="fas fa-chevron-down ms-1"></i>
                 </Link>
                 <div
@@ -214,7 +213,7 @@ const Navbar = () => {
                     </div>
                   </div>
                 </div>
-              </li>
+              </li> */}
 
               <li className="nav-item">
                 <Link
@@ -235,8 +234,7 @@ const Navbar = () => {
                   data-bs-placement="bottom"
                   title="Support"
                 >
-                  {" "}
-                  <i className="far fa-life-ring mx-1"></i>{" "}
+                  <i className="far fa-life-ring mx-1"></i>
                 </Link>
               </li>
               <li className="nav-item dropdown">
@@ -273,6 +271,11 @@ const Navbar = () => {
                   <li>
                     <Link className="dropdown-item" to="/change-password">
                       <i className="fas fa-lock me-2"></i> Change Password
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/feedback" className="dropdown-item">
+                      <i className="fas fa-comment-alt me-2"></i> Feedback
                     </Link>
                   </li>
                 </ul>

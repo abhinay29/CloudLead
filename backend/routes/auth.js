@@ -37,6 +37,28 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ status: "error", errors: errors.array() });
     }
+
+    var reqEmail = req.body.email;
+    var domain = reqEmail.substring(reqEmail.lastIndexOf("@") + 1);
+
+    if (domain === "gmail.com" || domain === "yahoo.com") {
+      return res.status(200).json({
+        status: "error",
+        error: "Please use your official email address"
+      });
+    }
+
+    let strongPassword = new RegExp(
+      "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})"
+    );
+
+    if (!strongPassword.test(req.body.password)) {
+      return res.status(200).json({
+        status: "error",
+        error:
+          "Password should contain at least 1 capital letter and 1 numeric value"
+      });
+    }
     try {
       // Check whether the user with this email exists already
       let user = await User.findOne({ email: req.body.email });
@@ -208,6 +230,15 @@ router.post("/googlelogin", async (req, res) => {
       const { email_verified, given_name, family_name, email } =
         response.payload;
 
+      var domain = email.substring(email.lastIndexOf("@") + 1);
+
+      if (domain === "gmail.com" || domain === "yahoo.com") {
+        return res.status(200).json({
+          status: "error",
+          error: "Please use your official email address"
+        });
+      }
+
       const salt = await bcrypt.genSalt(10);
       const secPass = await bcrypt.hash(email + JWT_SECRET, salt);
 
@@ -322,32 +353,44 @@ router.post("/forgotpassword", async (req, res) => {
 router.post("/resetpassword", async (req, res) => {
   let user = await User.findOne({ token: req.body.token });
 
+  if (!req.body.password) {
+    return res.status(200).send({
+      status: "error",
+      error: "Password can not be blank"
+    });
+  }
+
   const salt = await bcrypt.genSalt(10);
   const secPass = await bcrypt.hash(req.body.password, salt);
 
   if (user) {
-    let setPassword = await User.findByIdAndUpdate(
-      { _id: user._id },
-      { password: secPass, token: "" }
-    );
-
-    if (!setPassword) {
+    try {
+      await User.findByIdAndUpdate(
+        { _id: user._id },
+        { password: secPass, token: "" }
+      );
+    } catch (error) {
+      console.log(error);
       return res.status(200).send({
         status: "error",
         error: "Sorry, cannot set password this time."
       });
     }
 
-    let sendMail = await transporter.sendMail({
-      from: `"Cloudlead" <${adminEmail}>`,
-      to: user.email,
-      subject: "Cloudlead account password reset successfully",
-      html: `<p>Dear User,</p>
+    try {
+      await transporter.sendMail({
+        from: `"Cloudlead" <${adminEmail}>`,
+        to: user.email,
+        subject: "Cloudlead account password reset successfully",
+        html: `<p>Dear User,</p>
               <p>Your Cloudlead account password has been reset successfully.</p>
               <p>Have a wonderful day!</p>
               <p>Team Cloudlead</p>
             `
-    });
+      });
+    } catch (err) {
+      console.log(err);
+    }
     res.status(200).send({ status: "success" });
   } else {
     res.status(200).send({

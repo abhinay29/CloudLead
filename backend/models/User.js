@@ -52,6 +52,16 @@ const UserSchema = new Schema({
       gst_number: ""
     }
   },
+  smtpSettings: {
+    type: Object,
+    default: {
+      smtp_host: "",
+      smtp_user: "",
+      smtp_pass: "",
+      smtp_port: 25,
+      smtp_sender: ""
+    }
+  },
   created_at: {
     type: Date,
     default: Date.now

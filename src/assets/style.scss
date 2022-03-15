@@ -459,9 +459,9 @@ table th {
 // .bg-primary {
 //   background-color: #485fc7 !important;
 // }
-.btn {
-  border: none;
-}
+// .btn {
+//   border: none;
+// }
 
 .btn-primary {
   background: #7367f0 !important;
@@ -488,6 +488,10 @@ table th {
 
 .bg-warning {
   background-color: #fb6340 !important;
+}
+
+.btn-group .btn {
+  border: 0;
 }
 
 .text-primary {

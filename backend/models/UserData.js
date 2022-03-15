@@ -100,9 +100,37 @@ const Templates = new Schema({
 
 const templates = mongoose.model("templates", Templates);
 
+const Campaign = new Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "users",
+    required: true,
+    unique: false
+  },
+  list_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "sequences",
+    required: true,
+    unique: false
+  },
+  template_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "templates",
+    required: true,
+    unique: false
+  },
+  added_at: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+const campaign = mongoose.model("campaign", Campaign);
+
 module.exports = {
   savedSearch: savedSearch,
   savedCompanySearch: savedCompanySearch,
   sequenceList: sequenceList,
-  templates: templates
+  templates: templates,
+  campaign: campaign
 };

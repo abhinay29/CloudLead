@@ -10,28 +10,28 @@ const CompanySchema = new Schema({
   organization_name: {
     type: String
   },
-  primary_domain: {
+  primary_website_domain: {
     type: String
   },
-  website_url: {
+  website_link: {
     type: String
   },
   industry: {
     type: String
   },
-  city: {
+  org_city: {
     type: String
   },
-  state: {
+  org_state: {
     type: String
   },
-  country: {
+  org_country: {
     type: String
   },
-  revenue: {
+  annual_revenue: {
     type: String
   },
-  employee_range: {
+  size_range: {
     type: String
   },
   org_linkedin_url: {
@@ -41,6 +41,9 @@ const CompanySchema = new Schema({
     type: String
   },
   keywords: {
+    type: String
+  },
+  short_description: {
     type: String
   }
 });

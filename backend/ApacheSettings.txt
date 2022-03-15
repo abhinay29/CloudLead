@@ -1,0 +1,8 @@
+ProxyPreserveHost On
+ProxyPass / http://0.0.0.0:5000/
+ProxyPassReverse / http://0.0.0.0:5000/
+
+
+/usr/local/cpanel/scripts/rebuildhttpdconf 
+/usr/local/cpanel/scripts/restartsrv_httpd
+

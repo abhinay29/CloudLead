@@ -14,29 +14,11 @@ const TableRow = (props) => {
               showCompanyInfo(data.company_id);
             }}
           >
-            {data.organization_name ? data.organization_name : "Not Found"}
+            {data.organization_name ? data.organization_name : "--"}
           </strong>
           <div className="table_social_link mt-1">
-            <a
-              href={`//${data.website_url}`}
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Website"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <i className="fas fa-globe"></i>
-            </a>
-            <a
-              href={data.linkedin_url}
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="Linkedin Link"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <i className="fab fa-linkedin-in"></i>
-            </a>
+            {websiteCorrection(data.website_link)}
+            {linkedCorrection(data.org_linkedin_url)}
             <a
               href="#cloud"
               title="Show Contacts"
@@ -71,7 +53,7 @@ const TableRow = (props) => {
         <td className="industry align-middle text-capitalize">
           {data.industry}
         </td>
-        <td className="head-count align-middle">{data.employee_range}</td>
+        <td className="head-count align-middle">{data.size_range}</td>
         <td className="align-middle">
           <strong>{data.country ? data.country : "--"}</strong>
           <br />
@@ -81,5 +63,53 @@ const TableRow = (props) => {
     </>
   );
 };
+
+function websiteCorrection(link) {
+  var c;
+  if (link) {
+    c = link.replace(/http\/\//g, "");
+    if (!c.match(/^[a-zA-Z]+:\/\//)) {
+      c = "http://" + c;
+    }
+    return (
+      <a
+        href={c}
+        data-bs-toggle="tooltip"
+        data-bs-placement="top"
+        title="Website"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <i className="fas fa-globe"></i>
+      </a>
+    );
+  }
+  return "";
+}
+
+function linkedCorrection(link) {
+  var c;
+  if (link) {
+    c = link.replace(/http\/\//g, "");
+    if (!c.match(/^[a-zA-Z]+:\/\//)) {
+      c = "http://" + c;
+    }
+    if (c.match(/linkedin\.com/)) {
+      return (
+        <a
+          href={c}
+          data-bs-toggle="tooltip"
+          data-bs-placement="top"
+          title="Linkedin Link"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <i className="fab fa-linkedin-in"></i>
+        </a>
+      );
+    }
+  }
+  return "";
+}
 
 export default TableRow;

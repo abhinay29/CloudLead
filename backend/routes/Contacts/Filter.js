@@ -192,6 +192,7 @@ module.exports = async (req, res) => {
         "title",
         "country",
         "city",
+        "linkedin_id",
         "organization"
       ]),
       newQuery
@@ -233,6 +234,9 @@ module.exports = async (req, res) => {
       var temp = JSON.parse(JSON.stringify(contact));
       temp.unlocked_email = await getEmail(contact._id);
       // temp.company = await getCompany(contact.company_id);
+      if (!contact.organization.organization_name) {
+        contact.organization.organization_name = "";
+      }
       Conts.push(temp);
     });
 

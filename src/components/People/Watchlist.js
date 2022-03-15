@@ -520,7 +520,7 @@ const Watchlist = () => {
               className="btn btn-sm btn-outline-primary bi-tooltip"
               title="Refresh"
               onClick={() => {
-                window.location.reload();
+                getWatchlist();
               }}
             >
               <i className="fas fa-sync-alt"></i>
@@ -688,7 +688,7 @@ const Watchlist = () => {
           <div className="modal-content shadow-lg">
             <div className="modal-header">
               <h5 className="modal-title" id="mod_comp_name">
-                {company_info.company_name}
+                {company_info.organization_name}
               </h5>
               <button
                 type="button"
@@ -703,46 +703,34 @@ const Watchlist = () => {
                 <div className="col-md-6 col-lg-6">
                   <p className="fw-bold mb-1">Website</p>
                   <p className="text-break">
-                    <a
-                      href={`//${company_info.domain}`}
-                      rel="noreferrer"
-                      id="ext_website"
-                      target="_blank"
-                    >
-                      {company_info.domain}
-                    </a>
+                    {websiteCorrection(company_info.website_link)}
                   </p>
                   <p className="fw-bold mb-1">Linkedin</p>
                   <p className="text-break">
-                    <a
-                      href={company_info.linkedin_link}
-                      rel="noreferrer"
-                      id="ext_linkedin_link"
-                      target="_blank"
-                    >
-                      {company_info.linkedin_link}
-                    </a>
+                    {linkedCorrection(company_info.org_linkedin_url)}
                   </p>
                   <p className="fw-bold mb-1">Founded</p>
-                  <p id="ext_founded">{company_info.founded}</p>
+                  <p id="ext_founded">{company_info.founded_year}</p>
                 </div>
                 <div className="col-md-6 col-lg-6">
                   <p className="fw-bold mb-1">Industry</p>
-                  <p id="ext_industry">{company_info.industry}</p>
+                  <p id="ext_industry" className="text-capitalize">
+                    {company_info.industry}
+                  </p>
                   <p className="fw-bold mb-1">Size</p>
-                  <p id="ext_size">{company_info.company_size_range}</p>
+                  <p id="ext_size">{company_info.size_range}</p>
                   <p className="fw-bold mb-1">Revenue</p>
-                  <p id="ext_revenue">{company_info.revenue_range}</p>
+                  <p id="ext_revenue">{company_info.annual_revenue}</p>
                 </div>
               </div>
               <div className="row">
                 <div className="col-md-12 col-lg-12">
                   <p className="fw-bold mb-1">Company Description</p>
-                  <p id="ext_description">{company_info.description}</p>
+                  <p id="ext_description">{company_info.company_description}</p>
                   <p className="fw-bold mb-1">Location</p>
                   <p id="ext_location">
-                    {company_info.company_city},{" "}
-                    <strong>{company_info.company_country}</strong>
+                    {company_info.org_city},{" "}
+                    <strong>{company_info.org_country}</strong>
                   </p>
                 </div>
               </div>
@@ -793,5 +781,39 @@ const Watchlist = () => {
     </div>
   );
 };
+
+function websiteCorrection(link) {
+  var c;
+  if (link) {
+    c = link.replace(/http\/\//g, "");
+    if (!c.match(/^[a-zA-Z]+:\/\//)) {
+      c = "http://" + c;
+    }
+    return (
+      <a href={c} rel="noreferrer" id="ext_website" target="_blank">
+        {c}
+      </a>
+    );
+  }
+  return "";
+}
+
+function linkedCorrection(link) {
+  var c;
+  if (link) {
+    c = link.replace(/http\/\//g, "");
+    if (!c.match(/^[a-zA-Z]+:\/\//)) {
+      c = "http://" + c;
+    }
+    if (c.match(/linkedin\.com/)) {
+      return (
+        <a href={c} rel="noreferrer" id="ext_linkedin_link" target="_blank">
+          {c}
+        </a>
+      );
+    }
+  }
+  return "";
+}
 
 export default Watchlist;

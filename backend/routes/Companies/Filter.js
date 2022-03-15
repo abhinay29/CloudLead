@@ -133,11 +133,11 @@ module.exports = async (req, res) => {
         "industry",
         "city",
         "country",
-        "linkedin_url",
+        "org_linkedin_url",
         "organization_name",
         "primary_phone_number",
-        "employee_range",
-        "website_url"
+        "size_range",
+        "website_link"
       ]),
       newQuery
     )
@@ -146,12 +146,12 @@ module.exports = async (req, res) => {
       .paginating();
     const companies = await features.query;
     const totalResults = await Company.count(newQuery);
-    const uniqueComp = await Company.find(newQuery).distinct(
-      "primary_website_domain"
-    );
+    // const uniqueComp = await Company.find(newQuery).distinct(
+    //   "primary_website_domain"
+    // );
     res.status(200).json({
       status: "success",
-      total: uniqueComp.length,
+      // total: uniqueComp.length,
       totalResults: totalResults,
       limit: companies.length,
       page: req.query.page,

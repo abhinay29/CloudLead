@@ -92,9 +92,14 @@ class RoleFields {
   create() {
     let object = [];
     if (this.field instanceof Array) {
-      this.field.map((fin) => {
-        object.push(fin);
-      });
+      // this.field.map((fin) => {
+      //   object.push(fin);
+      // });
+      if (this.field.length > 0) {
+        let regex = new ConvertStringRegex(this.field).convertStr();
+        // return { $regex: regex, $options: "i" };
+        object.push(regex);
+      }
     } else {
       object.push(this.field);
     }

@@ -5,10 +5,15 @@ import Pagination from "react-js-pagination";
 import TableRow from "./TableRow";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { progressLoading, setSequenceList } from "../../states/action-creator";
+import {
+  progressLoading,
+  setSequenceList,
+  watchList
+} from "../../states/action-creator";
 import TableSkeleton from "../Skeleton/TableSkeleton";
 import NoRecordFound from "./NoRecordFound";
 import Select from "react-select";
+import axios from "axios";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -94,6 +99,9 @@ const Table = (props) => {
   const [company_info, setCompInfo] = useState({});
 
   const getCompanyInfo = async (company_id) => {
+    if (!company_id) {
+      return dispatch(progressLoading(100));
+    }
     dispatch(progressLoading(30));
     const data = await fetch(`${API_URL}/api/companies/${company_id}`);
     dispatch(progressLoading(50));
@@ -154,6 +162,28 @@ const Table = (props) => {
     dispatch(progressLoading(100));
   };
 
+  const refreshWatchlist = async () => {
+    console.log("Refresh watchlist");
+    await axios({
+      method: "GET",
+      url: `${API_URL}/api/contacts/watchlist?page=1&limit=25`,
+      headers: {
+        "auth-token": localStorage.getItem("token"),
+        "Content-Type": "application/json"
+      }
+    })
+      .then(function (response) {
+        if (response.data.status === "success") {
+          dispatch(watchList(response.data));
+        } else {
+          console.log(response);
+        }
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+  };
+
   const addToWatchList = async (ids) => {
     const bulkUnlock = await fetch(`${API_URL}/api/contacts/unlockbulk`, {
       method: "POST",
@@ -165,6 +195,7 @@ const Table = (props) => {
         ids: ids
       })
     });
+
     if (!bulkUnlock) {
       return false;
     }
@@ -172,6 +203,8 @@ const Table = (props) => {
     const res = await bulkUnlock.json();
 
     if (res.status === "success") {
+      refreshWatchlist();
+
       if (res.data.length !== 0) {
         res.data.map((data) => {
           var badge = "";
@@ -592,6 +625,7 @@ const Table = (props) => {
           </div>
         </div>
       </div>
+
       <div className="modal fade" id="showCompany" tabIndex="-1" role="dialog">
         <div
           className="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
@@ -615,36 +649,22 @@ const Table = (props) => {
                 <div className="col-md-6 col-lg-6">
                   <p className="fw-bold mb-1">Website</p>
                   <p className="text-break">
-                    <a
-                      href={company_info.website_link}
-                      rel="noreferrer"
-                      id="ext_website"
-                      target="_blank"
-                    >
-                      {company_info.website_link}
-                    </a>
+                    {websiteCorrection(company_info.website_link)}
                   </p>
                   <p className="fw-bold mb-1">Linkedin</p>
                   <p className="text-break">
-                    <a
-                      href={company_info.org_linkedin_url}
-                      rel="noreferrer"
-                      id="ext_linkedin_link"
-                      target="_blank"
-                    >
-                      {company_info.org_linkedin_url}
-                    </a>
+                    {linkedCorrection(company_info.org_linkedin_url)}
                   </p>
                   <p className="fw-bold mb-1">Founded</p>
                   <p id="ext_founded">{company_info.founded_year}</p>
                 </div>
                 <div className="col-md-6 col-lg-6">
                   <p className="fw-bold mb-1">Industry</p>
-                  <p id="ext_industry">{company_info.industry}</p>
-                  <p className="fw-bold mb-1">Size</p>
-                  <p id="ext_size">
-                    {company_info.estimated_employees_headcount}
+                  <p id="ext_industry" className="text-capitalize">
+                    {company_info.industry}
                   </p>
+                  <p className="fw-bold mb-1">Size</p>
+                  <p id="ext_size">{company_info.size_range}</p>
                   <p className="fw-bold mb-1">Revenue</p>
                   <p id="ext_revenue">{company_info.annual_revenue}</p>
                 </div>
@@ -652,7 +672,7 @@ const Table = (props) => {
               <div className="row">
                 <div className="col-md-12 col-lg-12">
                   <p className="fw-bold mb-1">Company Description</p>
-                  <p id="ext_description">{company_info.company_description}</p>
+                  <p id="ext_description">{company_info.short_description}</p>
                   <p className="fw-bold mb-1">Location</p>
                   <p id="ext_location">
                     {company_info.org_city},{" "}
@@ -684,5 +704,39 @@ const Table = (props) => {
     </>
   );
 };
+
+function websiteCorrection(link) {
+  var c;
+  if (link) {
+    c = link.replace(/http\/\//g, "");
+    if (!c.match(/^[a-zA-Z]+:\/\//)) {
+      c = "http://" + c;
+    }
+    return (
+      <a href={c} rel="noreferrer" id="ext_website" target="_blank">
+        {c}
+      </a>
+    );
+  }
+  return "";
+}
+
+function linkedCorrection(link) {
+  var c;
+  if (link) {
+    c = link.replace(/http\/\//g, "");
+    if (!c.match(/^[a-zA-Z]+:\/\//)) {
+      c = "http://" + c;
+    }
+    if (c.match(/linkedin\.com/)) {
+      return (
+        <a href={c} rel="noreferrer" id="ext_linkedin_link" target="_blank">
+          {c}
+        </a>
+      );
+    }
+  }
+  return "";
+}
 
 export default Table;

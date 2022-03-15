@@ -7,20 +7,60 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 const Signup = (props) => {
   const [disabled, setDisabled] = useState(false);
-  const [credentials, setCredentials] = useState({
+  const [signupInfo, setSignupInfo] = useState({
     first_name: "",
     last_name: "",
     email: "",
     password: "",
-    cpassword: ""
+    cpassword: "",
+    company: "",
+    phone: ""
   });
 
   let history = useHistory();
 
+  // let timeout;
+  // let password = document.getElementById("password");
+  // let strengthBadge = document.getElementById("StrengthDisp");
+  // let strongPassword = new RegExp(
+  //   "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})"
+  // );
+  // let mediumPassword = new RegExp(
+  //   "((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{6,}))|((?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9])(?=.{8,}))"
+  // );
+
+  // const StrengthChecker = (PasswordParameter) => {
+  //   if (strongPassword.test(PasswordParameter)) {
+  //     strengthBadge.style.backgroundColor = "green";
+  //     strengthBadge.textContent = "Strong";
+  //   } else if (mediumPassword.test(PasswordParameter)) {
+  //     strengthBadge.style.backgroundColor = "blue";
+  //     strengthBadge.textContent = "Medium";
+  //   } else {
+  //     strengthBadge.style.backgroundColor = "red";
+  //     strengthBadge.textContent = "Weak";
+  //   }
+  // };
+
+  // password.addEventListener("input", () => {
+  //   strengthBadge.style.display = "block";
+  //   clearTimeout(timeout);
+
+  //   timeout = setTimeout(() => {
+  //     StrengthChecker(password.value);
+  //   }, 500);
+
+  //   if (password.value.length !== 0) {
+  //     strengthBadge.style.display != "block";
+  //   } else {
+  //     strengthBadge.style.display = "none";
+  //   }
+  // });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setDisabled(true);
-    if (credentials.password !== credentials.cpassword) {
+    if (signupInfo.password !== signupInfo.cpassword) {
       toast.error("Passsword & Confirmed password does not matched");
       setDisabled(false);
       return false;
@@ -31,10 +71,10 @@ const Signup = (props) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        first_name: credentials.first_name,
-        last_name: credentials.last_name,
-        email: credentials.email,
-        password: credentials.password
+        first_name: signupInfo.first_name,
+        last_name: signupInfo.last_name,
+        email: signupInfo.email,
+        password: signupInfo.password
       })
     });
     const json = await response.json();
@@ -54,7 +94,7 @@ const Signup = (props) => {
   };
 
   const onChange = (e) => {
-    setCredentials({ ...credentials, [e.target.name]: e.target.value });
+    setSignupInfo({ ...signupInfo, [e.target.name]: e.target.value });
   };
 
   const responseGoogleSuccess = async (response) => {
@@ -107,7 +147,7 @@ const Signup = (props) => {
                   <input
                     type="text"
                     className="form-control p-2 border-1 border-primary"
-                    value={credentials.fist_name}
+                    value={signupInfo.first_name}
                     onChange={onChange}
                     id="first_name"
                     name="first_name"
@@ -118,7 +158,7 @@ const Signup = (props) => {
                   <input
                     type="text"
                     className="form-control p-2 border-1 border-primary"
-                    value={credentials.last_name}
+                    value={signupInfo.last_name}
                     onChange={onChange}
                     id="last_name"
                     name="last_name"
@@ -129,7 +169,7 @@ const Signup = (props) => {
                   <input
                     type="email"
                     className="form-control p-2 border-1 border-primary"
-                    value={credentials.email}
+                    value={signupInfo.email}
                     onChange={onChange}
                     id="email"
                     name="email"
@@ -140,18 +180,21 @@ const Signup = (props) => {
                   <input
                     type="password"
                     className="form-control p-2 border-1 border-primary"
-                    value={credentials.password}
+                    value={signupInfo.password}
                     onChange={onChange}
                     name="password"
                     id="password"
                     placeholder="Password"
                   />
+                  <span id="StrengthDisp" class="badge displayBadge">
+                    Weak
+                  </span>
                 </div>
                 <div className="mb-3 last mb-3">
                   <input
                     type="password"
                     className="form-control p-2 border-1 border-primary"
-                    value={credentials.cpassword}
+                    value={signupInfo.cpassword}
                     onChange={onChange}
                     name="cpassword"
                     id="cpassword"

@@ -1,297 +1,234 @@
 export const financeOptions = [
+  { label: "Financial Services", value: "Financial Services" },
   { label: "Accounting", value: "Accounting" },
-  { label: "Banking", value: "Banking" },
-  { label: "Capital Markets", value: "Capital Markets" },
-  { label: "Financial services", value: "Financial services" },
   { label: "Insurance", value: "Insurance" },
+  { label: "Banking", value: "Banking" },
+  { label: "Investment Management", value: "Investment Management" },
+  { label: "Law Practice", value: "Law Practice" },
   {
     label: "Venture Capital & Private Equity",
     value: "Venture Capital & Private Equity"
-  }
+  },
+  { label: "Investment Banking", value: "Investment Banking" },
+  { label: "Capital Markets", value: "Capital Markets" },
+  { label: "Fund-Raising", value: "Fund-Raising" },
+  { label: "Law Enforcement", value: "Law Enforcement" }
 ];
 
 export const manufacturingOptions = [
-  { label: "Airlines/Aviation", value: "Airlines/Aviation" },
-  { label: "Automotive", value: "Automotive" },
-  { label: "Aviation & Aerospace", value: "Aviation & Aerospace" },
   {
     label: "Electrical/Electronic Manufacturing",
     value: "Electrical/Electronic Manufacturing"
   },
-  { label: "Industrial Automation", value: "Industrial Automation" },
-  { label: "Maritime", value: "Maritime" },
   {
-    label: "Mechanical & Industrial Engineering",
-    value: "Mechanical & Industrial Engineering"
+    label: "Mechanical Or Industrial Engineering",
+    value: "Mechanical Or Industrial Engineering"
   },
+  { label: "Machinery", value: "Machinery" },
+  { label: "Automotive", value: "Automotive" },
+  { label: "Mining & Metals", value: "Mining & Metals" },
+  { label: "Design", value: "Design" },
+  { label: "Food Production", value: "Food Production" },
+  { label: "Oil & Energy", value: "Oil & Energy" },
+  { label: "Chemicals", value: "Chemicals" },
+  {
+    label: "Business Supplies & Equipment",
+    value: "Business Supplies & Equipment"
+  },
+  { label: "Renewables & Environment", value: "Renewables & Environment" },
+  { label: "Industrial Automation", value: "Industrial Automation" },
+  { label: "Outsourcing/Offshoring", value: "Outsourcing/Offshoring" },
+  { label: "Medical Devices", value: "Medical Devices" },
+  { label: "Furniture", value: "Furniture" },
+  { label: "Utilities", value: "Utilities" },
+  { label: "Packaging & Containers", value: "Packaging & Containers" },
+  { label: "Plastics", value: "Plastics" },
+  { label: "Paper & Forest Products", value: "Paper & Forest Products" },
+  { label: "Aviation & Aerospace", value: "Aviation & Aerospace" },
+  { label: "Semiconductors", value: "Semiconductors" },
+  { label: "Defense & Space", value: "Defense & Space" },
+  { label: "Sporting Goods", value: "Sporting Goods" },
+  { label: "Glass, Ceramics & Concrete", value: "Glass, Ceramics & Concrete" },
+  { label: "Shipbuilding", value: "Shipbuilding" },
   { label: "Railroad Manufacture", value: "Railroad Manufacture" },
-  { label: "Shipbuilding", value: "Shipbuilding" }
+  { label: "Agriculture", value: "Agriculture" },
+  { label: "Manufacturing", value: "Manufacturing" }
 ];
 
-export const legalOptions = [
-  {
-    label: "Alternative Dispute Resolution",
-    value: "Alternative Dispute Resolution"
-  }
+export const fmcgOptions = [
+  { label: "Food & Beverages", value: "Food & Beverages" },
+  { label: "Consumer Goods", value: "Consumer Goods" },
+  { label: "Luxury Goods & Jewelry", value: "Luxury Goods & Jewelry" },
+  { label: "Cosmetics", value: "Cosmetics" },
+  { label: "Dairy", value: "Dairy" },
+  { label: "Veterinary", value: "Veterinary" },
+  { label: "Wine & Spirits", value: "Wine & Spirits" },
+  { label: "Tobacco", value: "Tobacco" }
 ];
 
 export const healthcareOptions = [
-  { label: "Alternative Medicine", value: "Alternative Medicine" },
-  { label: "Biotechnology", value: "Biotechnology" },
-  { label: "Health, Wellness & Fitness", value: "Health, Wellness & Fitness" },
   { label: "Hospital & Health Care", value: "Hospital & Health Care" },
-  { label: "Medical Devices", value: "Medical Devices" },
-  { label: "Medical Practice", value: "Medical Practice" },
+  { label: "Health, Wellness & Fitness", value: "Health, Wellness & Fitness" },
+  { label: "Pharmaceuticals", value: "Pharmaceuticals" },
+  { label: "Biotechnology", value: "Biotechnology" },
   { label: "Mental Health Care", value: "Mental Health Care" },
-  { label: "Pharmaceuticals", value: "Pharmaceuticals" }
+  { label: "Alternative Medicine", value: "Alternative Medicine" }
 ];
 
 export const itOptions = [
   {
     label: "Information Technology & Services",
-    value: "information technology & services"
+    value: "Information Technology & Services"
   },
-  { label: "Computer Software", value: "computer software" },
-  { label: "Internet", value: "internet" },
+  { label: "Computer Software", value: "Computer Software" },
+  { label: "Internet", value: "Internet" },
   {
     label: "Computer & Network Security",
-    value: "computer & network security"
+    value: "Computer & Network Security"
   },
-  { label: "Computer Hardware", value: "computer hardware" },
-  { label: "Computer Networking", value: "computer networking" },
-  { label: "Computer Games", value: "computer games" },
-  { label: "Nanotechnology", value: "nanotechnology" }
+  { label: "Computer Hardware", value: "Computer Hardware" },
+  { label: "Computer Networking", value: "Computer Networking" },
+  { label: "Computer Games", value: "Computer Games" },
+  { label: "Nanotechnology", value: "Nanotechnology" }
 ];
 
 export const retailOptions = [
-  { label: "Apparel & Fashion", value: "Apparel & Fashion" },
-  { label: "Consumer Electronics", value: "Consumer Electronics" },
-  { label: "Consumer Goods", value: "Consumer Goods" },
-  { label: "Consumer Services", value: "Consumer Services" },
-  { label: "Cosmetics", value: "Cosmetics" },
-  { label: "Furniture", value: "Furniture" },
-  { label: "Luxury Goods & Jewelry", value: "Luxury Goods & Jewelry" },
   { label: "Retail", value: "Retail" },
-  { label: "Supermarkets", value: "Supermarkets" },
-  { label: "Warehousing", value: "Warehousing" },
   { label: "Wholesale", value: "Wholesale" },
-  { label: "Wine and Spirits", value: "Wine and Spirits" }
-];
-
-export const fasionOptions = [
-  { label: "Apparel & Fashion", value: "Apparel & Fashion" },
-  { label: "Cosmetics", value: "Cosmetics" },
-  { label: "Luxury Goods & Jewelry", value: "Luxury Goods & Jewelry" }
+  { label: "Consumer Electronics", value: "Consumer Electronics" },
+  { label: "Supermarkets", value: "Supermarkets" }
 ];
 
 export const realstateOptions = [
-  { label: "Architecture & Planning", value: "Architecture & Planning" },
-  { label: "Building Materials", value: "Building Materials" },
-  { label: "Commercial Real Estate", value: "Commercial Real Estate" },
   { label: "Construction", value: "Construction" },
-  { label: "Facilities Services", value: "Facilities Services" }
+  { label: "Real Estate", value: "Real Estate" },
+  { label: "Civil Engineering", value: "Civil Engineering" },
+  { label: "Building Materials", value: "Building Materials" },
+  { label: "Commercial Real Estate", value: "Commercial Real Estate" }
 ];
 
 export const otherOptions = [
-  { label: "Arts and Crafts", value: "Arts and Crafts" },
-  {
-    label: "Civic & Social organization",
-    value: "Civic & Social organization"
-  },
-  { label: "Civil Engineering", value: "Civil Engineering" },
-  { label: "Design", value: "Design" },
+  { label: "Sports", value: "Sports" },
+  { label: "Arts & Crafts", value: "Arts & Crafts" },
+  { label: "Farming", value: "Farming" },
   { label: "Executive Office", value: "Executive Office" },
+  { label: "Museums & Institutions", value: "Museums & Institutions" },
+  { label: "Fishery", value: "Fishery" },
+  { label: "Libraries", value: "Libraries" },
+  { label: "Ranching", value: "Ranching" },
+  { label: "Legislative Office", value: "Legislative Office" }
+];
+
+export const mediaOptions = [
+  { label: "Media Production", value: "Media Production" },
+  { label: "Entertainment", value: "Entertainment" },
+  { label: "Online Media", value: "Online Media" },
+  { label: "Publishing", value: "Publishing" },
+  { label: "Printing", value: "Printing" },
+  { label: "Photography", value: "Photography" },
+  { label: "Broadcast Media", value: "Broadcast Media" },
+  { label: "Music", value: "Music" },
+  { label: "Writing & Editing", value: "Writing & Editing" },
+  { label: "Motion Pictures & Film", value: "Motion Pictures & Film" },
+  { label: "Animation", value: "Animation" },
+  { label: "Newspapers", value: "Newspapers" },
+  { label: "Performing Arts", value: "Performing Arts" },
   { label: "Fine Art", value: "Fine Art" },
-  { label: "Glass, Ceramics & Concrete", value: "Glass, Ceramics & Concrete" },
-  { label: "Import and Export", value: "Import and Export" },
+  { label: "Gambling & Casinos", value: "Gambling & Casinos" }
+];
+
+export const serviceOptions = [
+  { label: "Marketing & Advertising", value: "Marketing & Advertising" },
+  { label: "Consumer Services", value: "Consumer Services" },
+  { label: "Management Consulting", value: "Management Consulting" },
+  { label: "Human Resources", value: "Human Resources" },
+  { label: "Staffing & Recruiting", value: "Staffing & Recruiting" },
+  { label: "Architecture & Planning", value: "Architecture & Planning" },
+  { label: "Events Services", value: "Events Services" },
+  { label: "Legal Services", value: "Legal Services" },
+  { label: "Research", value: "Research" },
+  { label: "Restaurants", value: "Restaurants" },
+  { label: "Environmental Services", value: "Environmental Services" },
+  { label: "Facilities Services", value: "Facilities Services" },
+  { label: "Graphic Design", value: "Graphic Design" },
+  { label: "Information Services", value: "Information Services" },
   {
-    label: "Individual & value Services",
-    value: "Individual & value Services"
+    label: "Individual & Family Services",
+    value: "Individual & Family Services"
   },
-  { label: "International Affairs", value: "International Affairs" },
+  { label: "Security & Investigations", value: "Security & Investigations" },
+  { label: "Medical Practice", value: "Medical Practice" },
+  { label: "Market Research", value: "Market Research" },
+  { label: "Airlines/Aviation", value: "Airlines/Aviation" },
+  { label: "Translation & Localization", value: "Translation & Localization" },
+  { label: "Public Safety", value: "Public Safety" },
+  { label: "Package/Freight Delivery", value: "Package/Freight Delivery" },
+  {
+    label: "Recreational Facilities & Services",
+    value: "Recreational Facilities & Services"
+  },
+  { label: "Consulting", value: "Consulting" }
+];
+
+export const educationOptions = [
+  { label: "Education Management", value: "Education Management" },
+  { label: "Higher Education", value: "Higher Education" },
+  { label: "E-Learning", value: "E-Learning" },
+  {
+    label: "Professional Training & Coaching",
+    value: "Professional Training & Coaching"
+  },
+  { label: "Primary/Secondary Education", value: "Primary/Secondary Education" }
+];
+
+export const govtOptions = [
+  {
+    label: "Nonprofit Organization Management",
+    value: "Nonprofit Organization Management"
+  },
+  { label: "Government Administration", value: "Government Administration" },
+  {
+    label: "Public Relations & Communications",
+    value: "Public Relations & Communications"
+  },
+  {
+    label: "Civic & Social Organization",
+    value: "Civic & Social Organization"
+  },
   {
     label: "International Trade & Development",
     value: "International Trade & Development"
   },
-  { label: "Libraries", value: "Libraries" },
-  { label: "Museums and Institutions", value: "Museums and Institutions" },
-  { label: "Paper & Forest Products", value: "Paper & Forest Products" },
-  { label: "Partnership", value: "Partnership" },
-  { label: "Performing Arts", value: "Performing Arts" },
-  { label: "Philantropy", value: "Philantropy" },
-  { label: "Photography", value: "Photography" },
-  { label: "Political Organization", value: "Political Organization" },
-  { label: "Privatelt Held", value: "Privatelt Held" },
-  { label: "Program Development", value: "Program Development" },
-  { label: "Public Company ", value: "Public Company " },
-  { label: "Public Policy", value: "Public Policy" },
-  {
-    label: "Public Relation & Communication",
-    value: "Public Relation & Communication"
-  },
-  { label: "Public Safety", value: "Public Safety" },
   { label: "Religious Institutions", value: "Religious Institutions" },
-  { label: "Renewables & Environment", value: "Renewables & Environment" },
-  { label: "Research", value: "Research" },
-  { label: "Self-Employed", value: "Self-Employed" },
-  { label: "Sole Proprietorship", value: "Sole Proprietorship" },
   { label: "Think Tanks", value: "Think Tanks" },
+  { label: "Philanthropy", value: "Philanthropy" },
+  { label: "Government Relations", value: "Government Relations" },
+  { label: "Program Development", value: "Program Development" },
+  { label: "International Affairs", value: "International Affairs" },
+  { label: "Public Policy", value: "Public Policy" },
+  { label: "Political Organization", value: "Political Organization" },
+  { label: "Military", value: "Military" },
   {
-    label: "Translation and Localization",
-    value: "Translation and Localization"
+    label: "Alternative Dispute Resolution",
+    value: "Alternative Dispute Resolution"
   },
-  { label: "Veterinary", value: "Veterinary" }
+  { label: "Judiciary", value: "Judiciary" }
 ];
 
-export const mediaOptions = [
-  { label: "Broadcast Media", value: "Broadcast Media" },
-  { label: "Media Production", value: "Media Production" },
-  { label: "Newspapers", value: "Newspapers" },
-  { label: "Online Media", value: "Online Media" },
-  { label: "Printing", value: "Printing" },
-  { label: "Publishing", value: "Publishing" },
-  { label: "Writing and Editing", value: "Writing and Editing" }
-];
-
-export const serviceOptions = [
-  {
-    label: "Business and Supplies Equipments",
-    value: "Business and Supplies Equipments"
-  },
-  { label: "Environmental Services", value: "Environmental Services" },
-  { label: "Events Services", value: "Events Services" },
-  { label: "Facilities Services", value: "Facilities Services" },
-  { label: "Information services", value: "Information services" },
-  { label: "Management Consulting", value: "Management Consulting" },
-  {
-    label: "Recerational Facilities & Services",
-    value: "Recerational Facilities & Services"
-  }
-];
-
-export const chemicalOptions = [{ label: "Chemicals", value: "Chemicals" }];
-
-export const foodandbeveragesOptions = [
-  { label: "Dairy", value: "Dairy" },
-  { label: "Fishery", value: "Fishery" },
-  { label: "Food & Beverages", value: "Food & Beverages" },
-  { label: "Food Production", value: "Food Production" },
-  { label: "Wine and Spirits", value: "Wine and Spirits" }
-];
-
-export const defenceOptions = [
-  { label: "Defense & space", value: "Defense & space" },
-  { label: "Military", value: "Military" }
-];
-
-export const educationOptions = [
-  { label: "E-Learning", value: "E-Learning" },
-  { label: "Education Management", value: "Education Management" },
-  { label: "Educational Institution", value: "Educational Institution" },
-  { label: "Higher Education", value: "Higher Education" },
-  {
-    label: "Primary/Secondary Education",
-    value: "Primary/Secondary Education"
-  },
-  {
-    label: "Professional Training & Coaching",
-    value: "Professional Training & Coaching"
-  }
-];
-
-export const entertainOptions = [
-  { label: "Entertainment", value: "Entertainment" },
-  { label: "Motion Pictures and Film", value: "Motion Pictures and Film" },
-  { label: "Music", value: "Music" }
-];
-
-export const farmingOptions = [
-  { label: "Farming", value: "Farming" },
-  { label: "Ranching", value: "Ranching" }
-];
-
-export const ventureOptions = [
-  { label: "Fund-Raising", value: "Fund-Raising" },
-  { label: "Investment Banking", value: "Investment Banking" },
-  { label: "Investment Management", value: "Investment Management" }
-];
-
-export const sportsOptions = [
-  { label: "Gambling & Casinos", value: "Gambling & Casinos" },
-  { label: "Sporting Goods", value: "Sporting Goods" },
-  { label: "Sports", value: "Sports" }
-];
-
-export const govtOptions = [
-  { label: "Government Administration", value: "Government Administration" },
-  { label: "Government Agency", value: "Government Agency" },
-  { label: "Governement Relations", value: "Governement Relations" }
-];
-
-export const hospitalOptions = [{ label: "Hospitality", value: "Hospitality" }];
-
-export const hrOptions = [
-  { label: "Human Resources", value: "Human Resources" },
-  { label: "Staffing and Recruiting", value: "Staffing and Recruiting" }
-];
-
-export const lawOptions = [
-  { label: "Judiciary", value: "Judiciary" },
-  { label: "Law Enforcement", value: "Law Enforcement" },
-  { label: "Law Practice", value: "Law Practice" },
-  { label: "Legal Services", value: "Legal Services" },
-  { label: "Legislative Office", value: "Legislative Office" }
-];
-
-export const travelOptions = [
-  { label: "Leisure,Travel,Tourism", value: "Leisure,Travel,Tourism" }
+export const hospitalOptions = [
+  { label: "Hospitality", value: "Hospitality" },
+  { label: "Leisure, Travel & Tourism", value: "Leisure, Travel & Tourism" }
 ];
 
 export const logisticOptions = [
-  { label: "Logistics and Supply Chain", value: "Logistics and Supply Chain" },
   {
     label: "Transportation/Trucking/Railroad",
     value: "Transportation/Trucking/Railroad"
-  }
-];
-
-export const marketingOptions = [
-  { label: "Market research", value: "Market research" },
-  { label: "Marketing and advertising", value: "Marketing and advertising" }
-];
-
-export const miningOptions = [
-  { label: "Mining & Metals", value: "Mining & Metals" }
-];
-
-export const nanotechOptions = [
-  { label: "Nanotechnology", value: "Nanotechnology" }
-];
-
-export const ngoOptions = [
-  {
-    label: "Non Profit Organisation Management",
-    value: "Non Profit Organisation Management"
-  }
-];
-
-export const oilenergyOptions = [
-  { label: "Oil & Energy", value: "Oil & Energy" }
-];
-
-export const packaginOptions = [
-  { label: "Package/Freight delivery", value: "Package/Freight delivery" },
-  { label: "Packaging and containers", value: "Packaging and containers" }
-];
-
-export const plasticOptions = [{ label: "Plastics", value: "Plastics" }];
-
-export const restaurentOptions = [
-  { label: "Restaurants", value: "Restaurants" }
-];
-
-export const securityOptions = [
-  { label: "security and Investigations", value: "security and Investigations" }
+  },
+  { label: "Logistics & Supply Chain", value: "Logistics & Supply Chain" },
+  { label: "Import & Export", value: "Import & Export" },
+  { label: "Maritime", value: "Maritime" },
+  { label: "Warehousing", value: "Warehousing" }
 ];
 
 export const telcomOptions = [
@@ -299,49 +236,26 @@ export const telcomOptions = [
   { label: "Wireless", value: "Wireless" }
 ];
 
-export const textilesOptions = [{ label: "Textiles", value: "Textiles" }];
-
-export const tobaccoOptions = [{ label: "Tobacco", value: "Tobacco" }];
-
-export const utilityOptions = [{ label: "Utilities", value: "Utilities" }];
+export const textilesOptions = [
+  { label: "Apparel & Fashion", value: "Apparel & Fashion" },
+  { label: "Textiles", value: "Textiles" }
+];
 
 export const industryGrpOpt = [
   { label: "Finance", options: financeOptions },
   { label: "Manufacturing", options: manufacturingOptions },
-  { label: "Legal", options: legalOptions },
-  { label: "Healthcare", options: healthcareOptions },
+  { label: "Healthcare/Pharma", options: healthcareOptions },
   { label: "Information Technology", options: itOptions },
-  { label: "Retail", options: retailOptions },
-  { label: "Fashion", options: fasionOptions },
-  { label: "Real Estate", options: realstateOptions },
-  { label: "Other", options: otherOptions },
-  { label: "Media", options: mediaOptions },
+  { label: "Real Estate/Construction", options: realstateOptions },
+  { label: "Others", options: otherOptions },
+  { label: "Media/Publishing/Entertainment", options: mediaOptions },
   { label: "Services", options: serviceOptions },
-  { label: "Chemical", options: chemicalOptions },
-  { label: "Food And Beverages", options: foodandbeveragesOptions },
-  { label: "Defence", options: defenceOptions },
+  { label: "FMCG", options: fmcgOptions },
   { label: "Education", options: educationOptions },
-  { label: "Entertainment", options: entertainOptions },
-  { label: "Farming", options: farmingOptions },
-  { label: "Venture Capital", options: ventureOptions },
-  { label: "Sports", options: sportsOptions },
-  { label: "Government ", options: govtOptions },
+  { label: "Public Sector/Philonthropy/Associations", options: govtOptions },
   { label: "Hospitality", options: hospitalOptions },
-  { label: "Human Resources", options: hrOptions },
-  { label: "Law", options: lawOptions },
-  { label: "Travel", options: travelOptions },
   { label: "Logistics and Transport", options: logisticOptions },
-  { label: "Marketing", options: marketingOptions },
-  { label: "Mining & Metals", options: miningOptions },
-  { label: "Nanotechnology", options: nanotechOptions },
-  { label: "Non Profit", options: ngoOptions },
-  { label: "Oil & Energy", options: oilenergyOptions },
-  { label: "Packaging", options: packaginOptions },
-  { label: "Plastics", options: plasticOptions },
-  { label: "Restaurants", options: restaurentOptions },
-  { label: "Security and Investigations", options: securityOptions },
   { label: "Telecom", options: telcomOptions },
   { label: "Textiles", options: textilesOptions },
-  { label: "Tobacco", options: tobaccoOptions },
-  { label: "Utilities", options: utilityOptions }
+  { label: "Retail", options: retailOptions }
 ];
