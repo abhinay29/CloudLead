@@ -4,6 +4,7 @@
   --color-bg-canvas: #ebeffa;
   --card-bg: #ffffff;
   --bs-primary: #1171ef;
+  --primary-color: #7367f0;
 }
 
 .dark-theme {
@@ -647,5 +648,216 @@ table th {
 .public-DraftStyleDefault-block {
   padding-left: 20px;
   padding-right: 20px;
+}
+
+.signup-content {
+  background: #7467f0;
+  height: 100vh;
+  width: 65%;
+  display: -ms-grid;
+  display: grid;
+  place-content: center;
+}
+
+.signup-content ul {
+  max-width: 600px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.6;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 20px;
+  /* Remove focus */
+  /* Use custom arrow */
+  /* LABEL ======================================= */
+  /* active state */
+  /* BOTTOM BARS ================================= */
+  /* active state */
+  /* HIGHLIGHTER ================================== */
+}
+
+.input-group input,
+.input-group textarea {
+  background: none;
+  color: #212529;
+  font-size: 1rem;
+  padding: 8px 5px;
+  display: block;
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  border-bottom: 1px solid #949fb1;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+  outline: none;
+}
+
+.input-group input:focus ~ label,
+.input-group input:valid ~ label,
+.input-group textarea:focus ~ label,
+.input-group textarea:valid ~ label {
+  top: -14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.input-group input:focus ~ .bar:before,
+.input-group textarea:focus ~ .bar:before {
+  width: 100%;
+}
+
+.input-group input::-webkit-input-placeholder,
+.input-group textarea::-webkit-input-placeholder {
+  color: #949fb1;
+}
+
+.input-group input:-ms-input-placeholder,
+.input-group textarea:-ms-input-placeholder {
+  color: #949fb1;
+}
+
+.input-group input::-ms-input-placeholder,
+.input-group textarea::-ms-input-placeholder {
+  color: #949fb1;
+}
+
+.input-group input::placeholder,
+.input-group textarea::placeholder {
+  color: #949fb1;
+}
+
+.input-group input[type="password"] {
+  letter-spacing: 0.3em;
+}
+
+.input-group label {
+  color: #949fb1;
+  font-size: 1rem;
+  font-weight: 500;
+  position: absolute;
+  pointer-events: none;
+  left: 5px;
+  top: 10px;
+  -webkit-transition: 300ms ease all;
+  transition: 300ms ease all;
+}
+
+.input-group .bar {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.input-group .bar:before {
+  content: "";
+  height: 2px;
+  width: 0;
+  bottom: 0px;
+  position: absolute;
+  background: var(--primary-color);
+  -webkit-transition: 300ms ease all;
+  transition: 300ms ease all;
+  left: 0%;
+}
+
+.input-group .select-text {
+  position: relative;
+  font-family: inherit;
+  background-color: transparent;
+  width: 100%;
+  font-size: 1rem;
+  padding: 8px 5px;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid #949fb1;
+}
+
+.input-group .select-text:focus {
+  outline: none;
+}
+
+.input-group .select .select-text {
+  -moz-appearance: none;
+       appearance: none;
+  -webkit-appearance: none;
+}
+
+.input-group .select:after {
+  position: absolute;
+  top: 18px;
+  right: 10px;
+  /* Styling the down arrow */
+  width: 0;
+  height: 0;
+  padding: 0;
+  content: "";
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+}
+
+.input-group .select-label {
+  color: #949fb1;
+  font-size: 1rem;
+  font-weight: 500;
+  position: absolute;
+  pointer-events: none;
+  left: 5px;
+  top: 10px;
+  -webkit-transition: 300ms ease all;
+  transition: 300ms ease all;
+}
+
+.input-group .select-text:focus ~ .select-label,
+.input-group .select-text:valid ~ .select-label {
+  color: var(--primary-color);
+  top: -14px;
+  -webkit-transition: 300ms ease all;
+  transition: 300ms ease all;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.input-group .select-bar {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.input-group .select-bar:before {
+  content: "";
+  height: 2px;
+  width: 0;
+  bottom: 0px;
+  position: absolute;
+  background: var(--primary-color);
+  -webkit-transition: 300ms ease all;
+  transition: 300ms ease all;
+  left: 0%;
+}
+
+.input-group .select-text:focus ~ .select-bar:before {
+  width: 100%;
+}
+
+.input-group .select-highlight {
+  position: absolute;
+  height: 60%;
+  width: 100px;
+  top: 25%;
+  left: 0;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.css-1rhbuit-multiValue input {
+  display: none;
 }
 /*# sourceMappingURL=style.css.map */

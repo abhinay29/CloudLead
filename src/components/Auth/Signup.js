@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { Link, useHistory } from "react-router-dom";
 import GoogleLogin from "react-google-login";
@@ -8,73 +8,47 @@ const API_URL = process.env.REACT_APP_API_URL;
 const Signup = (props) => {
   const [disabled, setDisabled] = useState(false);
   const [signupInfo, setSignupInfo] = useState({
-    first_name: "",
+    fullname: "",
     last_name: "",
     email: "",
     password: "",
     cpassword: "",
     company: "",
-    phone: ""
+    phone: "",
+    country: ""
   });
+  const [countries, setCountries] = useState([]);
 
   let history = useHistory();
-
-  // let timeout;
-  // let password = document.getElementById("password");
-  // let strengthBadge = document.getElementById("StrengthDisp");
-  // let strongPassword = new RegExp(
-  //   "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})"
-  // );
-  // let mediumPassword = new RegExp(
-  //   "((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{6,}))|((?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9])(?=.{8,}))"
-  // );
-
-  // const StrengthChecker = (PasswordParameter) => {
-  //   if (strongPassword.test(PasswordParameter)) {
-  //     strengthBadge.style.backgroundColor = "green";
-  //     strengthBadge.textContent = "Strong";
-  //   } else if (mediumPassword.test(PasswordParameter)) {
-  //     strengthBadge.style.backgroundColor = "blue";
-  //     strengthBadge.textContent = "Medium";
-  //   } else {
-  //     strengthBadge.style.backgroundColor = "red";
-  //     strengthBadge.textContent = "Weak";
-  //   }
-  // };
-
-  // password.addEventListener("input", () => {
-  //   strengthBadge.style.display = "block";
-  //   clearTimeout(timeout);
-
-  //   timeout = setTimeout(() => {
-  //     StrengthChecker(password.value);
-  //   }, 500);
-
-  //   if (password.value.length !== 0) {
-  //     strengthBadge.style.display != "block";
-  //   } else {
-  //     strengthBadge.style.display = "none";
-  //   }
-  // });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setDisabled(true);
-    if (signupInfo.password !== signupInfo.cpassword) {
-      toast.error("Passsword & Confirmed password does not matched");
+    // if (signupInfo.password !== signupInfo.cpassword) {
+    //   toast.error("Passsword & Confirmed password does not matched");
+    //   setDisabled(false);
+    //   return false;
+    // }
+
+    if (!signupInfo.country) {
+      toast.error("Please select your country");
       setDisabled(false);
       return false;
     }
+
     const response = await fetch(`${API_URL}/api/auth/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        first_name: signupInfo.first_name,
+        first_name: signupInfo.fullname,
         last_name: signupInfo.last_name,
         email: signupInfo.email,
-        password: signupInfo.password
+        password: signupInfo.password,
+        phone: signupInfo.phone,
+        country_code: signupInfo.country.value,
+        company: signupInfo.company
       })
     });
     const json = await response.json();
@@ -86,7 +60,11 @@ const Signup = (props) => {
       history.push("/login");
       return false;
     } else if (json.status === "error") {
-      toast.error(json.error);
+      if (json.errors) {
+        toast.error(json.errors[0].msg);
+      } else {
+        toast.error(json.error);
+      }
     } else {
       toast.error("Something went wrong please try again later.");
     }
@@ -94,8 +72,14 @@ const Signup = (props) => {
   };
 
   const onChange = (e) => {
+    if (e.target.name === "phone") {
+      e.target.value = e.target.value.replace(/\D/, "");
+    }
     setSignupInfo({ ...signupInfo, [e.target.name]: e.target.value });
   };
+  // const countrySelectChange = (inputValue, actionMeta) => {
+  //   setSignupInfo({ ...signupInfo, [actionMeta.name]: inputValue });
+  // };
 
   const responseGoogleSuccess = async (response) => {
     setDisabled(true);
@@ -129,84 +113,158 @@ const Signup = (props) => {
     console.log(response);
   };
 
+  const getCountries = async () => {
+    let url = `${API_URL}/api/countries`;
+    const response = await fetch(url);
+    const countryRes = await response.json();
+    setCountries(countryRes);
+  };
+
+  useEffect(() => {
+    getCountries();
+  }, []);
+
   return (
     <div
       className="d-flex w-100 justify-content-center align-items-center"
       style={{ height: "100vh" }}
     >
-      <div className="contents order-2 order-md-2 w-50">
+      <div className="contents order-2 order-md-2" style={{ width: "35%" }}>
         <div className="container">
           <div className="row align-items-center justify-content-center">
-            <div className="col-md-6">
+            <div className="col-md-10 px-4">
               <div className="mb-3">
                 <h4 className="text-uppercase fw-bold">Cloudlead</h4>
-                <h4 className="">Create Account</h4>
+                <h4 className="mb-4">Create Account</h4>
               </div>
               <form action="#" method="post" onSubmit={handleSubmit}>
-                <div className="mb-3">
+                <div className="row">
+                  <div className="col-md-12 col-lg-12">
+                    <div className="input-group">
+                      <input
+                        type="text"
+                        value={signupInfo.fullname}
+                        onChange={onChange}
+                        id="fullname"
+                        name="fullname"
+                        required
+                      />
+                      <span class="bar"></span>
+                      <label htmlFor="fullname">Your Full Name</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row">
+                  <div className="col-md-12 col-lg-12">
+                    <div className="input-group">
+                      <input
+                        type="email"
+                        value={signupInfo.email}
+                        onChange={onChange}
+                        id="email"
+                        name="email"
+                        required
+                      />
+                      <span class="bar"></span>
+                      <label htmlFor="email">Your Email</label>
+                    </div>
+                  </div>
+                  <div className="col-md-12 col-lg-12">
+                    <div className="input-group">
+                      <input
+                        type="text"
+                        value={signupInfo.company}
+                        onChange={onChange}
+                        name="company"
+                        id="company"
+                        required
+                      />
+                      <span class="bar"></span>
+                      <label htmlFor="company">Company Name</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row">
+                  <div className="col-md-12 col-lg-12">
+                    <div className="input-group">
+                      <input
+                        type="password"
+                        value={signupInfo.password}
+                        onChange={onChange}
+                        name="password"
+                        id="password"
+                        required
+                      />
+                      <span class="bar"></span>
+                      <label htmlFor="password">Password</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row">
+                  <div className="col-md-5 col-lg-5">
+                    <div className="input-group">
+                      {/* <Select
+                        defaultValue={signupInfo.country}
+                        closeMenuOnSelect={true}
+                        name="country"
+                        onChange={countrySelectChange}
+                        value={signupInfo.country}
+                        options={countries}
+                        className="small w-100"
+                        placeholder="Country"
+                        styles={{ background: "#000" }}
+                      /> */}
+                      <div class="select">
+                        <select
+                          name="country"
+                          id="country"
+                          className="small select-text"
+                          onChange={onChange}
+                          placeholder="Country"
+                          value={signupInfo.country}
+                          required
+                        >
+                          <option value="" selected></option>
+                          {countries &&
+                            countries.map((c) => {
+                              return <option value={c.value}>{c.label}</option>;
+                            })}
+                        </select>
+                        <span class="select-highlight"></span>
+                        <span class="select-bar"></span>
+                        <label class="select-label">Country</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-7 col-lg-7">
+                    <div className="input-group">
+                      <input
+                        type="text"
+                        value={signupInfo.phone}
+                        onInput={onChange}
+                        name="phone"
+                        id="phone"
+                        pattern="[0-9]*"
+                        required
+                      />
+                      <span class="bar"></span>
+                      <label htmlFor="phone">Mobile Number</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="w-75 mt-3 mx-auto">
                   <input
-                    type="text"
-                    className="form-control p-2 border-1 border-primary"
-                    value={signupInfo.first_name}
-                    onChange={onChange}
-                    id="first_name"
-                    name="first_name"
-                    placeholder="First Name"
+                    type="submit"
+                    disabled={disabled}
+                    value="Signup"
+                    className="btn py-3 btn-block w-100 btn-primary"
                   />
                 </div>
-                <div className="mb-3 first">
-                  <input
-                    type="text"
-                    className="form-control p-2 border-1 border-primary"
-                    value={signupInfo.last_name}
-                    onChange={onChange}
-                    id="last_name"
-                    name="last_name"
-                    placeholder="Last Name"
-                  />
-                </div>
-                <div className="mb-3 first">
-                  <input
-                    type="email"
-                    className="form-control p-2 border-1 border-primary"
-                    value={signupInfo.email}
-                    onChange={onChange}
-                    id="email"
-                    name="email"
-                    placeholder="Email"
-                  />
-                </div>
-                <div className="mb-3 last mb-3">
-                  <input
-                    type="password"
-                    className="form-control p-2 border-1 border-primary"
-                    value={signupInfo.password}
-                    onChange={onChange}
-                    name="password"
-                    id="password"
-                    placeholder="Password"
-                  />
-                  <span id="StrengthDisp" class="badge displayBadge">
-                    Weak
-                  </span>
-                </div>
-                <div className="mb-3 last mb-3">
-                  <input
-                    type="password"
-                    className="form-control p-2 border-1 border-primary"
-                    value={signupInfo.cpassword}
-                    onChange={onChange}
-                    name="cpassword"
-                    id="cpassword"
-                    placeholder="Confirm Password"
-                  />
-                </div>
-                <input
-                  type="submit"
-                  disabled={disabled}
-                  value="Signup"
-                  className="btn py-3 btn-block w-100 btn-primary"
-                />
+
                 <span className="d-block text-center my-4 text-muted">
                   — or —
                 </span>
@@ -232,14 +290,22 @@ const Signup = (props) => {
           </div>
         </div>
       </div>
-      <div
-        className="bg order-1 order-md-1 w-50"
-        style={{
-          backgroundImage: "url(/assets/images/login.jpg)",
-          backgroundPosition: "center",
-          height: "100vh"
-        }}
-      ></div>
+      <div className="order-1 order-md-1 signup-content">
+        <ul>
+          <li>
+            Search Millions of Global Contacts and Companies on Cloudlead
+            plateform using advanced filters
+          </li>
+          <li>Unlock unlimited business Emails</li>
+          <li>Schedule Email lists to campaigns</li>
+          <li>Direct dials - Get access to thousands of direct dials</li>
+          <li>Connect business leads via Chrome extension</li>
+          <li>Email Verifier</li>
+          <li>Track &amp; Analyze campaigns</li>
+          <li>Custom data - B2B &amp; B2C</li>
+          <li>Automation tools</li>
+        </ul>
+      </div>
     </div>
   );
 };

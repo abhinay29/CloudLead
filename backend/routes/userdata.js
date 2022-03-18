@@ -441,12 +441,12 @@ router.post("/template/delete", fetchuser, async (req, res) => {
   });
 });
 
-router.get("/checkphone/:phone", fetchuser, async (req, res) => {
+router.get("/checkphone/:phone", async (req, res) => {
   let user = await User.findOne({ phone: req.params.phone });
   if (user) {
     return res.status(200).json({
       status: "error",
-      error: "Sorry a user with this phone number is already exists"
+      error: "Sorry a user with this phone number is already registered."
     });
   } else {
     return res.status(200).json({ status: "success" });

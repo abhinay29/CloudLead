@@ -49,6 +49,9 @@ const ContactSchema = new Schema({
   linkedin_id: {
     type: String
   },
+  direct_dial: {
+    trpe: String
+  },
   organization: {
     company_type: {
       type: String
@@ -56,28 +59,28 @@ const ContactSchema = new Schema({
     organization_name: {
       type: String
     },
-    city: {
+    org_city: {
       type: String
     },
-    state: {
+    org_state: {
       type: String
     },
-    country: {
+    org_country: {
       type: String
     },
     industry: {
       type: String
     },
-    primary_domain: {
+    primary_website_domain: {
       type: String
     },
     keywords: {
       type: String
     },
-    revenue: {
+    annual_revenue: {
       type: String
     },
-    employee_range: {
+    size_range: {
       type: String
     }
   }

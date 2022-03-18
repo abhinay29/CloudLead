@@ -137,7 +137,7 @@ function SettingsEmailSetup() {
                   id="ssl_yes"
                   value="yes"
                 />
-                <label className="form-check-label" for="ssl_yes">
+                <label className="form-check-label" htmlFor="ssl_yes">
                   Yes
                 </label>
               </div>
@@ -149,7 +149,7 @@ function SettingsEmailSetup() {
                   id="ssl_no"
                   value="no"
                 />
-                <label className="form-check-label" for="ssl_no">
+                <label className="form-check-label" htmlFor="ssl_no">
                   No
                 </label>
               </div>

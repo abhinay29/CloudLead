@@ -1,4 +1,8 @@
-const { Fields, RoleFields, APIfeatures } = require("../Classes/clsGlobal");
+const {
+  Fields,
+  APIfeatures,
+  ConvertStringRegex
+} = require("../Classes/clsGlobal");
 // const Watchlist = require("../../models/Watchlist");
 const Company = require("../../models/Companies");
 // const Watchlist = require("../../models/CompanyWatchlist");

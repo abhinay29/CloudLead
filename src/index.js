@@ -13,7 +13,7 @@ ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <App />
-      <ToastContainer theme="colored" position="bottom-center" />
+      <ToastContainer theme="dark" position="bottom-center" />
     </Provider>
   </React.StrictMode>,
   document.getElementById("root")

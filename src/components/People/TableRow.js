@@ -106,18 +106,7 @@ const TableRow = (props) => {
                   <div className="fw-bold text-capitalize">
                     {data.first_name} {data.last_name}
                     <div className="table_social_link ms-2 d-inline">
-                      {data.linkedin_id && (
-                        <a
-                          href={data.linkedin_id}
-                          target="_blank"
-                          rel="noreferrer"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="top"
-                          title="Linkedin Profile"
-                        >
-                          <i className="fab fa-linkedin-in"></i>
-                        </a>
-                      )}
+                      {linkedCorrection(data.linkedin_id)}
                     </div>
                   </div>
                   <div className="text-muted">{data.title}</div>
@@ -160,14 +149,16 @@ const TableRow = (props) => {
                 >
                   <i className="fas fa-user"></i>
                 </a>
+                <span className="mx-2">|</span>
+                <span className="text-capitalize">
+                  {data.organization.industry}
+                </span>
+                <span className="mx-2">|</span>
+                <span>{data.organization.size_range}</span>
               </div>
             </td>
-            <td className="industry align-middle text-capitalize">
-              {data.organization.industry}
-            </td>
-            <td className="head-count align-middle">
-              {data.organization.size_range}
-            </td>
+            {/* <td className="industry align-middle text-capitalize"></td>
+            <td className="head-count align-middle"></td> */}
             <td
               className="align-middle email"
               id={`unlock_${data._id}`}
@@ -185,17 +176,21 @@ const TableRow = (props) => {
                     addToWatchList(data._id);
                   }}
                 >
-                  <i className="fas fa-envelope"></i> Get Contact
+                  <i className="fas fa-envelope"></i> Get Email
                 </span>
+              )}
+            </td>
+            <td className="align-middle">
+              {data.direct_dial === "available" ? (
+                <span className="badge bg-success">Available</span>
+              ) : (
+                <span className="badge bg-danger">Not Available</span>
               )}
             </td>
             <td className="align-middle">
               <div style={{ height: "45px", overflow: "hidden" }}>
                 {data.organization.primary_phone}
               </div>
-            </td>
-            <td className="align-middle">
-              <span className="badge bg-primary">Contact Us</span>
             </td>
             <td className="align-middle">
               <strong>{data.country}</strong>

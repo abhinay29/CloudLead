@@ -21,11 +21,36 @@ const rand = () => Math.random(0).toString(36).substr(2);
 const getToken = (length = 32) =>
   (rand() + rand() + rand() + rand()).substr(0, length);
 
+function parseName(input) {
+  var fullName = input || "";
+  var result = {};
+
+  if (fullName.length > 0) {
+    var nameTokens = fullName.match(/\b(\w+)\b/g);
+
+    if (nameTokens.length > 3) {
+      result.name = nameTokens.slice(0, 2).join(" ");
+    } else {
+      result.name = nameTokens.slice(0, 1).join(" ");
+    }
+
+    if (nameTokens.length > 2) {
+      result.lastName = nameTokens.slice(-2, -1).join(" ");
+      result.secondLastName = nameTokens.slice(-1).join(" ");
+    } else {
+      result.lastName = nameTokens.slice(-1).join(" ");
+      result.secondLastName = "";
+    }
+  }
+
+  return result;
+}
+
 router.post(
   "/signup",
   [
-    body("first_name", "Enter a valid name").isLength({ min: 3 }),
-    body("last_name", "Enter a valid name").isLength({ min: 1 }),
+    // body("first_name", "Enter a valid fullname").isLength({ min: 3 }),
+    // body("last_name", "Enter a valid fullname").isLength({ min: 1 }),
     body("email", "Enter a valid email").isEmail(),
     body("password", "Password must be atleast 5 characters").isLength({
       min: 5
@@ -48,9 +73,7 @@ router.post(
       });
     }
 
-    let strongPassword = new RegExp(
-      "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})"
-    );
+    let strongPassword = new RegExp("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])");
 
     if (!strongPassword.test(req.body.password)) {
       return res.status(200).json({
@@ -65,9 +88,18 @@ router.post(
       if (user) {
         return res.status(400).json({
           status: "error",
-          error: "Sorry a user with this email already exists"
+          error: "Sorry a user with this email is already registered"
         });
       }
+
+      let userPhone = await User.findOne({ phone: req.body.phone });
+      if (userPhone) {
+        return res.status(200).json({
+          status: "error",
+          error: "Sorry a user with this phone number is already registered."
+        });
+      }
+
       const salt = await bcrypt.genSalt(10);
       const secPass = await bcrypt.hash(req.body.password, salt);
 
@@ -75,10 +107,13 @@ router.post(
 
       // Create a new user
       user = await User.create({
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
+        first_name: parseName(req.body.first_name).name,
+        last_name: parseName(req.body.first_name).lastName,
         password: secPass,
         email: req.body.email,
+        country_code: req.body.country_code,
+        company: req.body.company,
+        phone: req.body.phone,
         token: token
       });
 
@@ -88,7 +123,7 @@ router.post(
         subject: "Confirm your email address", // Subject line
         html: `<h5>Welcome to Cloudlead</h5>
         <p>Thank you for signing up!</p>
-        <p>Please confirm your email address to start using Prospect.​io.</p>
+        <p>Please confirm your email address to start using Cloudlead.ai</p>
         <p><a href="${hostWebsite}/verify/${token}">${hostWebsite}/verify/${token}</a></p>
         <p></p>
         <p>Have a wonderful day!</p>

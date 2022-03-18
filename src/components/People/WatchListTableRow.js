@@ -8,7 +8,7 @@ const Badge = (props) => {
     badge = "high";
   } else if (
     confidence === "catchall" ||
-    confidence === "Catchall/Accept_all"
+    confidence === "Guessed / Recommended"
   ) {
     badge = "low";
   } else if (confidence === "guessed" || confidence === "") {
@@ -23,8 +23,8 @@ const Badge = (props) => {
         </span>
       )}
       {badge === "low" && (
-        <span className="badge bg-secondary" title="Catch all / Accept all">
-          Catch all / Accept all
+        <span className="badge bg-secondary" title="Guessed / Recommended">
+          Guessed / Recommended
         </span>
       )}
       {badge === "guessed" && (
@@ -82,11 +82,14 @@ const WatchListTableRow = (props) => {
                   <span>
                     <div className="fw-bold">
                       {data.first_name} {data.last_name}
+                      <div className="table_social_link ms-2 d-inline">
+                        {linkedCorrection(data.linkedin_id)}
+                      </div>
                     </div>
                     <div className="text-muted">{data.title}</div>
-                    <div className="table_social_link mt-1">
+                    {/* <div className="table_social_link mt-1">
                       {linkedCorrection(data.linkedin_id)}
-                    </div>
+                    </div> */}
                   </span>
                 </div>
               </td>
@@ -114,13 +117,13 @@ const WatchListTableRow = (props) => {
                   >
                     <i className="fas fa-eye small"></i>
                   </a>
+                  <span className="mx-2">|</span>
+                  <span className="text-capitalize">
+                    {data.organization.industry}
+                  </span>
+                  <span className="mx-2">|</span>
+                  <span>{data.organization.size_range}</span>
                 </div>
-              </td>
-              <td className="industry align-middle text-capitalize">
-                {data.organization.industry}
-              </td>
-              <td className="head-count align-middle">
-                {data.organization.size_range}
               </td>
               <td className="align-middle" id={`unlock_${data._id}`}>
                 {data.email} <br />
@@ -130,12 +133,12 @@ const WatchListTableRow = (props) => {
                 </span>
               </td>
               <td className="align-middle">
+                <span className="badge bg-success">Available</span>
+              </td>
+              <td className="align-middle">
                 <div style={{ height: "45px", overflow: "hidden" }}>
                   {data.organization.primary_phone}
                 </div>
-              </td>
-              <td className="align-middle">
-                <span className="badge bg-primary">Contact Us</span>
               </td>
               <td className="align-middle">
                 <strong>{data.country}</strong>

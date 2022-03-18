@@ -74,11 +74,6 @@ module.exports = async (req, res) => {
     newQuery.title = new Fields(req.query.title).create();
   }
 
-  if (req.query.company_size_range && req.query.company_size_range !== "") {
-    newQuery["organization.employee_range"] = new Fields(
-      req.query.company_size_range
-    ).create();
-  }
   if (req.query.company_type && req.query.company_type !== "") {
     newQuery["organization.company_type"] = new Fields(
       req.query.company_type
@@ -91,20 +86,22 @@ module.exports = async (req, res) => {
     newQuery["organization.keywords"] = new Fields(req.query.keyword).create();
   }
   if (req.query.domain && req.query.domain !== "") {
-    newQuery["organization.primary_domain"] = new Fields(
+    newQuery["organization.primary_website_domain"] = new Fields(
       req.query.domain
     ).create();
   }
   if (req.query.company_city && req.query.company_city !== "") {
-    newQuery["organization.city"] = new Fields(req.query.company_city).create();
+    newQuery["organization.org_city"] = new Fields(
+      req.query.company_city
+    ).create();
   }
   if (req.query.company_state && req.query.company_state !== "") {
-    newQuery["organization.state"] = new Fields(
+    newQuery["organization.org_state"] = new Fields(
       req.query.company_state
     ).create();
   }
   if (req.query.company_country && req.query.company_country !== "") {
-    newQuery["organization.country"] = new Fields(
+    newQuery["organization.org_country"] = new Fields(
       req.query.company_country
     ).create();
   }
@@ -170,11 +167,30 @@ module.exports = async (req, res) => {
   if (req.query.product_services && req.query.product_services !== "") {
     newQuery.product_services = new Fields(req.query.product_services).create();
   }
+
+  // if (req.query.company_size_range && req.query.company_size_range !== "") {
+  //   newQuery["organization.size_range"] = new Fields(
+  //     req.query.company_size_range
+  //   ).create();
+  // }
+
+  if (req.query.company_size_range && req.query.company_size_range !== "") {
+    if (req.query.company_size_range instanceof Array) {
+      newQuery["organization.size_range"] = {
+        $in: req.query.company_size_range
+      };
+    } else {
+      newQuery["organization.size_range"] = req.query.company_size_range;
+    }
+  }
+
   if (req.query.revenue_range && req.query.revenue_range !== "") {
     if (req.query.revenue_range instanceof Array) {
-      newQuery["organization.revenue"] = { $in: req.query.revenue_range };
+      newQuery["organization.annual_revenue"] = {
+        $in: req.query.revenue_range
+      };
     } else {
-      newQuery["organization.revenue"] = req.query.revenue_range;
+      newQuery["organization.annual_revenue"] = req.query.revenue_range;
     }
   }
 
@@ -193,6 +209,7 @@ module.exports = async (req, res) => {
         "country",
         "city",
         "linkedin_id",
+        "direct_dial",
         "organization"
       ]),
       newQuery
@@ -205,6 +222,8 @@ module.exports = async (req, res) => {
     // const totalContacts = await Contacts.count({});
     const totalResults = await Contacts.count(newQuery);
     const uniqueComp = await Contacts.find(newQuery).distinct("company_id");
+    newQuery.direct_dial = "available";
+    const directDial = await Contacts.count(newQuery);
     // let reqLimit = 50;
     // if (req.query.limit) {
     //   reqLimit = parseInt(req.query.limit);
@@ -235,7 +254,7 @@ module.exports = async (req, res) => {
       temp.unlocked_email = await getEmail(contact._id);
       // temp.company = await getCompany(contact.company_id);
       if (!contact.organization.organization_name) {
-        contact.organization.organization_name = "";
+        contact.organization.organization_name = " ";
       }
       Conts.push(temp);
     });
@@ -246,8 +265,9 @@ module.exports = async (req, res) => {
       status: "success",
       // total: totalContacts,
       totalResults: totalResults,
+      directDial: directDial,
       limit: contacts.length,
-      page: req.query.page,
+      page: req.query.page ? parseInt(req.query.page) : 1,
       uniqueCompany: uniqueComp.length,
       data: {
         contacts: Conts

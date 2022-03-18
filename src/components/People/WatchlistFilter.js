@@ -23,7 +23,7 @@ const WatchFilter = (props) => {
 
   // const context = useContext(PeopleContext);
   // const { getPeoples, setTotalPeople, setUniqueComp } = context;
-  const { searchWatchList, closeModal } = props;
+  const { searchWatchList, closeModal, setShowBacktoWatchlist } = props;
   const [disSearchBtn, setDisSearchBtn] = useState(false);
   const [deptState, setdeptState] = useState({
     finance: false,
@@ -141,6 +141,7 @@ const WatchFilter = (props) => {
 
     dispatch(progressLoading(30));
     searchWatchList(`&${query}`);
+    setShowBacktoWatchlist(true);
     setDisSearchBtn(false);
   };
 

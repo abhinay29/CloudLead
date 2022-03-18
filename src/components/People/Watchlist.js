@@ -26,6 +26,7 @@ const Watchlist = () => {
   const [disAddBtn, setDisAddBtn] = useState(false);
   const [skeletonLoading, setSkeletonLoading] = useState(false);
   const [limit, setLimit] = useState(25);
+  const [showBacktoWatchlist, setShowBacktoWatchlist] = useState(false);
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber !== page) {
@@ -539,8 +540,21 @@ const Watchlist = () => {
           >
             <i className="fas fa-chevron-left"></i> Back to Result
           </Link>
+          {showBacktoWatchlist && (
+            <button
+              type="button"
+              className="btn btn-sm btn-primary bi-tooltip me-2"
+              title="Refresh"
+              onClick={() => {
+                getWatchlist();
+                setShowBacktoWatchlist(false);
+              }}
+            >
+              <i className="fas fa-chevron-left"></i> Back to Watchlist
+            </button>
+          )}
           <Link
-            to="/radar/people"
+            to="/radar/people?showFilters=yes"
             className="btn btn-sm btn-primary bi-tooltip me-2"
           >
             <i className="fas fa-search"></i> Back to Search
@@ -578,11 +592,11 @@ const Watchlist = () => {
                 value="catchall"
               />
               <label htmlFor="low_confidence" className="form-check-label">
-                Catch all / Accept all
+                Guessed / Recommended
               </label>
             </div>
 
-            <div className="me-3">
+            {/* <div className="me-3">
               <input
                 type="checkbox"
                 id="guessed_confidence"
@@ -590,10 +604,11 @@ const Watchlist = () => {
                 onChange={() => filterConfidence()}
                 value="guessed"
               />
-              <label htmlFor="guessed_confidence" className="form-check-label">
-                Guessed / Recommended
-              </label>
-            </div>
+              <label
+                htmlFor="guessed_confidence"
+                className="form-check-label"
+              ></label>
+            </div> */}
           </div>
         </div>
         <div
@@ -621,11 +636,11 @@ const Watchlist = () => {
                 </th>
                 {/* <th>Title</th> */}
                 <th>Company</th>
-                <th>Industry</th>
-                <th>Head Count</th>
+                {/* <th>Industry</th>
+                <th>Head Count</th> */}
                 <th>Email</th>
-                <th>Boardline Numbers</th>
                 <th>Direct Dial</th>
+                <th>Boardline Numbers</th>
                 <th>Contact Location</th>
                 <th>Company Location</th>
                 <th>Added on</th>
@@ -767,6 +782,7 @@ const Watchlist = () => {
             </div>
             <WatchFilter
               searchWatchList={searchWatchList}
+              setShowBacktoWatchlist={setShowBacktoWatchlist}
               closeModal={closeModal}
             />
           </div>

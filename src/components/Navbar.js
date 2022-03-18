@@ -83,11 +83,16 @@ const Navbar = () => {
             style={{ height: "40px" }}
           >
             <img
-              src="/logo.png"
+              src="/cl_logo.png"
               alt="Logo"
-              style={{ width: "40px", height: "40px" }}
+              style={{ width: "100%", height: "40px" }}
             />
-            <h5 className="fw-bold ms-3 mb-0">CLOUDLEAD</h5>
+            {/* <h5 className="fw-bold ms-3 mb-0">CLOUDLEAD</h5> */}
+            {/* <img
+              src="/assets/images/logo.svg"
+              alt="Logo"
+              style={{ height: "56px" }}
+            /> */}
           </Link>
           <button
             className="navbar-toggler"

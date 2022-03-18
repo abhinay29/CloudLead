@@ -9,7 +9,7 @@ import UserMenu from "./UserMenu";
 
 // const ENDPOINT = "http://localhost:5000";
 
-function Settings() {
+function Settings(props) {
   // const [response, setResponse] = useState("");
 
   // useEffect(() => {

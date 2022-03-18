@@ -753,16 +753,35 @@ const Filter = (props) => {
 
   const setDefaultValueGroupFunction = (options, name) => {
     var opt = [];
-    if (defaultValue.industry.length > 0) {
-      opt = defaultValue.industry;
-      options.map((o) => {
-        return opt.push(o);
-      });
-    } else {
-      opt = options;
-    }
 
-    console.log(opt);
+    if (name === "country") {
+      if (defaultValue.country.length > 0) {
+        opt = defaultValue.country;
+        options.map((o) => {
+          return opt.push(o);
+        });
+      } else {
+        opt = options;
+      }
+    } else if (name === "industry") {
+      if (defaultValue.industry.length > 0) {
+        opt = defaultValue.industry;
+        options.map((o) => {
+          return opt.push(o);
+        });
+      } else {
+        opt = options;
+      }
+    } else if (name === "company_country") {
+      if (defaultValue.company_country.length > 0) {
+        opt = defaultValue.company_country;
+        options.map((o) => {
+          return opt.push(o);
+        });
+      } else {
+        opt = options;
+      }
+    }
 
     setDefaultValue({ ...defaultValue, [name]: opt });
   };
@@ -771,7 +790,7 @@ const Filter = (props) => {
     return {
       label: (() => {
         return (
-          <div>
+          <div className="d-flex align-items-center">
             <input
               type="checkbox"
               className="form-check-input me-2"
@@ -780,11 +799,34 @@ const Filter = (props) => {
                   setDefaultValueGroupFunction(options, name);
               }}
             />
-            {groupName}
+            <span className="fw-bold text-dark" style={{ fontSize: "14px" }}>
+              {groupName}
+            </span>
           </div>
         );
       })(),
-      options: options
+      options: (() => {
+        var opt = [];
+        options.map((option) => {
+          var optPush = {
+            label: (() => {
+              return (
+                <>
+                  <input
+                    type="checkbox"
+                    className="form-check-input mx-2 small"
+                  />
+                  {option.label}
+                </>
+              );
+            })(),
+            value: option.value
+          };
+          opt.push(optPush);
+          return false;
+        });
+        return opt;
+      })()
     };
   };
 
@@ -964,7 +1006,9 @@ const Filter = (props) => {
                 </div>
 
                 <div className="d-flex selectAllCheckbox align-items-center mb-2">
-                  <h6 className="fw-bold me-3 mb-0">Search by Department</h6>
+                  <h6 className="fw-bold me-3 mb-0">
+                    Search by Department/Role
+                  </h6>
                   <span>Select</span>{" "}
                   <span
                     className="selectBtn"

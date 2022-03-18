@@ -8,7 +8,8 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   progressLoading,
   setSequenceList,
-  watchList
+  watchList,
+  setPeopleSearchResults
 } from "../../states/action-creator";
 import TableSkeleton from "../Skeleton/TableSkeleton";
 import NoRecordFound from "./NoRecordFound";
@@ -21,6 +22,9 @@ const Table = (props) => {
   const dispatch = useDispatch();
   const peopleSearchResults = useSelector((state) => state.peopleSearchResults);
   const sequences = useSelector((state) => state.sequences);
+
+  const queryParams = new URLSearchParams(window.location.search);
+  const showFilters = queryParams.get("showFilters");
 
   const context = useContext(PeopleContext);
   const {
@@ -39,6 +43,21 @@ const Table = (props) => {
   const [disAddBtn, setDisAddBtn] = useState(false);
   const { setShowFilter, setShowTable } = props;
   const [limit, setLimit] = useState(25);
+  const [directDial, setDirectDial] = useState(0);
+  const [backToResultStatus, setBackToResultStatus] = useState(false);
+
+  if (showFilters === "yes") {
+    // queryParams.delete("showFilters");
+    window.history.replaceState({}, document.title, "/radar/peoples");
+    dispatch(progressLoading(30));
+    getPeoples([]);
+    setTotalPeople(0);
+    setShowFilter(true);
+    setShowTable(false);
+    setPage(1);
+    dispatch(progressLoading(100));
+    localStorage.removeItem("searchQuery");
+  }
 
   const backToSearch = () => {
     dispatch(progressLoading(30));
@@ -56,17 +75,19 @@ const Table = (props) => {
     // props.setResetRole(true);
   };
 
-  const handlePageChange = (pageNumber) => {
-    if (pageNumber !== page) searchPeople(pageNumber);
+  const handlePageChange = async (pn) => {
+    if (pn !== page) {
+      searchPeople(pn);
+    }
   };
 
-  const searchPeople = async (pageNumber = 1) => {
+  const searchPeople = async (pn = 1) => {
     if (!localStorage.getItem("searchQuery")) {
       return false;
     }
 
-    setPage(pageNumber);
-    let query = localStorage.getItem("searchQuery") + `&page=${pageNumber}`;
+    setPage(pn);
+    let query = localStorage.getItem("searchQuery") + `&page=${pn}`;
 
     if (query.length === 0) {
       return;
@@ -91,7 +112,11 @@ const Table = (props) => {
       setTotalPeople(parsedData.totalResults);
       setSelectAll(false);
       setUniqueComp(parsedData.uniqueCompany);
+      setDirectDial(parsedData.directDial);
       setSkeletonLoading(false);
+      dispatch(setPeopleSearchResults(parsedData));
+      let allSelectorCheckbox = document.getElementById("allSelector");
+      allSelectorCheckbox.checked = false;
     }
     dispatch(progressLoading(100));
   };
@@ -363,6 +388,7 @@ const Table = (props) => {
       } else {
         getPeoples(peopleSearchResults);
         setTotalPeople(peopleSearchResults.totalResults);
+        setPage(peopleSearchResults.page);
         setSelectAll(false);
         setUniqueComp(peopleSearchResults.uniqueCompany);
         setSkeletonLoading(false);
@@ -385,11 +411,23 @@ const Table = (props) => {
     no_selected_contact.innerHTML = `${selectedCheckbox.length} contact selected`;
   }, [selectAll]);
 
-  const showAllContacts = (company_id) => {
+  const showAllContacts = async (company_id) => {
     let query = "company_id=" + company_id;
+    let oldQuery = localStorage.getItem("searchQuery");
+    localStorage.setItem("oldQuery", oldQuery);
     localStorage.removeItem("searchQuery");
     localStorage.setItem("searchQuery", query);
-    searchPeople();
+    await searchPeople();
+    setBackToResultStatus(true);
+  };
+
+  const backToResult = async () => {
+    let oldQuery = localStorage.getItem("oldQuery");
+    localStorage.removeItem("oldQuery");
+    localStorage.removeItem("searchQuery");
+    localStorage.setItem("searchQuery", oldQuery);
+    await searchPeople();
+    setBackToResultStatus(false);
   };
 
   return (
@@ -401,8 +439,11 @@ const Table = (props) => {
               <span className="small fw-bold text-primary me-2">
                 CONTACTS (<span>{totalPeople}</span>)
               </span>
-              <span className="small fw-bold text-primary">
+              <span className="small fw-bold text-primary me-2">
                 UNIQUE COMPANIES (<span>{uniqueComp}</span>)
+              </span>
+              <span className="small fw-bold text-primary">
+                DIRECT DIAL (<span>{directDial}</span>)
               </span>
             </div>
             <div id="no_selected_contact" className="text-primary"></div>
@@ -507,7 +548,7 @@ const Table = (props) => {
               <button
                 type="button"
                 className="btn btn-sm btn-outline-primary bi-tooltip"
-                onClick={() => window.location.reload()}
+                onClick={() => searchPeople()}
                 title="Refresh"
               >
                 <i className="fas fa-redo-alt"></i>
@@ -529,7 +570,7 @@ const Table = (props) => {
               }}
               title="Get Contacts"
             >
-              <i className="fas fa-envelope"></i> Get Contacts
+              <i className="fas fa-envelope"></i> Get Email
             </button>
             <Link
               to="/radar/people/watchlist"
@@ -537,6 +578,18 @@ const Table = (props) => {
             >
               <i className="fas fa-bookmark"></i> My Watchlist
             </Link>
+            {backToResultStatus && (
+              <button
+                type="button"
+                className="btn btn-sm btn-primary bi-tooltip me-2"
+                onClick={() => {
+                  backToResult();
+                }}
+                title="Back to Result"
+              >
+                <i className="fas fa-chevron-left"></i> Back to Result
+              </button>
+            )}
           </div>
 
           <div
@@ -565,11 +618,11 @@ const Table = (props) => {
                   </th>
                   {/* <th>Title</th> */}
                   <th>Company</th>
-                  <th>Industry</th>
-                  <th>Head Count</th>
+                  {/* <th></th>
+                  <th></th> */}
                   <th>Email</th>
-                  <th>Boardline Numbers</th>
                   <th>Direct Dial</th>
+                  <th>Boardline Numbers</th>
                   <th>Contact Location</th>
                   <th>Company Location</th>
                 </tr>
@@ -696,6 +749,7 @@ const Table = (props) => {
           </div>
         </div>
       </div>
+
       <div
         className="modal-backdrop"
         id="modal-backdrop"

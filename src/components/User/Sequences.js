@@ -173,9 +173,14 @@ function Sequences() {
           <div className="card-body">
             <div className="cardTitle mb-4 d-flex justify-content-between align-items-center">
               <h5>Sequences</h5>
-              <Link to="/templates" className="btn btn-sm btn-primary">
-                Templates
-              </Link>
+              <div>
+                <Link className="btn btn-sm btn-primary me-2" to="/settings">
+                  <i className="fas fa-cog me-2"></i> Email Settings
+                </Link>
+                <Link to="/templates" className="btn btn-sm btn-primary">
+                  <i className="fas fa-pencil-ruler me-2"></i> Templates
+                </Link>
+              </div>
             </div>
             <div className="table-responsive">
               <table className="table">

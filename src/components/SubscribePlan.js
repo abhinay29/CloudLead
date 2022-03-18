@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { NotificationManager } from "react-notifications";
+import { toast } from "react-toastify";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -14,11 +14,6 @@ function SubscribePlan() {
   const uemail = localStorage.getItem("uemail");
   const uname = localStorage.getItem("uname");
   const [invalidPhoneMsg, setInvalidPhoneMsg] = useState("");
-  // const [formData, setFormData] = useState({
-  //   country_code: '',
-  //   phone: '',
-  //   company_name: ''
-  // });
   const [profile, setProfile] = useState({
     country_code: "",
     phone: "",
@@ -31,12 +26,6 @@ function SubscribePlan() {
     gst: false,
     gst_number: ""
   });
-
-  // useEffect(() => {
-  //   if (userState) {
-  //     setProfile({ company: userState.company, phone: userState.phone, country_code: userState.country_code });
-  //   }
-  // }, [userState])
 
   const handleInput = (e) => {
     if (e.target.type === "checkbox") {
@@ -53,48 +42,26 @@ function SubscribePlan() {
   };
   useEffect(() => {
     getPlans();
+    setProfile({
+      ...profile,
+      phone: userState.phone,
+      country_code: userState.country_code
+    });
+    // eslint-disable-next-line
   }, []);
 
   const subscribe = async (pid) => {
     let Plan = await fetch(`${API_URL}/api/plans/${pid}`);
     let res = await Plan.json();
     setSelectedPlan(res);
+    if (pid === 1) {
+      return openModal("tosModal");
+    }
     openModal("billingInformation");
   };
 
-  // const handleInput = (e) => {
-  //   setFormData({ ...formData, [e.target.name]: e.target.value });
-  // }
-
-  // const handleFormValidation = () => {
-  //   let companyInput = document.getElementById("company");
-  //   if (!profile.company) {
-  //     companyInput.classList.add('is-invalid');
-  //     NotificationManager.error("Please enter your company name");
-  //     return false;
-  //   } else {
-  //     companyInput.classList.add('is-valid')
-  //     companyInput.classList.remove('is-invalid');
-  //   }
-  //   if (!profile.country_code) {
-  //     NotificationManager.error("Please enter valid country code");
-  //     return false;
-  //   }
-  //   if (!profile.phone) {
-  //     let phoneNumberInput = document.getElementById("phoneNumber");
-  //     NotificationManager.error("Please enter valid phone no.");
-  //     setInvalidPhoneMsg("Please enter valid phone no.")
-  //     phoneNumberInput.focus()
-  //     phoneNumberInput.classList.add('is-invalid');
-  //     return false;
-  //   }
-  // }
-
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    // if (!handleFormValidation()) {
-    //   return false;
-    // }
     let User = await fetch(`${API_URL}/api/user/checkphone/${profile.phone}`, {
       method: "GET",
       headers: {
@@ -106,7 +73,7 @@ function SubscribePlan() {
 
     if (res.status === "error") {
       let phoneNumberInput = document.getElementById("phoneNumber");
-      NotificationManager.error(res.error);
+      toast.error(res.error);
       setInvalidPhoneMsg("A user with this phone number is already exists.");
       phoneNumberInput.focus();
       phoneNumberInput.classList.add("is-invalid");
@@ -138,10 +105,10 @@ function SubscribePlan() {
     });
     let res = await Subscribe.json();
     if (res.status === "success") {
-      NotificationManager.success(`Welcome! ${uname}`);
+      toast.success(`Welcome! ${uname}`);
       window.location.reload();
     } else {
-      NotificationManager.error(res.error);
+      toast.error(res.error);
     }
   };
 
@@ -252,10 +219,7 @@ function SubscribePlan() {
         );
 
         if (result.data.status === "success") {
-          NotificationManager.success(
-            "Thank you for choosing us.",
-            `Welcome! ${uname}`
-          );
+          toast.success(`Welcome! ${uname} Thank you for choosing us`);
           closeModal("orderSummery");
           window.location.reload();
         }
@@ -820,9 +784,8 @@ function SubscribePlan() {
                               className="form-control"
                               name="company"
                               id="company"
-                              onChange={handleInput}
-                              value={profile.company}
-                              required
+                              value={userState.company}
+                              disabled
                             />
                           </div>
                         </div>
@@ -839,9 +802,8 @@ function SubscribePlan() {
                               className="form-control"
                               placeholder="e.g. 91"
                               name="country_code"
-                              onChange={handleInput}
-                              value={profile.country_code}
-                              required
+                              value={userState.country_code}
+                              disabled
                             />
                           </div>
                         </div>
@@ -859,9 +821,8 @@ function SubscribePlan() {
                               className="form-control"
                               name="phone"
                               id="phoneNumber"
-                              onChange={handleInput}
-                              value={profile.phone}
-                              required
+                              value={userState.phone}
+                              disabled
                             />
                             <div id="invalidPhone" className="invalid-feedback">
                               {invalidPhoneMsg}
@@ -987,45 +948,6 @@ function SubscribePlan() {
                           </div>
                         </div>
                       </div>
-                      {/* <div className="row">
-                      <div className="col-md-6">
-                        <div className="mb-3">
-                          <label htmlFor="">Name</label>
-                          <input type="text" className="form-control" value={uname} readOnly />
-                        </div>
-                      </div>
-                      <div className="col-md-6">
-                        <div className="mb-3">
-                          <label htmlFor="">Email</label>
-                          <input type="text" className="form-control" value={uemail} readOnly />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="col-md-6">
-                        <div className="mb-3">
-                          <label htmlFor="">Country Code <span className="text-danger">*</span></label>
-                          <input type="text" className="form-control" name="country_code" onChange={handleInput} value={formData.country_code} required placeholder="e.g. 91 for India" />
-                        </div>
-                      </div>
-                      <div className="col-md-6">
-                        <div className="mb-3">
-                          <label htmlFor="">Phone <span className="text-danger">*</span></label>
-                          <input type="text" className="form-control" name="phone" id="phoneNumber" onChange={handleInput} value={formData.phone} required />
-                          <div id="invalidPhone" className="invalid-feedback">
-                            A user with this phone number is already exists.
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="col-md-6">
-                        <div className="mb-3">
-                          <label htmlFor="">Comapany Name <span className="text-danger">*</span></label>
-                          <input type="text" className="form-control" name="company_name" onChange={handleInput} value={formData.company_name} required />
-                        </div>
-                      </div>
-                    </div> */}
                     </div>
                   </div>
                 </div>

@@ -119,33 +119,31 @@ const Login = (props) => {
                 </p>
               </div>
               <form action="#" method="post" onSubmit={handleSubmit}>
-                <div className="mb-3 first">
-                  <label htmlFor="username" className="form-label">
-                    Email
-                  </label>
+                <div className="input-group">
                   <input
                     type="email"
-                    className="form-control p-2 border-1 border-primary"
                     value={credentials.email}
                     onChange={onChange}
                     id="email"
                     name="email"
                     autoComplete="username"
+                    required
                   />
+                  <span class="bar"></span>
+                  <label htmlFor="username">Email</label>
                 </div>
-                <div className="mb-3 last mb-3">
-                  <label htmlFor="password" className="form-label">
-                    Password
-                  </label>
+                <div className="input-group">
                   <input
                     type="password"
-                    className="form-control p-2 border-1 border-primary"
                     value={credentials.password}
                     onChange={onChange}
                     name="password"
                     id="password"
                     autoComplete="current-password"
+                    required
                   />
+                  <span class="bar"></span>
+                  <label htmlFor="password">Password</label>
                 </div>
                 <div className="mb-4 d-flex">
                   <span className="me-auto">

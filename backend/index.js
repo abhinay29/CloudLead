@@ -24,6 +24,7 @@ app.use("/api/auth", require("./routes/auth"));
 app.use("/api/contacts", require("./routes/contacts"));
 app.use("/api/companies", require("./routes/companies"));
 app.use("/api/cities", require("./routes/cities"));
+app.use("/api/countries", require("./routes/countries"));
 app.use("/api/states", require("./routes/states"));
 app.use("/api/user", require("./routes/userdata"));
 app.use("/api/plans", require("./routes/plans"));
