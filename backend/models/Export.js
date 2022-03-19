@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const ExportSchema = new Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'users',
+    ref: "users",
     required: true
   },
   contactIds: {
@@ -13,12 +13,12 @@ const ExportSchema = new Schema({
   },
   token: {
     type: String,
-    required: true,
+    required: true
   },
   date: {
     type: Date,
     default: Date.now
-  },
+  }
 });
 
-module.exports = mongoose.model('userExportList', ExportSchema);
+module.exports = mongoose.model("userexportlists", ExportSchema);

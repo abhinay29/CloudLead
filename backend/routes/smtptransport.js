@@ -240,7 +240,7 @@ router.post("/invoice", fetchuser, async (req, res) => {
     marginRight: 25,
     marginLeft: 25,
     marginBottom: 25,
-    logo: "https://beta.cloudlead.in/logoBig.png",
+    logo: "https://app.cloudlead.in/cl_logo_192x192.png",
     // "background": "https://public.easyinvoice.cloud/img/watermark-draft.jpg", //or base64 //img or pdf
     sender: {
       company: "Cloudlead",

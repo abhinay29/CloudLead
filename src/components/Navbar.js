@@ -268,10 +268,23 @@ const Navbar = () => {
                       <i className="fas fa-file-invoice me-2"></i> Billing
                     </Link>
                   </li>
-                  <li>
-                    <Link className="dropdown-item" to="/settings">
+                  <li className="nav-item dropleft">
+                    <Link
+                      className="dropdown-item"
+                      to="/settings"
+                      role="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
                       <i className="fas fa-cog me-2"></i> Settings
                     </Link>
+                    <ul className="dropdown-menu shadow" aria-labelledby="settingsDropdown">
+                      <li>
+                        <Link className="dropdown-item" to="/profile">
+                          <i className="fas fa-user me-2"></i> My Profile
+                        </Link>
+                      </li>
+                    </ul>
                   </li>
                   <li>
                     <Link className="dropdown-item" to="/change-password">

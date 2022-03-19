@@ -18,15 +18,37 @@ function Export(props) {
   const initiateDownload = async () => {
     await axios({
       method: "GET",
-      url: `${API_URL}/api/contacts/watchlist/download`,
-      data: JSON.stringify({ token: token }),
+      url: `${API_URL}/api/contacts/watchlist/download?token=${token}`,
       headers: {
         "Content-Type": "application/json"
       }
     })
       .then(function (response) {
         //handle success
-        console.log(response);
+        var output = [];
+        response.data.data.map((res) => {
+          return output.push({
+            first_name: res.first_name,
+            last_name: res.last_name,
+            title: res.title,
+            email: res.email,
+            organization_name: res.organization.organization_name,
+            linkedin_id: res.linkedin_id,
+            city: res.city,
+            state: res.state,
+            country: res.country,
+            seniority: res.seniority,
+            role: res.role,
+            department: res.department,
+            company_type: res.organization.company_type,
+            industry: res.organization.industry,
+            size_range: res.organization.size_range,
+            org_country: res.organization.org_country,
+            org_city: res.organization.org_city,
+            website_link: res.organization.website_link
+          });
+        });
+        setCsvData(output);
       })
       .catch(function (err) {
         //handle error
@@ -53,6 +75,14 @@ function Export(props) {
     }, 5000);
   };
 
+  const click = () => {
+    document.getElementById("downloadBtn").click();
+  };
+
+  // useEffect(() => {
+  //   click();
+  // }, [csvData]);
+
   return (
     <div className="p-3 text-center">
       {!csvData && <div>Please wait...</div>}
@@ -63,8 +93,9 @@ function Export(props) {
             filename={filename}
             onClick={closeWindow}
             target="_blank"
+            id="downloadBtn"
           >
-            Download File
+            Click here to download file
           </CSVLink>
         </div>
       )}
