@@ -2,7 +2,8 @@ import React from "react";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import axios from "axios";
-import { watchList } from "../../states/action-creator";
+import { watchList, userInfo } from "../../states/action-creator";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -42,6 +43,28 @@ const TableRow = (props) => {
       });
   };
 
+  const initiateUserInfo = async () => {
+    await axios({
+      method: "GET",
+      url: `${API_URL}/api/auth/getuser`,
+      headers: {
+        "auth-token": localStorage.getItem("token"),
+        "Content-Type": "application/json"
+      }
+    })
+      .then(function (response) {
+        if (response.data.status === "success") {
+          dispatch(userInfo(response.data.userdata));
+          localStorage.removeItem("searchQuery");
+        } else {
+          console.log(response);
+        }
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+  };
+
   const addToWatchList = async (personId) => {
     const watchList = await fetch(`${API_URL}/api/contacts/unlock`, {
       method: "POST",
@@ -55,24 +78,11 @@ const TableRow = (props) => {
     if (res.status === "success") {
       refreshWatchlist();
       let badge = "";
-      if (
-        res.data.email_confidence_level === "valid" ||
-        res.data.email_confidence_level === "Valid"
-      ) {
+      if (res.data.email_confidence_level === "Valid") {
         badge =
           '<span class="badge text-white bg-success small"><i class="fas fa-check-circle me-1" title="Verified"></i> Verified</span>';
-      } else if (
-        res.data.email_confidence_level === "catchall" ||
-        res.data.email_confidence_level === "Catchall/Accept_all"
-      ) {
-        badge =
-          '<span class="badge bg-secondary">Catch all / Accept all</span>';
-      } else if (
-        res.data.email_confidence_level === "guessed" ||
-        res.data.email_confidence_level === ""
-      ) {
-        badge =
-          '<span class="badge" style="background: #f57c00"> Guessed / Recommended</span>';
+      } else if (res.data.email_confidence_level === "catchall") {
+        badge = '<span class="badge bg-secondary">Guessed / Recommended</span>';
       }
 
       let unlockContainer = document.getElementById("unlock_" + personId);
@@ -80,6 +90,7 @@ const TableRow = (props) => {
         res.data.email
       })"><i class="far fa-copy"></i></span>`;
       toast.success("Contact added to watchlist");
+      initiateUserInfo();
     } else if (res.status === "exist") {
       toast.warning(res.msg);
     } else if (res.status === "limit_reached") {
@@ -109,7 +120,7 @@ const TableRow = (props) => {
                       {linkedCorrection(data.linkedin_id)}
                     </div>
                   </div>
-                  <div className="text-muted">{data.title}</div>
+                  <div className="small text-primary fw-bold">{data.title}</div>
                 </span>
               </div>
             </td>
@@ -129,32 +140,44 @@ const TableRow = (props) => {
               <div className="table_social_link mt-1">
                 {websiteCorrection(data.organization.website_link)}
                 {linkedCorrection(data.organization.org_linkedin_url)}
-                <a
-                  href="#cloud"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    showCompanyInfo(data.company_id);
-                  }}
-                  title="View Company Profile"
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={<Tooltip>View Company Profile</Tooltip>}
                 >
-                  <i className="fas fa-eye small"></i>
-                </a>
-                <a
-                  href="#cloud"
-                  title="Show all contacts from this company"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    showAllContacts(data.organization.company_id);
-                  }}
+                  <a
+                    href="#cloud"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      showCompanyInfo(data.company_id);
+                    }}
+                  >
+                    <i className="fas fa-eye small"></i>
+                  </a>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={
+                    <Tooltip>View all contacts from this company</Tooltip>
+                  }
                 >
-                  <i className="fas fa-user"></i>
-                </a>
+                  <a
+                    href="#cloud"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      showAllContacts(data.organization.company_id);
+                    }}
+                  >
+                    <i className="fas fa-user"></i>
+                  </a>
+                </OverlayTrigger>
                 <span className="mx-2">|</span>
-                <span className="text-capitalize">
+                <span className="text-capitalize small text-primary fw-bold">
                   {data.organization.industry}
                 </span>
                 <span className="mx-2">|</span>
-                <span>{data.organization.size_range}</span>
+                <span className="small fw-bold">
+                  {data.organization.size_range}
+                </span>
               </div>
             </td>
             {/* <td className="industry align-middle text-capitalize"></td>
@@ -171,7 +194,7 @@ const TableRow = (props) => {
               )}
               {data.unlocked_email === "no" && (
                 <span
-                  className="btn btn-sm btn-primary"
+                  className="btn btn-sm bg-success text-light py-0 px-1"
                   onClick={() => {
                     addToWatchList(data._id);
                   }}
@@ -217,16 +240,17 @@ function websiteCorrection(link) {
       c = "http://" + c;
     }
     return (
-      <a
-        href={c}
-        data-bs-toggle="tooltip"
-        data-bs-placement="top"
-        title="Website"
-        target="_blank"
-        rel="noreferrer"
-      >
-        <i className="fas fa-globe"></i>
-      </a>
+      <OverlayTrigger placement="bottom" overlay={<Tooltip>Website</Tooltip>}>
+        <a
+          href={c}
+          data-bs-toggle="tooltip"
+          data-bs-placement="top"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <i className="fas fa-globe"></i>
+        </a>
+      </OverlayTrigger>
     );
   }
   return "";
@@ -241,16 +265,21 @@ function linkedCorrection(link) {
     }
     if (c.match(/linkedin\.com/)) {
       return (
-        <a
-          href={c}
-          data-bs-toggle="tooltip"
-          data-bs-placement="top"
-          title="Linkedin Link"
-          target="_blank"
-          rel="noreferrer"
+        <OverlayTrigger
+          placement="bottom"
+          overlay={<Tooltip>Linkedin Link</Tooltip>}
         >
-          <i className="fab fa-linkedin-in"></i>
-        </a>
+          <a
+            href={c}
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title=""
+            target="_blank"
+            rel="noreferrer"
+          >
+            <i className="fab fa-linkedin-in"></i>
+          </a>
+        </OverlayTrigger>
       );
     }
   }

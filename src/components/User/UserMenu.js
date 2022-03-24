@@ -52,12 +52,12 @@ function UserMenu() {
             </li>
             <li>
               <Link
-                to="/feedback"
+                to="/unsubscribe"
                 className={`${
-                  location.pathname === "/feedback" ? "active" : ""
+                  location.pathname === "/unsubscribe" ? "active" : ""
                 }`}
               >
-                <i className="fas fa-comment-alt me-2"></i> Feedback
+                <i className="fas fa-sign-out-alt me-2"></i> Unsubscribe
               </Link>
             </li>
           </ul>

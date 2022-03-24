@@ -1,38 +1,23 @@
 import React from "react";
-// import { NotificationManager } from 'react-notifications';
 
 const Badge = (props) => {
   const { confidence } = props;
   let badge = "";
-  if (confidence === "valid" || confidence === "Valid") {
-    badge = "high";
-  } else if (
-    confidence === "catchall" ||
-    confidence === "Guessed / Recommended"
-  ) {
-    badge = "low";
-  } else if (confidence === "guessed" || confidence === "") {
-    badge = "guessed";
+  if (confidence === "catchall") {
+    badge = "catchall";
+  } else if (confidence === "Valid") {
+    badge = "valid";
   }
 
   return (
     <>
-      {badge === "high" && (
+      {badge === "valid" && (
         <span className="badge text-white bg-success small">
           <i className="fas fa-check-circle me-1" title="Verified"></i> Verified
         </span>
       )}
-      {badge === "low" && (
+      {badge === "catchall" && (
         <span className="badge bg-secondary" title="Guessed / Recommended">
-          Guessed / Recommended
-        </span>
-      )}
-      {badge === "guessed" && (
-        <span
-          className="badge"
-          style={{ background: "#f57c00" }}
-          title="Guessed"
-        >
           Guessed / Recommended
         </span>
       )}
@@ -80,22 +65,19 @@ const WatchListTableRow = (props) => {
                     />
                   </span>
                   <span>
-                    <div className="fw-bold">
+                    <div className="fw-bold text-primary">
                       {data.first_name} {data.last_name}
                       <div className="table_social_link ms-2 d-inline">
                         {linkedCorrection(data.linkedin_id)}
                       </div>
                     </div>
-                    <div className="text-muted">{data.title}</div>
-                    {/* <div className="table_social_link mt-1">
-                      {linkedCorrection(data.linkedin_id)}
-                    </div> */}
+                    <div className="text-muted small">{data.title}</div>
                   </span>
                 </div>
               </td>
               <td className="name_of_company align-middle">
                 <strong
-                  className="show_company"
+                  className="show_company text-primary"
                   data-name="21st Century Software Solutions Pvt Ltd"
                   style={{ cursor: "pointer" }}
                   onClick={() => {
@@ -118,22 +100,26 @@ const WatchListTableRow = (props) => {
                     <i className="fas fa-eye small"></i>
                   </a>
                   <span className="mx-2">|</span>
-                  <span className="text-capitalize">
+                  <span className="text-capitalize small">
                     {data.organization.industry}
                   </span>
                   <span className="mx-2">|</span>
-                  <span>{data.organization.size_range}</span>
+                  <span className="small">{data.organization.size_range}</span>
                 </div>
               </td>
-              <td className="align-middle" id={`unlock_${data._id}`}>
-                {data.email} <br />
+              <td className="align-middle">
+                <span className="text-lowercase">{data.email}</span> <br />
                 <Badge confidence={data.email_confidence_level} />
                 <span className="ms-2" style={{ cursor: "pointer" }}>
                   <i className="far fa-copy"></i>
                 </span>
               </td>
               <td className="align-middle">
-                <span className="badge bg-success">Available</span>
+                {data.direct_dial === "available" ? (
+                  <span className="badge bg-success">Available</span>
+                ) : (
+                  <span className="badge bg-danger">Not Available</span>
+                )}
               </td>
               <td className="align-middle">
                 <div style={{ height: "45px", overflow: "hidden" }}>

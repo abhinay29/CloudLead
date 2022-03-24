@@ -129,7 +129,7 @@ const Login = (props) => {
                     autoComplete="username"
                     required
                   />
-                  <span class="bar"></span>
+                  <span className="bar"></span>
                   <label htmlFor="username">Email</label>
                 </div>
                 <div className="input-group">
@@ -142,7 +142,7 @@ const Login = (props) => {
                     autoComplete="current-password"
                     required
                   />
-                  <span class="bar"></span>
+                  <span className="bar"></span>
                   <label htmlFor="password">Password</label>
                 </div>
                 <div className="mb-4 d-flex">

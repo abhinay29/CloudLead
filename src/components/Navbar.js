@@ -83,11 +83,11 @@ const Navbar = () => {
             style={{ height: "40px" }}
           >
             <img
-              src="/cl_logo.png"
+              src="/cl_logo.svg"
               alt="Logo"
               style={{ width: "100%", height: "40px" }}
             />
-            {/* <h5 className="fw-bold ms-3 mb-0">CLOUDLEAD</h5> */}
+            <h5 className="fw-bold ms-2 mb-0">cloudlead.AI</h5>
             {/* <img
               src="/assets/images/logo.svg"
               alt="Logo"
@@ -222,6 +222,7 @@ const Navbar = () => {
 
               <li className="nav-item">
                 <Link
+                  href="#/action-3"
                   to="/"
                   className="nav-link bi-tooltip"
                   data-bas-placement="bottom"
@@ -251,8 +252,7 @@ const Navbar = () => {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  {" "}
-                  <i className="fas fa-cog mx-1"></i>{" "}
+                  <i className="fas fa-cog mx-1"></i>
                 </Link>
                 <ul
                   className="dropdown-menu shadow"
@@ -268,33 +268,44 @@ const Navbar = () => {
                       <i className="fas fa-file-invoice me-2"></i> Billing
                     </Link>
                   </li>
-                  <li className="nav-item dropleft">
+                  <li className="nav-item dropdown sub-menu-dropdown">
                     <Link
                       className="dropdown-item"
                       to="/settings"
                       role="button"
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
+                      onClick={(e) => e.preventDefault()}
                     >
                       <i className="fas fa-cog me-2"></i> Settings
+                      <i className="fas fa-chevron-right ms-5 right-chevron"></i>
                     </Link>
-                    <ul className="dropdown-menu shadow" aria-labelledby="settingsDropdown">
+                    <ul
+                      className="dropdown-menu sub-menu shadow"
+                      aria-labelledby="settingsDropdown"
+                    >
                       <li>
-                        <Link className="dropdown-item" to="/profile">
-                          <i className="fas fa-user me-2"></i> My Profile
+                        <Link to="/settings" className="dropdown-item">
+                          <i className="fas fa-comment-alt me-2"></i> Notify Me
+                        </Link>
+                      </li>
+                      <li>
+                        <Link className="dropdown-item" to="/change-password">
+                          <i className="fas fa-lock me-2"></i> Change Password
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/unsubscribe" className="dropdown-item">
+                          <i className="fas fa-sign-out-alt me-2"></i>{" "}
+                          Unsubscribe
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/feedback" className="dropdown-item">
+                          <i className="fas fa-palette me-2"></i> Theme
                         </Link>
                       </li>
                     </ul>
-                  </li>
-                  <li>
-                    <Link className="dropdown-item" to="/change-password">
-                      <i className="fas fa-lock me-2"></i> Change Password
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/feedback" className="dropdown-item">
-                      <i className="fas fa-comment-alt me-2"></i> Feedback
-                    </Link>
                   </li>
                 </ul>
               </li>
@@ -316,18 +327,17 @@ const Navbar = () => {
                     <i className="fas fa-chevron-down"></i>
                   </span>
                 </Link>
-                {/* <li><Link className="dropdown-item" to="/"><i className="fas fa-user me-1 text-primary"></i> Profile</Link></li>
-								<li><Link className="dropdown-item" to="logout.php"><i className="fas fa-power-off me-1 text-danger"></i> Logout</Link></li> */}
                 <div
                   className="dropdown-menu shadow"
                   style={{ width: "260px" }}
                   aria-labelledby="userAccountMenu"
                 >
-                  <div className="py-2 px-3">
+                  <div className="py-2 px-2">
                     <div className="text-center">
                       <h6 className="fw-bold">
                         {userState.first_name} {userState.last_name}
                       </h6>
+                      <h6>{userState.company}</h6>
                       <button
                         type="button"
                         onClick={handleLogout}
@@ -344,47 +354,90 @@ const Navbar = () => {
                     </div>
                     <hr />
                     <div className="text-center">
-                      <h5 className="fw-bold">Basic</h5>
+                      <h5 className="fw-bold">{userState.plan_name}</h5>
                     </div>
                     <hr />
                     <div>
-                      <p className="fw-bold mb-0">Usage Report</p>
-                      <p className="mb-0">Daily Unlock</p>
+                      <p className="fw-bold mb-2">Usage Report</p>
+                      <table className="table mb-2">
+                        <tbody>
+                          <tr>
+                            <td className="pb-2">Daily Contact Unlock</td>
+                            <td className="text-end fw-bold">
+                              {userState.dailyUnlock}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Monthly Contact Unlock</td>
+                            <td className="text-end fw-bold">
+                              {userState.monthlyUnlock}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <p className="mb-0 small">Email Sent Today</p>
                       <div className="progress">
                         <div
                           className="progress-bar"
                           role="progressbar"
-                          style={{ width: "40%" }}
-                          aria-valuenow="40"
+                          style={{
+                            width:
+                              (userState.dailyEmailSent
+                                ? userState.dailyEmailSent
+                                : 0) + "%"
+                          }}
+                          aria-valuenow="0"
                           aria-valuemin="0"
-                          aria-valuemax="100"
+                          aria-valuemax="1000"
                         ></div>
                       </div>
-                      <p className="small mb-2">2000 / 5000</p>
-                      <p className="mb-0">Monthly Unlock</p>
-                      <div className="progress">
-                        <div
-                          className="progress-bar"
-                          role="progressbar"
-                          style={{ width: "20%" }}
-                          aria-valuenow="20"
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                        ></div>
-                      </div>
-                      <p className="small mb-2">2000 / 20000</p>
-                      <p className="mb-0">Downloads</p>
+                      <p className="small mb-2">
+                        {userState.monthlyEmailSent
+                          ? userState.monthlyEmailSent
+                          : 0}{" "}
+                        / 1000
+                      </p>
+                      <p className="mb-0 small">Email Sent This Month</p>
                       <div className="progress mb-2">
                         <div
                           className="progress-bar"
                           role="progressbar"
-                          style={{ width: "5%" }}
-                          aria-valuenow="5"
+                          style={{
+                            width:
+                              (userState.monthlyEmailSent
+                                ? userState.monthlyEmailSent
+                                : 0) + "%"
+                          }}
+                          aria-valuenow="0"
                           aria-valuemin="0"
-                          aria-valuemax="100"
+                          aria-valuemax="30000"
                         ></div>
                       </div>
-                      <p className="small mb-2">50 / 1000</p>
+                      <p className="small mb-2">
+                        {userState.monthlyEmailSent
+                          ? userState.monthlyEmailSent
+                          : 0}{" "}
+                        / 30000
+                      </p>
+                      <p className="mb-0 small">Downloads</p>
+                      <div className="progress mb-2">
+                        <div
+                          className="progress-bar"
+                          role="progressbar"
+                          style={{
+                            width:
+                              (userState.downloads
+                                ? (userState.downloads * 100) / 2000
+                                : 0) + "%"
+                          }}
+                          aria-valuenow={userState.downloads}
+                          aria-valuemin="0"
+                          aria-valuemax="2000"
+                        ></div>
+                      </div>
+                      <p className="small mb-2">
+                        {userState.downloads ? userState.downloads : 0} / 2000
+                      </p>
                     </div>
                   </div>
                 </div>

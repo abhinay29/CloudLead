@@ -13,7 +13,7 @@ import { industryGrpOpt } from "../Data/industries";
 import { countryGroup } from "../Data/countries";
 import { useDispatch } from "react-redux";
 import { progressLoading } from "../../states/action-creator";
-import { NotificationManager } from "react-notifications";
+import { toast } from "react-toastify";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -132,7 +132,7 @@ const WatchFilter = (props) => {
     let query = params.toString();
 
     if (query.length === 0) {
-      NotificationManager.error("Please fill at least 1 field");
+      toast.error("Please fill at least 1 field");
       setDisSearchBtn(false);
       return;
     }
@@ -150,10 +150,10 @@ const WatchFilter = (props) => {
   const [defaultValue, setDefaultValue] = useState({
     first_name: [],
     last_name: [],
-    position: [],
-    person_country: [],
-    person_state: [],
-    person_city: [],
+    title: [],
+    country: [],
+    state: [],
+    city: [],
     company_name: [],
     company_country: [],
     company_state: [],
@@ -192,14 +192,45 @@ const WatchFilter = (props) => {
   };
 
   const setDefaultValueGroupFunction = (options, name) => {
-    setDefaultValue({ ...defaultValue, [name]: options });
+    var opt = [];
+
+    if (name === "country") {
+      if (defaultValue.country.length > 0) {
+        opt = defaultValue.country;
+        options.map((o) => {
+          return opt.push(o);
+        });
+      } else {
+        opt = options;
+      }
+    } else if (name === "industry") {
+      if (defaultValue.industry.length > 0) {
+        opt = defaultValue.industry;
+        options.map((o) => {
+          return opt.push(o);
+        });
+      } else {
+        opt = options;
+      }
+    } else if (name === "company_country") {
+      if (defaultValue.company_country.length > 0) {
+        opt = defaultValue.company_country;
+        options.map((o) => {
+          return opt.push(o);
+        });
+      } else {
+        opt = options;
+      }
+    }
+
+    setDefaultValue({ ...defaultValue, [name]: opt });
   };
 
   const createGroup = (groupName, options, name) => {
     return {
       label: (() => {
         return (
-          <div>
+          <div className="d-flex align-items-center">
             <input
               type="checkbox"
               className="form-check-input me-2"
@@ -208,21 +239,40 @@ const WatchFilter = (props) => {
                   setDefaultValueGroupFunction(options, name);
               }}
             />
-            {groupName}
+            <span className="fw-bold text-dark" style={{ fontSize: "14px" }}>
+              {groupName}
+            </span>
           </div>
         );
       })(),
-      options: options
+      options: (() => {
+        var opt = [];
+        options.map((option) => {
+          var optPush = {
+            label: (() => {
+              return (
+                <>
+                  <input
+                    type="checkbox"
+                    className="form-check-input mx-2 small"
+                  />
+                  {option.label}
+                </>
+              );
+            })(),
+            value: option.value
+          };
+          opt.push(optPush);
+          return false;
+        });
+        return opt;
+      })()
     };
   };
 
   let countryOptionsPerson = [
     countryGroup.map((countryGrp) => {
-      return createGroup(
-        countryGrp.label,
-        countryGrp.options,
-        "person_country"
-      );
+      return createGroup(countryGrp.label, countryGrp.options, "country");
     })
   ];
 
@@ -251,10 +301,10 @@ const WatchFilter = (props) => {
       ...defaultValue,
       first_name: [],
       last_name: [],
-      position: [],
-      person_country: [],
-      person_state: [],
-      person_city: [],
+      title: [],
+      country: [],
+      state: [],
+      city: [],
       company_name: [],
       company_country: [],
       company_state: [],
@@ -287,7 +337,7 @@ const WatchFilter = (props) => {
               >
                 <h6 className="fw-bold">Search by Person Name</h6>
                 <div className="row mb-3">
-                  <div className="col-md-4 col-lg-4 position-relative">
+                  <div className="col-md-4 col-lg-4 title-relative">
                     <CreatableSelect
                       isClearable
                       defaultValue={[]}
@@ -303,7 +353,7 @@ const WatchFilter = (props) => {
                       Use tab/enter for multi selection.
                     </p>
                   </div>
-                  <div className="col-md-4 col-lg-4 position-relative">
+                  <div className="col-md-4 col-lg-4 title-relative">
                     <CreatableSelect
                       defaultValue={[]}
                       name="last_name"
@@ -859,6 +909,23 @@ const WatchFilter = (props) => {
                   </div>
                 </div>
 
+                <h6 className="fw-bold">Search by Industry</h6>
+                <div className="row mb-3">
+                  <div className="col-md-4 col-lg-4 title-relative">
+                    <Select
+                      defaultValue={[]}
+                      isMulti
+                      closeMenuOnSelect={false}
+                      onChange={handleSelectChange}
+                      value={defaultValue.industry}
+                      name="industry"
+                      options={industryGroupOptions[0]}
+                      className="basic-multi-select"
+                      placeholder="Select Industry"
+                    />
+                  </div>
+                </div>
+
                 <h6 className="fw-bold">Search by Title</h6>
                 <div className="row mb-3">
                   <div className="col-md-4 col-lg-4">
@@ -866,9 +933,9 @@ const WatchFilter = (props) => {
                       defaultValue={[]}
                       closeMenuOnSelect={false}
                       isMulti
-                      name="position"
+                      name="title"
                       onChange={handleSelectChange}
-                      value={defaultValue.position}
+                      value={defaultValue.title}
                       options={titleOptions}
                       className="basic-multi-select"
                       placeholder="Select Title"
@@ -878,44 +945,44 @@ const WatchFilter = (props) => {
 
                 <h6 className="fw-bold">Search by Person's Location</h6>
                 <div className="row mb-3">
-                  <div className="col-md-4 col-lg-4 position-relative">
+                  <div className="col-md-4 col-lg-4 title-relative">
                     <Select
                       defaultValue={[]}
                       closeMenuOnSelect={false}
                       isMulti
-                      name="person_country"
+                      name="country"
                       onChange={handleSelectChange}
-                      value={defaultValue.person_country}
+                      value={defaultValue.country}
                       options={countryOptionsPerson[0]}
                       className="basic-multi-select"
                       placeholder="Person's Country"
                       styles={{ background: "#000" }}
                     />
                   </div>
-                  <div className="col-md-4 col-lg-4 position-relative">
+                  <div className="col-md-4 col-lg-4 title-relative">
                     <Select
                       defaultValue={[]}
                       closeMenuOnSelect={false}
                       noOptionsMessage={({ inputValue }) => "Type to search.."}
                       isMulti
-                      name="person_state"
+                      name="state"
                       onChange={handleSelectChange}
-                      value={defaultValue.person_state}
+                      value={defaultValue.state}
                       options={states}
                       onKeyDown={handleState}
                       className="basic-multi-select"
                       placeholder="Person's State"
                     />
                   </div>
-                  <div className="col-md-4 col-lg-4 position-relative">
+                  <div className="col-md-4 col-lg-4 title-relative">
                     <Select
                       defaultValue={[]}
                       closeMenuOnSelect={false}
                       noOptionsMessage={({ inputValue }) => "Type to search.."}
                       isMulti
-                      name="person_city"
+                      name="city"
                       onChange={handleSelectChange}
-                      value={defaultValue.person_city}
+                      value={defaultValue.city}
                       options={cities}
                       onKeyDown={handleCity}
                       className="basic-multi-select"
@@ -925,8 +992,8 @@ const WatchFilter = (props) => {
                 </div>
                 <h6 className="fw-bold">Search by Company</h6>
                 <div className="row mb-3">
-                  <div className="col-md-4 col-lg-4 position-relative">
-                    <Select
+                  <div className="col-md-4 col-lg-4 title-relative">
+                    <CreatableSelect
                       defaultValue={[]}
                       name="company_name"
                       closeMenuOnSelect={false}
@@ -943,7 +1010,7 @@ const WatchFilter = (props) => {
                       Use tab/enter for multi selection.
                     </p>
                   </div>
-                  <div className="col-md-4 col-lg-4 position-relative">
+                  <div className="col-md-4 col-lg-4 title-relative">
                     <Select
                       defaultValue={[]}
                       closeMenuOnSelect={false}
@@ -956,7 +1023,7 @@ const WatchFilter = (props) => {
                       placeholder="Select Company Size"
                     />
                   </div>
-                  <div className="col-md-4 col-lg-4 position-relative">
+                  <div className="col-md-4 col-lg-4 title-relative">
                     <Select
                       defaultValue={[]}
                       closeMenuOnSelect={false}
@@ -969,25 +1036,9 @@ const WatchFilter = (props) => {
                   </div>
                 </div>
 
-                <div className="row mb-3">
-                  <div className="col-md-4 col-lg-4 position-relative">
-                    <Select
-                      defaultValue={[]}
-                      isMulti
-                      closeMenuOnSelect={false}
-                      onChange={handleSelectChange}
-                      value={defaultValue.industry}
-                      name="industry"
-                      options={industryGroupOptions[0]}
-                      className="basic-multi-select"
-                      placeholder="Select Industry"
-                    />
-                  </div>
-                </div>
-
                 <h6 className="fw-bold">Search by Company Location</h6>
                 <div className="row mb-3">
-                  <div className="col-md-4 col-lg-4 position-relative">
+                  <div className="col-md-4 col-lg-4 title-relative">
                     <Select
                       defaultValue={[]}
                       closeMenuOnSelect={false}
@@ -1000,7 +1051,7 @@ const WatchFilter = (props) => {
                       placeholder="Comapany's Country"
                     />
                   </div>
-                  <div className="col-md-4 col-lg-4 position-relative">
+                  <div className="col-md-4 col-lg-4 title-relative">
                     <Select
                       defaultValue={[]}
                       closeMenuOnSelect={false}
@@ -1015,7 +1066,7 @@ const WatchFilter = (props) => {
                       placeholder="Comapany's State"
                     />
                   </div>
-                  <div className="col-md-4 col-lg-4 position-relative">
+                  <div className="col-md-4 col-lg-4 title-relative">
                     <Select
                       defaultValue={[]}
                       closeMenuOnSelect={false}
@@ -1034,7 +1085,7 @@ const WatchFilter = (props) => {
 
                 <h6 className="fw-bold">Search by Website & Keywords</h6>
                 <div className="row">
-                  <div className="col-md-4 col-lg-4 position-relative">
+                  <div className="col-md-4 col-lg-4 title-relative">
                     <CreatableSelect
                       defaultValue=""
                       name="domain"
@@ -1049,7 +1100,7 @@ const WatchFilter = (props) => {
                       Use tab/enter for multi selection.
                     </p>
                   </div>
-                  <div className="col-md-4 col-lg-4 position-relative">
+                  <div className="col-md-4 col-lg-4 title-relative">
                     <CreatableSelect
                       defaultValue=""
                       name="keyword"

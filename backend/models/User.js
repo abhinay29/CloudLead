@@ -85,6 +85,14 @@ const UserSchema = new Schema({
   dateUnlockDaily: {
     type: String,
     default: null
+  },
+  downloads: {
+    type: Number,
+    default: 0
+  },
+  showGuide: {
+    type: Boolean,
+    default: true
   }
 });
 const User = mongoose.model("users", UserSchema);

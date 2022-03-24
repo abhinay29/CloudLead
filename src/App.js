@@ -3,9 +3,6 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Routes } from "./routes";
 
-import { NotificationContainer } from "react-notifications";
-import "react-notifications/lib/notifications.css";
-
 import Navbar from "./components/Navbar";
 import Cockpit from "./components/Cockpit";
 import PeopleSearch from "./components/Radar/People";
@@ -20,7 +17,7 @@ import Billing from "./components/User/Billing";
 import Settings from "./components/User/Settings";
 import ChangePassword from "./components/User/ChangePassword";
 import Export from "./components/People/Export";
-import Feedback from "./components/User/Feedback";
+import Unsubscribe from "./components/User/Unsubscribe";
 import Sidebar from "./components/Sidebar";
 import ForgotPassword from "./components/Auth/ForgotPassword";
 import ResetPassword from "./components/Auth/ResetPassword";
@@ -34,8 +31,7 @@ const RouteWithoutNavbar = ({ component: Component, ...rest }) => {
       {...rest}
       render={(props) => (
         <>
-          {" "}
-          <Component {...props} />{" "}
+          <Component {...props} />
         </>
       )}
     />
@@ -111,8 +107,8 @@ function App() {
           />
           <RouteWithNavbar
             exact
-            path={Routes.Feedback.path}
-            component={Feedback}
+            path={Routes.Unsubscribe.path}
+            component={Unsubscribe}
           />
           <RouteWithNavbar
             exact
@@ -161,7 +157,6 @@ function App() {
           />
         </Switch>
       </Router>
-      <NotificationContainer />
     </>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NotificationManager } from "react-notifications";
+import { toast } from "react-toastify";
 import UserMenu from "./UserMenu";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -18,14 +18,11 @@ function ChangePassword() {
   const changePassword = async (e) => {
     e.preventDefault();
     if (password.newPassword !== password.confirmPassword) {
-      NotificationManager.error(
-        "New password and Confirm password does not match.",
-        "Error!"
-      );
+      toast.error("New password and Confirm password does not match.");
       return false;
     }
     if (!password.newPassword || !password.currentPassword) {
-      NotificationManager.error("Please fill all fields.", "Error!");
+      toast.error("Please fill all fields.");
       return false;
     }
     let url = `${API_URL}/api/user/changepassword`;
@@ -39,7 +36,7 @@ function ChangePassword() {
     });
     let parsedData = await update.json();
     if (parsedData.status === "success") {
-      NotificationManager.success("Password changed successfully.", "Success!");
+      toast.success("Password changed successfully.");
       setPassword({
         ...password,
         currentPassword: "",
@@ -47,12 +44,9 @@ function ChangePassword() {
         confirmPassword: ""
       });
     } else if (parsedData.status === "error") {
-      NotificationManager.error(parsedData.error, "Error!");
+      toast.error(parsedData.error);
     } else {
-      NotificationManager.error(
-        "Something went wrong, please try again later.",
-        "Error!"
-      );
+      toast.error("Something went wrong, please try again later.");
     }
   };
 

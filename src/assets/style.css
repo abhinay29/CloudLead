@@ -14,7 +14,7 @@
 }
 
 body {
-  background-color: #fff;
+  background-color: #e3f2fd29;
   font-size: 1rem;
   font-family: "Nunito", sans-serif;
   color: var(--color-text-primary);
@@ -80,7 +80,7 @@ table th {
   color: #949fb1;
   border-radius: 50%;
   margin-right: 8px;
-  font-size: 1rem;
+  font-size: 14px;
   display: -webkit-inline-box;
   display: -ms-inline-flexbox;
   display: inline-flex;
@@ -419,12 +419,16 @@ table th {
 
 .sibedarMenuUser {
   padding: 0 !important;
+  min-width: 200px;
+}
+
+.dropdown-menu {
+  min-width: 200px;
 }
 
 .dropdown-menu,
 .sibedarMenuUser {
   padding: 8px;
-  min-width: 200px;
   list-style: none;
   margin-bottom: 0;
 }
@@ -470,6 +474,13 @@ table th {
           align-items: center;
 }
 
+.dropdown-menu a i.right-chevron,
+.sibedarMenuUser a i.right-chevron {
+  background-color: transparent;
+  position: absolute;
+  right: 0;
+}
+
 .dropdown-menu a:hover, .dropdown-menu a.active,
 .sibedarMenuUser a:hover,
 .sibedarMenuUser a.active {
@@ -481,6 +492,22 @@ table th {
 .sibedarMenuUser a:hover i,
 .sibedarMenuUser a.active i {
   background-color: #7267f025;
+}
+
+.dropdown-menu a:hover i.right-chevron, .dropdown-menu a.active i.right-chevron,
+.sibedarMenuUser a:hover i.right-chevron,
+.sibedarMenuUser a.active i.right-chevron {
+  background-color: transparent;
+}
+
+.sub-menu-dropdown:hover .sub-menu {
+  display: block;
+}
+
+.dropdown-menu.sub-menu {
+  position: absolute;
+  right: 100% !important;
+  top: -10px;
 }
 
 .sidebar .card {
@@ -605,6 +632,7 @@ table th {
 
 .fullHeightWithNavBar .card {
   padding: 1rem;
+  height: 100%;
 }
 
 .fullHeightWithNavBar .card-body {
@@ -859,5 +887,13 @@ table th {
 
 .css-1rhbuit-multiValue input {
   display: none;
+}
+
+.planTable td {
+  padding: 5px;
+}
+
+.tooltip-inner {
+  max-width: 260px;
 }
 /*# sourceMappingURL=style.css.map */

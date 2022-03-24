@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Pagination from "react-js-pagination";
 import WatchListTableRow from "./WatchListTableRow";
-import { NotificationManager } from "react-notifications";
+import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { progressLoading } from "../../states/action-creator";
 import ContactTableRow from "../People/TableRow";
@@ -107,9 +107,7 @@ const Watchlist = () => {
       if (checkboxes[i].checked) selectedId.push(checkboxes[i].value);
     }
     if (selectedId.length === 0) {
-      NotificationManager.error(
-        "Please select people to delete from watchlist"
-      );
+      toast.error("Please select people to delete from watchlist");
       return false;
     }
     dispatch(progressLoading(30));
@@ -132,15 +130,9 @@ const Watchlist = () => {
 
     if (res.status === "success") {
       getWatchlist();
-      NotificationManager.success(
-        `${res.deletedCount} contacts deleted from watchlist`,
-        "Success!",
-        3000
-      );
+      toast.success(`${res.deletedCount} contacts deleted from watchlist`);
     } else {
-      NotificationManager.error(
-        "Something went wrong, please try again later."
-      );
+      toast.error("Something went wrong, please try again later.");
     }
     dispatch(progressLoading(100));
     return true;
@@ -169,7 +161,7 @@ const Watchlist = () => {
     const res = await watchList.json();
     if (res.status === "success") {
       if (res.totalResults === 0) {
-        NotificationManager.error("No result found");
+        toast.error("No result found");
         return;
       }
       setTotalContacts(res.totalResults);

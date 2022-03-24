@@ -44,12 +44,12 @@ function Feedback() {
             <div className="card">
               <div className="card-body">
                 <div className="cardTitle mb-3">
-                  <h5>Feedback</h5>
+                  <h5>Unsubscribe</h5>
                 </div>
                 <form method="POST" id="feedbackForm" onSubmit={handleSubmit}>
                   <p>
-                    You can always re-subscribe the account.Please leave us a
-                    feedback.
+                    You can anytime re-subscribe the account in future. Request
+                    to leave us a feedback.
                   </p>
                   <div className="form-check">
                     <input
@@ -143,7 +143,7 @@ function Feedback() {
                     ></textarea>
                   </div>
                   <button type="submit" className="btn btn-primary">
-                    Send Feedback
+                    Unsubscribe
                   </button>
                 </form>
               </div>

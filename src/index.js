@@ -7,6 +7,9 @@ import "react-toastify/dist/ReactToastify.css";
 
 import App from "./App";
 
+// import LogRocket from "logrocket";
+// LogRocket.init("yot0x9/testcl");
+
 // store.subscribe(() => console.log(store.getState()))
 
 ReactDOM.render(

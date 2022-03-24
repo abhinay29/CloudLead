@@ -1,0 +1,52 @@
+<div className="container px-5">
+  <div className="row text-center justify-content-center align-items-end">
+    {plans.map((plan) => {
+    return (
+    <div className="col-lg-4" key={plan.plan_id}>
+      <div className={`bg-white p-5 rounded-lg shadow ${ plan.name==="Basic" ? "border border-2 border-primary" : ""
+        }`}>
+        <h1 className="h5 text-uppercase fw-bold mb-3">
+          {plan.name}
+        </h1>
+        {plan.price_inr === 0 ? (
+        <>
+          <h2 className="fw-bold">Free</h2>
+          <p>&nbsp;</p>
+        </>
+        ) : (
+        <>
+          <h2 className="fw-bold">
+            ₹ {plan.price_inr}
+            <span className="text-small fw-normal ms-2">
+              / month
+            </span>
+          </h2>
+          <p className="text-small">*Annual Commitment</p>
+        </>
+        )}
+        <div className="custom-separator my-3 mx-auto bg-primary"></div>
+        <ul className="list-unstyled my-3 text-small text-left">
+          <li className="mb-2 text-center">
+            <p className="mb-2">Daily Unlock</p>{" "}
+            <h5 className="mb-0 fw-bold">{plan.unlock_daily}</h5>
+          </li>
+          <li className="mb-2 text-center">
+            <p className="mb-2">Monthly Unlock</p>{" "}
+            <h5 className="mb-0 fw-bold">{plan.unlock_month}</h5>
+          </li>
+          <li className="mb-2 text-center">
+            <p className="mb-2">Downloads</p>{" "}
+            <h5 className="mb-0 fw-bold">{plan.download}</h5>
+          </li>
+        </ul>
+        <button type="button" onClick={()=> subscribe(plan.plan_id)}
+          className="btn btn-outline-primary"
+          >
+          Subscribe
+        </button>
+      </div>
+    </div>
+    );
+    })}
+  </div>
+</div>

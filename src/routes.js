@@ -14,7 +14,7 @@ export const Routes = {
   Billing: { path: "/billing" },
   Settings: { path: "/settings" },
   ChangePassword: { path: "/change-password" },
-  Feedback: { path: "/feedback" },
+  Unsubscribe: { path: "/unsubscribe" },
   Sequences: { path: "/sequences" },
   Templates: { path: "/templates" },
   CreateTemplate: { path: "/sequences/template/create" }

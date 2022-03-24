@@ -17,6 +17,7 @@ const {
 } = require("../models/UserData");
 
 const EmailSetup = require("./UserData/EmailSetup");
+const GuideStatus = require("./UserData/GuideStatus");
 
 const adminEmail = process.env.ADMIN_EMAIL;
 
@@ -565,5 +566,6 @@ router.post("/changepassword", fetchuser, async (req, res) => {
 });
 
 router.post("/update/smtp", fetchuser, EmailSetup);
+router.post("/guide-status", fetchuser, GuideStatus);
 
 module.exports = router;

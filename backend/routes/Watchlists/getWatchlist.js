@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
     page = parseInt(req.query.page);
   }
 
-  let newLimit = 50;
+  let newLimit = 25;
   if (req.query.limit) {
     newLimit = parseInt(req.query.limit);
   }
@@ -73,16 +73,6 @@ module.exports = async (req, res) => {
       search.title = new Fields(req.query.title).create();
     }
 
-    if (req.query.company_size_range && req.query.company_size_range !== "") {
-      search.company_size_range = new Fields(
-        req.query.company_size_range
-      ).create();
-    }
-    if (req.query.company_type && req.query.company_type !== "") {
-      search["organization.organization_type"] = new Fields(
-        req.query.company_type
-      ).create();
-    }
     if (req.query.seniority_level && req.query.seniority_level !== "") {
       search.seniority = new Fields(req.query.seniority_level).create();
     }
@@ -94,6 +84,13 @@ module.exports = async (req, res) => {
         req.query.domain
       ).create();
     }
+
+    if (req.query.company_type && req.query.company_type !== "") {
+      search["organization.company_type"] = new Fields(
+        req.query.company_type
+      ).create();
+    }
+
     if (req.query.company_city && req.query.company_city !== "") {
       search["organization.org_city"] = new Fields(
         req.query.company_city
@@ -168,16 +165,23 @@ module.exports = async (req, res) => {
       if (RoleObj.length > 0) search.role = new Fields(RoleObj).create();
     }
 
-    if (req.query.product_services && req.query.product_services !== "") {
-      search.product_services = new Fields(req.query.product_services).create();
+    if (req.query.company_size_range && req.query.company_size_range !== "") {
+      if (req.query.company_size_range instanceof Array) {
+        search["organization.size_range"] = {
+          $in: req.query.company_size_range
+        };
+      } else {
+        search["organization.size_range"] = req.query.company_size_range;
+      }
     }
+
     if (req.query.revenue_range && req.query.revenue_range !== "") {
       if (req.query.revenue_range instanceof Array) {
-        search["organization.revenue_range"] = {
+        search["organization.annual_revenue"] = {
           $in: req.query.revenue_range
         };
       } else {
-        search["organization.revenue_range"] = req.query.revenue_range;
+        search["organization.annual_revenue"] = req.query.revenue_range;
       }
     }
 
@@ -193,8 +197,9 @@ module.exports = async (req, res) => {
           "title",
           "country",
           "city",
-          "organization",
-          "linkedin_id"
+          "linkedin_id",
+          "direct_dial",
+          "organization"
         ]),
         search
       )

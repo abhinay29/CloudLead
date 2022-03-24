@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from "react";
 import Pagination from "react-js-pagination";
 import WatchListTableRow from "./WatchListTableRow";
-import { NotificationManager } from "react-notifications";
+import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { progressLoading } from "../../states/action-creator";
+import {
+  setSequenceList,
+  progressLoading,
+  userInfo
+} from "../../states/action-creator";
 import WatchFilter from "./WatchlistFilter";
 import TableSkeleton from "../Skeleton/TableSkeleton";
 import NoRecordFound from "./NoRecordFound";
 import { Link } from "react-router-dom";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import Select from "react-select";
+import axios from "axios";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -15,6 +22,7 @@ const Watchlist = () => {
   const [watchList, setWatchList] = useState([]);
   const initialWatchlist = useSelector((state) => state.initialWatchlist);
   // setWatchList(initialWatchlist);
+  const sequences = useSelector((state) => state.sequences);
 
   const dispatch = useDispatch();
 
@@ -27,6 +35,28 @@ const Watchlist = () => {
   const [skeletonLoading, setSkeletonLoading] = useState(false);
   const [limit, setLimit] = useState(25);
   const [showBacktoWatchlist, setShowBacktoWatchlist] = useState(false);
+
+  const initiateUserInfo = async () => {
+    await axios({
+      method: "GET",
+      url: `${API_URL}/api/auth/getuser`,
+      headers: {
+        "auth-token": localStorage.getItem("token"),
+        "Content-Type": "application/json"
+      }
+    })
+      .then(function (response) {
+        if (response.data.status === "success") {
+          dispatch(userInfo(response.data.userdata));
+          localStorage.removeItem("searchQuery");
+        } else {
+          console.log(response);
+        }
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+  };
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber !== page) {
@@ -142,9 +172,7 @@ const Watchlist = () => {
       if (checkboxes[i].checked) selectedId.push(checkboxes[i].value);
     }
     if (selectedId.length === 0) {
-      NotificationManager.error(
-        "Please select people to delete from watchlist"
-      );
+      toast.error("Please select people to delete from watchlist");
       return false;
     }
     dispatch(progressLoading(30));
@@ -167,45 +195,39 @@ const Watchlist = () => {
 
     if (res.status === "success") {
       getWatchlist();
-      NotificationManager.success(
-        `${res.deletedCount} contacts deleted from watchlist`,
-        "Success!",
-        3000
-      );
+      toast.success(`${res.deletedCount} contacts deleted from watchlist`);
     } else {
-      NotificationManager.error(
-        "Something went wrong, please try again later."
-      );
+      toast.error("Something went wrong, please try again later.");
     }
     dispatch(progressLoading(100));
     return true;
   };
 
-  const [newListName, setNewListName] = useState("");
-  const [selectListName, setSelectListName] = useState("");
+  const [sequenceListName, setSequenceListName] = useState("");
 
-  const handlenewListName = (e) => {
-    setNewListName(e.target.value);
-  };
-
-  const handleSelectListName = (e) => {
-    console.log(e.target.value);
-    setSelectListName(e.target.value);
+  const handleSelectChange = (inVal) => {
+    setSequenceListName(inVal);
   };
 
   const handleAddList = async (e) => {
     e.preventDefault();
     setDisAddBtn(true);
+    let newListName = document.getElementById("newListName");
     let list_name = "";
-    if (newListName !== "") {
-      list_name = newListName;
+    if (newListName.value) {
+      list_name = newListName.value;
+      var check_List = sequences.filter((obj) => obj.label === list_name);
+      if (check_List.length === 0 || sequences.length === 0) {
+        let sl = sequences;
+        sl.push({ label: list_name, value: list_name });
+        dispatch(setSequenceList(sl));
+      }
     } else {
-      if (selectListName !== "") {
-        list_name = selectListName;
+      if (sequenceListName) {
+        list_name = sequenceListName.value;
       } else {
-        NotificationManager.error(
-          "Please create or select a list to add people"
-        );
+        toast.error("Please create or select a list to add people");
+        setDisAddBtn(true);
         return false;
       }
     }
@@ -213,35 +235,43 @@ const Watchlist = () => {
     let selectedId = [];
     var checkboxes = document.getElementsByClassName("selectContacts");
     for (var i = 0, n = checkboxes.length; i < n; i++) {
-      if (checkboxes[i].checked) selectedId.push(checkboxes[i].value);
+      if (checkboxes[i].checked) {
+        selectedId.push(checkboxes[i].value);
+      }
     }
     if (selectedId.length === 0) {
-      NotificationManager.error("Please select people to add in list");
+      toast.error("Please select people to add in list");
+      setDisAddBtn(true);
       return false;
     }
+    setDisAddBtn(false);
+    addSequenceList(list_name, selectedId);
+  };
 
-    // console.log(selectedId);
-
-    dispatch(progressLoading(40));
-    const url = `${API_URL}/api/user/list/create`;
-    let data = await fetch(url, {
+  const addSequenceList = async (name, ids) => {
+    const addList = await fetch(`${API_URL}/api/user/list/add`, {
       method: "POST",
       headers: {
-        "auth-token": localStorage.getItem("token"),
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "auth-token": localStorage.getItem("token")
       },
       body: JSON.stringify({
-        list_name: list_name,
-        ids: selectedId
+        ids: ids,
+        name: name
       })
     });
-    dispatch(progressLoading(100));
-    let res = await data.json();
+
+    if (!addList) return toast.error("Something went wrong.");
+
+    const res = await addList.json();
+
     if (res.status === "success") {
-      setNewListName("");
-      NotificationManager.success("List added successfully", "Success!");
+      toast.success(res.message);
+    } else if (res.status === "error") {
+      toast.error(res.error);
+    } else {
+      toast.error("Something went wrong.");
     }
-    setDisAddBtn(false);
   };
 
   const handleExportSelectContact = async () => {
@@ -251,7 +281,7 @@ const Watchlist = () => {
       if (checkboxes[i].checked) selectedId.push(checkboxes[i].value);
     }
     if (selectedId.length === 0) {
-      NotificationManager.error("Please select record rows to download.");
+      toast.error("Please select record rows to download.");
       return false;
     }
     dispatch(progressLoading(30));
@@ -274,15 +304,10 @@ const Watchlist = () => {
     dispatch(progressLoading(60));
     const res = await exportCsv.json();
     if (res.status === "success") {
-      NotificationManager.success(
-        "Contact exported successfully, please check your inbox",
-        "Success!",
-        3000
-      );
+      toast.success("Contact exported successfully, please check your inbox");
+      initiateUserInfo();
     } else {
-      NotificationManager.error(
-        "Something went wrong, please try again later."
-      );
+      toast.error("Something went wrong, please try again later.");
     }
     dispatch(progressLoading(100));
     return true;
@@ -456,20 +481,24 @@ const Watchlist = () => {
             >
               <i className="far fa-trash-alt"></i>
             </button>
-            <span className="dropdown bi-tooltip" title="Add to list">
-              <button
-                className="btn btn-sm btn-outline-primary bi-tooltip"
-                type="button"
-                id="addlistDropdown"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-                data-bs-auto-close="inside"
+            <span className="dropdown">
+              <OverlayTrigger
+                placement="bottom"
+                overlay={<Tooltip>Add to List</Tooltip>}
               >
-                <i className="fas fa-plus"></i>
-              </button>
+                <button
+                  className="btn btn-sm btn-outline-primary"
+                  type="button"
+                  data-bs-auto-close="false"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <i className="fas fa-plus"></i>
+                </button>
+              </OverlayTrigger>
               <div
                 className="dropdown-menu shadow p-3"
-                aria-labelledby="addlistDropdown"
+                aria-labelledby="addList"
               >
                 <h5 className="text-center">Add to List</h5>
                 <form action="" onSubmit={handleAddList}>
@@ -485,26 +514,22 @@ const Watchlist = () => {
                       style={{ width: "260px" }}
                       placeholder="Provide name for list"
                       maxLength="50"
-                      value={newListName}
-                      onChange={handlenewListName}
                     />
                   </div>
                   <div className="text-center mb-2">-- or --</div>
                   <div className="mb-3">
-                    <label htmlFor="listName" className="form-label small">
-                      Select a List
-                    </label>
-                    <select
-                      name="listName"
-                      id="listName"
-                      onChange={handleSelectListName}
-                      className="form-select"
-                    >
-                      <option value="">--</option>
-                      <option value="1">One</option>
-                      <option value="2">Two</option>
-                      <option value="3">Three</option>
-                    </select>
+                    {sequences && (
+                      <Select
+                        defaultValue={[]}
+                        closeMenuOnSelect={false}
+                        value={sequenceListName}
+                        name="listName"
+                        onChange={handleSelectChange}
+                        options={sequences}
+                        className="basic-multi-select"
+                        placeholder="Select List"
+                      />
+                    )}
                   </div>
                   <button
                     type="submit"

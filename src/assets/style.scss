@@ -23,9 +23,7 @@
 }
 
 body {
-  // background-color: var(--color-bg-canvas);
-  // background-color: #f6fbff;
-  background-color: #fff;
+  background-color: #e3f2fd29;
   font-size: 1rem;
   font-family: "Nunito", sans-serif;
   color: var(--color-text-primary);
@@ -92,7 +90,7 @@ table th {
       color: #949fb1;
       border-radius: 50%;
       margin-right: 8px;
-      font-size: 1rem;
+      font-size: 14px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -555,12 +553,16 @@ table th {
 
 .sibedarMenuUser {
   padding: 0 !important;
+  min-width: 200px;
+}
+
+.dropdown-menu {
+  min-width: 200px;
 }
 
 .dropdown-menu,
 .sibedarMenuUser {
   padding: 8px;
-  min-width: 200px;
   list-style: none;
   margin-bottom: 0;
 
@@ -586,6 +588,12 @@ table th {
       display: flex;
       justify-content: center;
       align-items: center;
+
+      &.right-chevron {
+        background-color: transparent;
+        position: absolute;
+        right: 0;
+      }
     }
 
     &:hover,
@@ -595,8 +603,25 @@ table th {
 
       i {
         background-color: #7267f025;
+        &.right-chevron {
+          background-color: transparent;
+        }
       }
     }
+  }
+}
+.sub-menu-dropdown {
+  &:hover {
+    .sub-menu {
+      display: block;
+    }
+  }
+}
+.dropdown-menu {
+  &.sub-menu {
+    position: absolute;
+    right: 100% !important;
+    top: -10px;
   }
 }
 
@@ -707,6 +732,7 @@ table th {
 
   .card {
     padding: 1rem;
+    height: 100%;
   }
 
   .card-body {
@@ -955,4 +981,14 @@ table th {
   input {
     display: none;
   }
+}
+
+.planTable {
+  td {
+    padding: 5px;
+  }
+}
+
+.tooltip-inner {
+  max-width: 260px;
 }

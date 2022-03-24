@@ -9,12 +9,14 @@ import {
   progressLoading,
   setSequenceList,
   watchList,
+  userInfo,
   setPeopleSearchResults
 } from "../../states/action-creator";
 import TableSkeleton from "../Skeleton/TableSkeleton";
 import NoRecordFound from "./NoRecordFound";
 import Select from "react-select";
 import axios from "axios";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -22,6 +24,7 @@ const Table = (props) => {
   const dispatch = useDispatch();
   const peopleSearchResults = useSelector((state) => state.peopleSearchResults);
   const sequences = useSelector((state) => state.sequences);
+  const userState = useSelector((state) => state.setUserData);
 
   const queryParams = new URLSearchParams(window.location.search);
   const showFilters = queryParams.get("showFilters");
@@ -209,6 +212,28 @@ const Table = (props) => {
       });
   };
 
+  const initiateUserInfo = async () => {
+    await axios({
+      method: "GET",
+      url: `${API_URL}/api/auth/getuser`,
+      headers: {
+        "auth-token": localStorage.getItem("token"),
+        "Content-Type": "application/json"
+      }
+    })
+      .then(function (response) {
+        if (response.data.status === "success") {
+          dispatch(userInfo(response.data.userdata));
+          localStorage.removeItem("searchQuery");
+        } else {
+          console.log(response);
+        }
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+  };
+
   const addToWatchList = async (ids) => {
     const bulkUnlock = await fetch(`${API_URL}/api/contacts/unlockbulk`, {
       method: "POST",
@@ -244,7 +269,7 @@ const Table = (props) => {
             data.email_confidence_level === "Catchall/Accept_all"
           ) {
             badge =
-              '<span class="badge bg-secondary">Catch all / Accept all</span>';
+              '<span class="badge bg-secondary">Guessed / Recommended</span>';
           } else if (
             data.email_confidence_level === "guessed" ||
             data.email_confidence_level === ""
@@ -257,6 +282,7 @@ const Table = (props) => {
         });
       }
       toast.success(`${res.unlocked} contacts added to watchlist`);
+      initiateUserInfo();
     } else if (res.status === "exist") {
       toast.warning(res.msg);
     } else if (res.status === "limit_reached") {
@@ -436,12 +462,14 @@ const Table = (props) => {
         <div className="card-body" id="result_body">
           <div className="mb-2 d-flex">
             <div className="me-auto">
-              <span className="small fw-bold text-primary me-2">
+              <span className="small fw-bold text-primary">
                 CONTACTS (<span>{totalPeople}</span>)
               </span>
-              <span className="small fw-bold text-primary me-2">
+              <span className="mx-2">|</span>
+              <span className="small fw-bold text-primary">
                 UNIQUE COMPANIES (<span>{uniqueComp}</span>)
               </span>
+              <span className="mx-2">|</span>
               <span className="small fw-bold text-primary">
                 DIRECT DIAL (<span>{directDial}</span>)
               </span>
@@ -450,17 +478,21 @@ const Table = (props) => {
           </div>
           <div className="mb-2">
             <div className="btn-group me-2" role="group" aria-label="Menu">
-              <span className="dropdown bi-tooltip">
-                <button
-                  className="btn btn-sm btn-outline-primary bi-tooltip"
-                  title="Save Search"
-                  type="button"
-                  id="saveSearch"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
+              <span className="dropdown">
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={<Tooltip>Save Search</Tooltip>}
                 >
-                  <i className="far fa-save"></i>
-                </button>
+                  <button
+                    className="btn btn-sm btn-outline-primary"
+                    type="button"
+                    id="saveSearch"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <i className="far fa-save"></i>
+                  </button>
+                </OverlayTrigger>
                 <div
                   className="dropdown-menu shadow p-3"
                   aria-labelledby="saveSearch"
@@ -490,16 +522,21 @@ const Table = (props) => {
                   </form>
                 </div>
               </span>
-              <span className="dropdown bi-tooltip" title="Add to list">
-                <button
-                  className="btn btn-sm btn-outline-primary bi-tooltip"
-                  type="button"
-                  data-bs-auto-close="false"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
+              <span className="dropdown">
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={<Tooltip>Add to List</Tooltip>}
                 >
-                  <i className="fas fa-plus"></i>
-                </button>
+                  <button
+                    className="btn btn-sm btn-outline-primary"
+                    type="button"
+                    data-bs-auto-close="false"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <i className="fas fa-plus"></i>
+                  </button>
+                </OverlayTrigger>
                 <div
                   className="dropdown-menu shadow p-3"
                   aria-labelledby="addList"
@@ -545,18 +582,22 @@ const Table = (props) => {
                   </form>
                 </div>
               </span>
-              <button
-                type="button"
-                className="btn btn-sm btn-outline-primary bi-tooltip"
-                onClick={() => searchPeople()}
-                title="Refresh"
+              <OverlayTrigger
+                placement="bottom"
+                overlay={<Tooltip>Refresh</Tooltip>}
               >
-                <i className="fas fa-redo-alt"></i>
-              </button>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline-primary bi-tooltip"
+                  onClick={() => searchPeople()}
+                >
+                  <i className="fas fa-redo-alt"></i>
+                </button>
+              </OverlayTrigger>
             </div>
             <button
               type="button"
-              className="btn btn-sm btn-primary bi-tooltip me-2"
+              className="btn btn-sm btn-danger me-2"
               title="Back to Search"
               onClick={backToSearch}
             >
@@ -564,7 +605,7 @@ const Table = (props) => {
             </button>
             <button
               type="button"
-              className="btn btn-sm btn-primary bi-tooltip me-2"
+              className="btn btn-sm btn-success me-2"
               onClick={() => {
                 getContacts();
               }}
@@ -574,7 +615,7 @@ const Table = (props) => {
             </button>
             <Link
               to="/radar/people/watchlist"
-              className="btn btn-sm btn-primary me-2"
+              className="btn btn-sm btn-warning me-2"
             >
               <i className="fas fa-bookmark"></i> My Watchlist
             </Link>
@@ -653,7 +694,12 @@ const Table = (props) => {
                 className="form-select form-control-sm"
               >
                 <option value="25">25 Contact</option>
-                <option value="50">50 Contact</option>
+                <option
+                  value="50"
+                  disabled={userState.plan_id === "1" ? true : false}
+                >
+                  50 Contact
+                </option>
               </select>
             </div>
             <nav className="ms-auto d-flex align-items-center">

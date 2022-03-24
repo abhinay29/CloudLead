@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const User = require("../models/User");
+const PlanModal = require("../models/Plans");
 const router = express.Router();
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
@@ -235,16 +236,24 @@ router.post(
 
 router.get("/getuser", fetchuser, async (req, res) => {
   try {
-    userId = req.user.id;
-    const user = await User.findById(userId).select([
+    var userId = req.user.id;
+    let user = await User.findById(userId).select([
       "-password",
       "-token",
       "-_id",
-      "-__v"
+      "-__v",
+      "-dateUnlockDaily"
     ]);
+    let Plan = await PlanModal.findOne({
+      plan_id: parseInt(user.plan_id)
+    }).select(["-_id", "name"]);
+    let userData = {};
+    userData = user;
+    let plan_name = Plan.name;
+    userData = { ...user._doc, plan_name };
     res.status(200).send({
       status: "success",
-      userdata: user
+      userdata: userData
     });
   } catch (error) {
     console.error(error.message);
@@ -265,14 +274,14 @@ router.post("/googlelogin", async (req, res) => {
       const { email_verified, given_name, family_name, email } =
         response.payload;
 
-      var domain = email.substring(email.lastIndexOf("@") + 1);
+      // var domain = email.substring(email.lastIndexOf("@") + 1);
 
-      if (domain === "gmail.com" || domain === "yahoo.com") {
-        return res.status(200).json({
-          status: "error",
-          error: "Please use your official email address"
-        });
-      }
+      // if (domain === "gmail.com" || domain === "yahoo.com") {
+      //   return res.status(200).json({
+      //     status: "error",
+      //     error: "Please use your official email address"
+      //   });
+      // }
 
       const salt = await bcrypt.genSalt(10);
       const secPass = await bcrypt.hash(email + JWT_SECRET, salt);

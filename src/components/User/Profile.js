@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import UserMenu from "./UserMenu";
 import { useSelector } from "react-redux";
-import NotificationManager from "react-notifications/lib/NotificationManager";
+import { toast } from "react-toastify";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -41,12 +41,9 @@ function Profile() {
     });
     let parsedData = await update.json();
     if (parsedData.status === "success") {
-      NotificationManager.success("Profile updated successfully.", "Success!");
+      toast.success("Profile updated successfully.");
     } else {
-      NotificationManager.error(
-        "Something went wrong, please try again later.",
-        "Error!"
-      );
+      toast.error("Something went wrong, please try again later.");
     }
   };
 

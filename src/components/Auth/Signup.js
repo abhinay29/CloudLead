@@ -149,7 +149,7 @@ const Signup = (props) => {
                         name="fullname"
                         required
                       />
-                      <span class="bar"></span>
+                      <span className="bar"></span>
                       <label htmlFor="fullname">Your Full Name</label>
                     </div>
                   </div>
@@ -166,7 +166,7 @@ const Signup = (props) => {
                         name="email"
                         required
                       />
-                      <span class="bar"></span>
+                      <span className="bar"></span>
                       <label htmlFor="email">Your Email</label>
                     </div>
                   </div>
@@ -180,7 +180,7 @@ const Signup = (props) => {
                         id="company"
                         required
                       />
-                      <span class="bar"></span>
+                      <span className="bar"></span>
                       <label htmlFor="company">Company Name</label>
                     </div>
                   </div>
@@ -197,7 +197,7 @@ const Signup = (props) => {
                         id="password"
                         required
                       />
-                      <span class="bar"></span>
+                      <span className="bar"></span>
                       <label htmlFor="password">Password</label>
                     </div>
                   </div>
@@ -250,7 +250,7 @@ const Signup = (props) => {
                         pattern="[0-9]*"
                         required
                       />
-                      <span class="bar"></span>
+                      <span className="bar"></span>
                       <label htmlFor="phone">Mobile Number</label>
                     </div>
                   </div>

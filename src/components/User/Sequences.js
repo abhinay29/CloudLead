@@ -271,11 +271,9 @@ function Sequences() {
                       </th>
                       {/* <th>Title</th> */}
                       <th>Company</th>
-                      <th>Industry</th>
-                      <th>Head Count</th>
                       <th>Email</th>
-                      <th>Boardline Numbers</th>
                       <th>Direct Dial</th>
+                      <th>Boardline Numbers</th>
                       <th>Contact Location</th>
                       <th>Company Location</th>
                     </tr>

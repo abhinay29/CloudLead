@@ -29,7 +29,7 @@ const Filter = (props) => {
     context;
   const { showFilter, setShowFilter, setShowTable } = props;
   const [disSearchBtn, setDisSearchBtn] = useState(false);
-  const [deptState, setdeptState] = useState({
+  const initalDeptState = {
     finance: false,
     human: false,
     marketing: false,
@@ -38,7 +38,8 @@ const Filter = (props) => {
     corporate: false,
     others: false,
     it: false
-  });
+  };
+  const [deptState, setdeptState] = useState(initalDeptState);
   const [cities, setCities] = useState([]);
   const [states, setStates] = useState([]);
   const [companySuggestions, setCompanySuggestions] = useState([]);
@@ -226,7 +227,7 @@ const Filter = (props) => {
     if (showFilter) getSavedSearches();
   }, [showFilter]);
 
-  const [defaultValue, setDefaultValue] = useState({
+  const initialDefaultValue = {
     first_name: [],
     last_name: [],
     title: [],
@@ -250,7 +251,14 @@ const Filter = (props) => {
     industry: [],
     domain: [],
     keyword: []
-  });
+  };
+
+  const [defaultValue, setDefaultValue] = useState(initialDefaultValue);
+
+  const handleResetFilter = () => {
+    setDefaultValue(initialDefaultValue);
+    setdeptState(initalDeptState);
+  };
 
   const handleSelectChange = (inputValue, actionMeta) => {
     setDefaultValue({ ...defaultValue, [actionMeta.name]: inputValue });
@@ -749,6 +757,9 @@ const Filter = (props) => {
     for (var i = 0, n = input.length; i < n; i++) {
       input[i].checked = false;
     }
+    if (inputName === "department") {
+      setdeptState(initalDeptState);
+    }
   };
 
   const setDefaultValueGroupFunction = (options, name) => {
@@ -787,6 +798,9 @@ const Filter = (props) => {
   };
 
   const createGroup = (groupName, options, name) => {
+    // if (name === "industry") {
+
+    // }
     return {
       label: (() => {
         return (
@@ -799,7 +813,7 @@ const Filter = (props) => {
                   setDefaultValueGroupFunction(options, name);
               }}
             />
-            <span className="fw-bold text-dark" style={{ fontSize: "14px" }}>
+            <span className="fw-bold text-dark " style={{ fontSize: "14px" }}>
               {groupName}
             </span>
           </div>
@@ -1414,6 +1428,23 @@ const Filter = (props) => {
                   </div>
                 </div>
 
+                <h6 className="fw-bold">Search by Industry</h6>
+                <div className="row mb-3">
+                  <div className="col-md-4 col-lg-4">
+                    <Select
+                      defaultValue={[]}
+                      isMulti
+                      closeMenuOnSelect={false}
+                      onChange={handleSelectChange}
+                      value={defaultValue.industry}
+                      name="industry"
+                      options={industryGroupOptions[0]}
+                      className="basic-multi-select"
+                      placeholder="Select Industry"
+                    />
+                  </div>
+                </div>
+
                 <h6 className="fw-bold">Search by Title</h6>
                 <div className="row mb-3">
                   <div className="col-md-4 col-lg-4">
@@ -1524,22 +1555,6 @@ const Filter = (props) => {
                   </div>
                 </div>
 
-                <div className="row mb-3">
-                  <div className="col-md-4 col-lg-4 title-relative">
-                    <Select
-                      defaultValue={[]}
-                      isMulti
-                      closeMenuOnSelect={false}
-                      onChange={handleSelectChange}
-                      value={defaultValue.industry}
-                      name="industry"
-                      options={industryGroupOptions[0]}
-                      className="basic-multi-select"
-                      placeholder="Select Industry"
-                    />
-                  </div>
-                </div>
-
                 <h6 className="fw-bold">Search by Company Location</h6>
                 <div className="row mb-3">
                   <div className="col-md-4 col-lg-4 title-relative">
@@ -1635,11 +1650,10 @@ const Filter = (props) => {
               >
                 <button
                   type="reset"
-                  id="reset_search"
                   onClick={() => {
-                    window.location.reload(false);
+                    handleResetFilter();
                   }}
-                  className="btn btn-outline-secondary"
+                  className="btn btn-secondary"
                 >
                   Reset
                 </button>
@@ -1647,15 +1661,14 @@ const Filter = (props) => {
                   type="submit"
                   className="btn btn-primary mx-3"
                   id="search_btn"
-                  style={{ width: "160px" }}
                   disabled={disSearchBtn && "disabled"}
                 >
-                  Run Search Query
+                  Search
                 </button>
                 <span className="dropup">
                   <button
                     type="button"
-                    className="btn btn-outline-secondary"
+                    className="btn btn-secondary"
                     id="savedSearchBtn"
                     data-bs-auto-close="false"
                     data-bs-toggle="dropdown"
@@ -1680,14 +1693,14 @@ const Filter = (props) => {
                         placeholder="Type to search"
                       />
                     </div>
-                    <h6 className="fw-bold">Last 5 Searches</h6>
+                    {/* <h6 className="fw-bold">Last 5 Searches</h6>
                     <div>
                       <span className="badge bg-success me-1">Search 1</span>
                       <span className="badge bg-success me-1">Search 2</span>
                       <span className="badge bg-success me-1">Search 3</span>
                       <span className="badge bg-success me-1">Search 4</span>
                       <span className="badge bg-success me-1">Search 5</span>
-                    </div>
+                    </div> */}
                   </div>
                 </span>
                 <Link

@@ -164,10 +164,6 @@ module.exports = async (req, res) => {
     if (RoleObj.length > 0) newQuery.role = new Fields(RoleObj).create();
   }
 
-  if (req.query.product_services && req.query.product_services !== "") {
-    newQuery.product_services = new Fields(req.query.product_services).create();
-  }
-
   // if (req.query.company_size_range && req.query.company_size_range !== "") {
   //   newQuery["organization.size_range"] = new Fields(
   //     req.query.company_size_range

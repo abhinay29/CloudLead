@@ -3,7 +3,7 @@ import CompanyContext from "../Context/Company/CompanyContext";
 import Pagination from "react-js-pagination";
 import TableRow from "./TableRow";
 import ContactTableRow from "../People/TableRow";
-import { NotificationManager } from "react-notifications";
+import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { progressLoading } from "../../states/action-creator";
 import { Link } from "react-router-dom";
@@ -128,10 +128,10 @@ const Table = (props) => {
     dispatch(progressLoading(50));
     const json = await responce.json();
     if (json.status === "success") {
-      NotificationManager.success("Search saved successfully");
+      toast.success("Search saved successfully");
       input.value = "";
     } else {
-      NotificationManager.error("Something went wrong please try again later.");
+      toast.error("Something went wrong please try again later.");
     }
     setDisSaveBtn(false);
     dispatch(progressLoading(100));
@@ -148,11 +148,7 @@ const Table = (props) => {
     });
     const res = await watchList.json();
     if (res.status === "success") {
-      NotificationManager.success(
-        "Company added to watchlist",
-        "Success!",
-        2000
-      );
+      toast.success("Company added to watchlist");
     }
   };
 
@@ -175,7 +171,7 @@ const Table = (props) => {
     const res = await watchList.json();
     if (res.status === "success") {
       if (res.totalResults === 0) {
-        NotificationManager.error("No result found");
+        toast.error("No result found");
         return;
       }
       setTotalContacts(res.totalResults);
@@ -438,8 +434,6 @@ const Table = (props) => {
                       </th>
                       {/* <th>Title</th> */}
                       <th>Company</th>
-                      <th>Industry</th>
-                      <th>Head Count</th>
                       <th>Email</th>
                       <th>Boardline Numbers</th>
                       <th>Direct Dial</th>
@@ -452,9 +446,7 @@ const Table = (props) => {
                       <ContactTableRow
                         TableData={peoples}
                         closeModal={closeModal}
-                        showCompanyInfo={() => {
-                          return false;
-                        }}
+                        showCompanyInfo={getCompanyInfo}
                         selectAll={false}
                       />
                     )}

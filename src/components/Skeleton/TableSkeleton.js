@@ -1,14 +1,10 @@
-import React from 'react'
-import './Skeleton.css'
+import React from "react";
+import "./Skeleton.css";
 
 function TableRow() {
   return (
     <tr>
-      <td className="px-4" colSpan="4">
-        <div className="skeleton-text"></div>
-        <div className="skeleton-text"></div>
-      </td>
-      <td className="px-4" colSpan="4">
+      <td className="px-4" colSpan="2">
         <div className="skeleton-text"></div>
         <div className="skeleton-text"></div>
       </td>
@@ -16,12 +12,15 @@ function TableRow() {
         <div className="skeleton-text"></div>
         <div className="skeleton-text"></div>
       </td>
+      <td className="px-4" colSpan="2">
+        <div className="skeleton-text"></div>
+        <div className="skeleton-text"></div>
+      </td>
     </tr>
-  )
+  );
 }
 
 function TableSkeleton() {
-
   return (
     <>
       <TableRow />
@@ -32,7 +31,7 @@ function TableSkeleton() {
       <TableRow />
       <TableRow />
     </>
-  )
+  );
 }
 
-export default TableSkeleton
+export default TableSkeleton;
