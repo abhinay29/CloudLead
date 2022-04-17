@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
+import LoginImages from "./LoginImages";
+import Logo from "./Logo";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -10,6 +12,8 @@ function ResetPassword(props) {
   const [password, setPassword] = useState("");
   const [cpassword, setCPassword] = useState("");
   const [disabled, setDisabled] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   if (!token) {
     window.location.href = "/";
@@ -67,24 +71,19 @@ function ResetPassword(props) {
       className="d-flex w-100 justify-content-center align-items-center"
       style={{ height: "100vh" }}
     >
+      <LoginImages />
       <div
-        className="bg order-1 order-md-2 w-50"
-        style={{
-          backgroundImage: "url(/assets/images/login.jpg)",
-          backgroundPosition: "center",
-          height: "100vh"
-        }}
-      ></div>
-      <div className="contents order-2 order-md-1 w-50">
+        className="contents order-2 order-md-1 position-relative d-flex justify-content-center align-items-center"
+        style={{ width: "35%", height: "100vh" }}
+      >
+        <Logo />
         <div className="container">
           <div className="row align-items-center justify-content-center">
-            <div className="col-md-6">
+            <div className="col-md-8">
               <div className="mb-3">
-                <h4 className="text-uppercase fw-bold">Cloudlead</h4>
-                <h3 className="fw-bold">Forgot Password?</h3>
+                <h3 className="fw-bold">Set New Password</h3>
                 <p className="mb-3 text-muted">
-                  Enter your registered email and we will send you instruction
-                  to reset your cloudlead account password.
+                  Enter new password for your cloudlead account.
                 </p>
               </div>
               <form method="post" onSubmit={handleSubmit}>
@@ -92,29 +91,65 @@ function ResetPassword(props) {
                   <label htmlFor="password" className="form-label">
                     New Password
                   </label>
-                  <input
-                    type="password"
-                    name="password"
-                    className="form-control p-2 border-1 border-primary"
-                    value={password}
-                    onChange={handleChange}
-                    id="password"
-                    autoComplete="new-password"
-                  />
+                  <div className="inputGroupWithShowHide">
+                    <input
+                      type={showNewPassword ? "text" : "password"}
+                      name="password"
+                      className="form-control p-2 border-1 border-primary"
+                      value={password}
+                      onChange={handleChange}
+                      id="password"
+                      autoComplete="new-password"
+                    />
+                    {!showNewPassword && (
+                      <span
+                        className="showBtn"
+                        onClick={() => setShowNewPassword(true)}
+                      >
+                        <i className="fas fa-eye text-muted"></i>
+                      </span>
+                    )}
+                    {showNewPassword && (
+                      <span
+                        className="hideBtn"
+                        onClick={() => setShowNewPassword(false)}
+                      >
+                        <i className="fas fa-eye-slash text-muted"></i>
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div className="mb-3">
                   <label htmlFor="cpassword" className="form-label">
                     Confirm Password
                   </label>
-                  <input
-                    type="password"
-                    name="cpassword"
-                    className="form-control p-2 border-1 border-primary"
-                    value={cpassword}
-                    onChange={handleChange}
-                    id="cpassword"
-                    autoComplete="confirm-password"
-                  />
+                  <div className="inputGroupWithShowHide">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      name="cpassword"
+                      className="form-control p-2 border-1 border-primary"
+                      value={cpassword}
+                      onChange={handleChange}
+                      id="cpassword"
+                      autoComplete="confirm-password"
+                    />
+                    {!showConfirmPassword && (
+                      <span
+                        className="showBtn"
+                        onClick={() => setShowConfirmPassword(true)}
+                      >
+                        <i className="fas fa-eye text-muted"></i>
+                      </span>
+                    )}
+                    {showConfirmPassword && (
+                      <span
+                        className="hideBtn"
+                        onClick={() => setShowConfirmPassword(false)}
+                      >
+                        <i className="fas fa-eye-slash text-muted"></i>
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <input
                   type="submit"

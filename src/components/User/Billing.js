@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import easyinvoice from "easyinvoice";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import ChoosePlan from "./ChoosePlan";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -105,6 +106,27 @@ function Billing() {
     }
   };
 
+  const openModal = (modalId) => {
+    document.body.classList.add("modal-open");
+    document.body.style.overflow = "hidden";
+    var modal = document.getElementById(modalId);
+    modal.classList.add("show");
+    modal.style.display = "block";
+    let modalBackdrop = document.getElementById("modal-backdrop");
+    modalBackdrop.style.display = "block";
+  };
+
+  const closeModal = (modalId) => {
+    document.body.classList.remove("modal-open");
+    document.body.style.overflow = "visible";
+    document.body.style.padding = "0";
+    var modal = document.getElementById(modalId);
+    modal.classList.remove("show");
+    modal.style.display = "none";
+    let modalBackdrop = document.getElementById("modal-backdrop");
+    modalBackdrop.style.display = "none";
+  };
+
   return (
     <>
       <div className="fullHeightWithNavBar py-4">
@@ -118,11 +140,13 @@ function Billing() {
                 <div className="card-body">
                   <div className="cardTitle d-flex justify-content-between align-items-center mb-3">
                     <h5>Billing</h5>
-                    {userState.plan_id === "1" && (
-                      <button type="button" className="btn btn-sm btn-primary">
-                        Upgrade Plan
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => openModal("upgradePlanModal")}
+                      className="btn btn-sm btn-primary"
+                    >
+                      Upgrade Plan
+                    </button>
                   </div>
                   <nav>
                     <div className="nav nav-tabs" id="nav-tab" role="tablist">
@@ -377,20 +401,24 @@ function Billing() {
                           </div>
                           <div className="table-responsive mt-4">
                             <table className="table">
-                              <tr>
-                                <td class="fw-bold h6 border-bottom py-3">
-                                  Net Amount
-                                </td>
-                                <td class="fw-bold h6 text-end border-bottom py-3">
-                                  ₹ {plan.price_inr}
-                                </td>
-                              </tr>
-                              <tr>
-                                <td class="fw-bold h6 py-3">Total Amount</td>
-                                <td class="fw-bold h6 text-end py-3">
-                                  ₹ {plan.price_inr}
-                                </td>
-                              </tr>
+                              <tbody>
+                                <tr>
+                                  <td className="fw-bold h6 border-bottom py-3">
+                                    Net Amount
+                                  </td>
+                                  <td className="fw-bold h6 text-end border-bottom py-3">
+                                    ₹ {plan.price_inr}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td className="fw-bold h6 py-3">
+                                    Total Amount
+                                  </td>
+                                  <td className="fw-bold h6 text-end py-3">
+                                    ₹ {plan.price_inr}
+                                  </td>
+                                </tr>
+                              </tbody>
                             </table>
                           </div>
                         </div>
@@ -401,219 +429,246 @@ function Billing() {
                             </h6>
                             <div className="table-responsive">
                               <table className="table planTable">
-                                <tr>
-                                  <td>
-                                    <span className="fw-bold p-0">
-                                      Email Credits
-                                    </span>
-                                    <OverlayTrigger
-                                      placement="right"
-                                      overlay={
-                                        <Tooltip>
-                                          Number of contacts you can download
-                                          per month
-                                        </Tooltip>
-                                      }
+                                <tbody>
+                                  <tr>
+                                    <td>
+                                      <span className="fw-bold p-0">
+                                        Direct Dials
+                                      </span>
+                                    </td>
+                                    <td
+                                      style={{ width: "150px" }}
+                                      className="text-center"
                                     >
-                                      <i className="fas fa-info-circle"></i>
-                                    </OverlayTrigger>
-                                  </td>
-                                  <td
-                                    style={{ width: "100px" }}
-                                    className="text-center"
-                                  >
-                                    <span className="me-2 text-primary">
-                                      {plan.unlock_daily}
-                                    </span>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <span className="fw-bold p-0">
-                                      Contacts Unlock
-                                    </span>
-                                    <OverlayTrigger
-                                      placement="right"
-                                      overlay={
-                                        <Tooltip>
-                                          Number of contacts you can unlock
-                                        </Tooltip>
-                                      }
+                                      <span className="me-2 text-primary">
+                                        {plan.direct_dial === 25
+                                          ? `${plan.direct_dial} Free Sample`
+                                          : "--"}
+                                      </span>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <span className="fw-bold p-0">
+                                        Email Credits
+                                      </span>
+                                      <OverlayTrigger
+                                        placement="right"
+                                        overlay={
+                                          <Tooltip>
+                                            Number of contacts you can download
+                                            per month
+                                          </Tooltip>
+                                        }
+                                      >
+                                        <i className="fas fa-info-circle"></i>
+                                      </OverlayTrigger>
+                                    </td>
+                                    <td
+                                      style={{ width: "100px" }}
+                                      className="text-center"
                                     >
-                                      <i className="fas fa-info-circle"></i>
-                                    </OverlayTrigger>
-                                  </td>
-                                  <td
-                                    style={{ width: "100px" }}
-                                    className="text-center"
-                                  >
-                                    <span className="me-2 text-primary">
-                                      {plan.unlock_daily}
-                                    </span>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <span className="fw-bold p-0">
-                                      Multi Selection limit
-                                    </span>
-                                    <OverlayTrigger
-                                      placement="right"
-                                      overlay={
-                                        <Tooltip>
-                                          Number of contacts you can select
-                                          together
-                                        </Tooltip>
-                                      }
+                                      <span className="me-2 text-primary">
+                                        {plan.download === 0
+                                          ? "Custom Buy"
+                                          : plan.download}
+                                      </span>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <span className="fw-bold p-0">
+                                        Contacts Unlock
+                                      </span>
+                                      <OverlayTrigger
+                                        placement="right"
+                                        overlay={
+                                          <Tooltip>
+                                            Number of contacts you can unlock
+                                          </Tooltip>
+                                        }
+                                      >
+                                        <i className="fas fa-info-circle"></i>
+                                      </OverlayTrigger>
+                                    </td>
+                                    <td
+                                      style={{ width: "100px" }}
+                                      className="text-center"
                                     >
-                                      <i className="fas fa-info-circle"></i>
-                                    </OverlayTrigger>
-                                  </td>
-                                  <td
-                                    style={{ width: "100px" }}
-                                    className="text-center"
-                                  >
-                                    <span className="me-2 text-primary">
-                                      {plan.unlock_daily}
-                                    </span>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <span className="fw-bold p-0">
-                                      Daily Email sending limit
-                                    </span>
-                                    <OverlayTrigger
-                                      placement="right"
-                                      overlay={
-                                        <Tooltip>
-                                          via your SMTP Server, GSuite,
-                                          Microsoft 365
-                                        </Tooltip>
-                                      }
+                                      <span className="me-2 text-primary">
+                                        {plan.contact_unlock === -1
+                                          ? "Unlimited"
+                                          : plan.contact_unlock}
+                                      </span>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <span className="fw-bold p-0">
+                                        Multi Selection limit
+                                      </span>
+                                      <OverlayTrigger
+                                        placement="right"
+                                        overlay={
+                                          <Tooltip>
+                                            Number of contacts you can select
+                                            together
+                                          </Tooltip>
+                                        }
+                                      >
+                                        <i className="fas fa-info-circle"></i>
+                                      </OverlayTrigger>
+                                    </td>
+                                    <td
+                                      style={{ width: "100px" }}
+                                      className="text-center"
                                     >
-                                      <i className="fas fa-info-circle"></i>
-                                    </OverlayTrigger>
-                                  </td>
-                                  <td
-                                    style={{ width: "100px" }}
-                                    className="text-center"
-                                  >
-                                    <span className="me-2 text-primary">
-                                      {plan.unlock_daily}
-                                    </span>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <span className="fw-bold p-0">
-                                      Online Email Verification
-                                    </span>
-                                    <OverlayTrigger
-                                      placement="right"
-                                      overlay={
-                                        <Tooltip>Single Selection</Tooltip>
-                                      }
+                                      <span className="me-2 text-primary">
+                                        {plan.multi_select}
+                                      </span>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <span className="fw-bold p-0">
+                                        Daily Email sending limit
+                                      </span>
+                                      <OverlayTrigger
+                                        placement="right"
+                                        overlay={
+                                          <Tooltip>
+                                            via your SMTP Server, GSuite,
+                                            Microsoft 365
+                                          </Tooltip>
+                                        }
+                                      >
+                                        <i className="fas fa-info-circle"></i>
+                                      </OverlayTrigger>
+                                    </td>
+                                    <td
+                                      style={{ width: "100px" }}
+                                      className="text-center"
                                     >
-                                      <i className="fas fa-info-circle"></i>
-                                    </OverlayTrigger>
-                                  </td>
-                                  <td
-                                    style={{ width: "100px" }}
-                                    className="text-center"
-                                  >
-                                    <span className="me-2 text-primary">
-                                      {plan.unlock_daily}
-                                    </span>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <span className="fw-bold p-0">
-                                      CSV upload
-                                    </span>
-                                    <OverlayTrigger
-                                      placement="right"
-                                      overlay={
-                                        <Tooltip>
-                                          Upload your own data for campaigns
-                                        </Tooltip>
-                                      }
+                                      <span className="me-2 text-primary">
+                                        {plan.daily_email_limit === 0
+                                          ? "Not Available"
+                                          : `${plan.daily_email_limit} / Day`}
+                                      </span>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <span className="fw-bold p-0">
+                                        Online Email Verification
+                                      </span>
+                                      <OverlayTrigger
+                                        placement="right"
+                                        overlay={
+                                          <Tooltip>Single Selection</Tooltip>
+                                        }
+                                      >
+                                        <i className="fas fa-info-circle"></i>
+                                      </OverlayTrigger>
+                                    </td>
+                                    <td
+                                      style={{ width: "100px" }}
+                                      className="text-center"
                                     >
-                                      <i className="fas fa-info-circle"></i>
-                                    </OverlayTrigger>
-                                  </td>
-                                  <td
-                                    style={{ width: "100px" }}
-                                    className="text-center"
-                                  >
-                                    <span className="me-2 text-primary">
-                                      {plan.unlock_daily}
-                                    </span>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <span className="fw-bold p-0">
-                                      Custom Data Request
-                                    </span>
-                                    <OverlayTrigger
-                                      placement="right"
-                                      overlay={
-                                        <Tooltip>
-                                          Get only Email credits/Mobile numbers
-                                          without Subscription
-                                        </Tooltip>
-                                      }
+                                      <span className="me-2 text-primary">
+                                        Free
+                                      </span>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <span className="fw-bold p-0">
+                                        CSV upload
+                                      </span>
+                                      <OverlayTrigger
+                                        placement="right"
+                                        overlay={
+                                          <Tooltip>
+                                            Upload your own data for campaigns
+                                          </Tooltip>
+                                        }
+                                      >
+                                        <i className="fas fa-info-circle"></i>
+                                      </OverlayTrigger>
+                                    </td>
+                                    <td
+                                      style={{ width: "100px" }}
+                                      className="text-center"
                                     >
-                                      <i className="fas fa-info-circle"></i>
-                                    </OverlayTrigger>
-                                  </td>
-                                  <td
-                                    style={{ width: "100px" }}
-                                    className="text-center"
-                                  >
-                                    <span className="me-2 text-primary">
-                                      Yes
-                                    </span>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <span className="fw-bold p-0">
-                                      Email Pattern Finder
-                                    </span>
-                                    <OverlayTrigger
-                                      placement="right"
-                                      overlay={<Tooltip>Online</Tooltip>}
+                                      <span className="me-2 text-primary">
+                                        {plan.csv_upload === 1
+                                          ? "Available"
+                                          : "Not Available"}
+                                      </span>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <span className="fw-bold p-0">
+                                        Custom Data Request
+                                      </span>
+                                      <OverlayTrigger
+                                        placement="right"
+                                        overlay={
+                                          <Tooltip>
+                                            Get only Email credits/Mobile
+                                            numbers without Subscription
+                                          </Tooltip>
+                                        }
+                                      >
+                                        <i className="fas fa-info-circle"></i>
+                                      </OverlayTrigger>
+                                    </td>
+                                    <td
+                                      style={{ width: "100px" }}
+                                      className="text-center"
                                     >
-                                      <i className="fas fa-info-circle"></i>
-                                    </OverlayTrigger>
-                                  </td>
-                                  <td
-                                    style={{ width: "100px" }}
-                                    className="text-center"
-                                  >
-                                    <span className="me-2 text-primary">
-                                      Free
-                                    </span>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <span className="fw-bold p-0">
-                                      Linkedin Chrome Extension
-                                    </span>
-                                  </td>
-                                  <td
-                                    style={{ width: "100px" }}
-                                    className="text-center"
-                                  >
-                                    <span className="me-2 text-primary">
-                                      Available
-                                    </span>
-                                  </td>
-                                </tr>
+                                      <span className="me-2 text-primary">
+                                        Yes
+                                      </span>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <span className="fw-bold p-0">
+                                        Email Pattern Finder
+                                      </span>
+                                      <OverlayTrigger
+                                        placement="right"
+                                        overlay={<Tooltip>Online</Tooltip>}
+                                      >
+                                        <i className="fas fa-info-circle"></i>
+                                      </OverlayTrigger>
+                                    </td>
+                                    <td
+                                      style={{ width: "100px" }}
+                                      className="text-center"
+                                    >
+                                      <span className="me-2 text-primary">
+                                        Free
+                                      </span>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <span className="fw-bold p-0">
+                                        Linkedin Chrome Extension
+                                      </span>
+                                    </td>
+                                    <td
+                                      style={{ width: "100px" }}
+                                      className="text-center"
+                                    >
+                                      <span className="me-2 text-primary">
+                                        Available
+                                      </span>
+                                    </td>
+                                  </tr>
+                                </tbody>
                               </table>
                             </div>
                           </div>
@@ -629,33 +684,28 @@ function Billing() {
       </div>
 
       <div className="modal" id="upgradePlanModal" tabIndex="-1">
-        <div className="modal-dialog">
+        <div className="modal-dialog modal-fullscreen">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title">Modal title</h5>
               <button
                 type="button"
                 className="btn-close"
-                data-bs-dismiss="modal"
+                onClick={() => closeModal("upgradePlanModal")}
                 aria-label="Close"
+                style={{ zIndex: "1" }}
               ></button>
             </div>
-            <div className="modal-body"></div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-              <button type="button" className="btn btn-primary">
-                Save changes
-              </button>
+            <div className="modal-body">
+              <ChoosePlan />
             </div>
           </div>
         </div>
       </div>
+      <div
+        className="modal-backdrop"
+        id="modal-backdrop"
+        style={{ display: "none", opacity: ".5" }}
+      ></div>
     </>
   );
 }

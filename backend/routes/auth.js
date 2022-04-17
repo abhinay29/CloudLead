@@ -83,6 +83,7 @@ router.post(
           "Password should contain at least 1 capital letter and 1 numeric value"
       });
     }
+
     try {
       // Check whether the user with this email exists already
       let user = await User.findOne({ email: req.body.email });
@@ -249,7 +250,7 @@ router.get("/getuser", fetchuser, async (req, res) => {
     }).select(["-_id", "name"]);
     let userData = {};
     userData = user;
-    let plan_name = Plan.name;
+    let plan_name = Plan ? Plan.name : "None";
     userData = { ...user._doc, plan_name };
     res.status(200).send({
       status: "success",
@@ -386,11 +387,11 @@ router.post("/forgotpassword", async (req, res) => {
         res.status(200).send({ status: "success" });
       }
     } else {
-      res.status(200).send({ status: "error" });
+      res.status(200).send({ status: "error", error: "Incorrect Email" });
     }
   } catch (error) {
     console.error(error.message);
-    res.status(400).send({ status: "error", error: "User not found" });
+    res.status(400).send({ status: "error", error: "Incorrect Email" });
   }
 });
 
@@ -404,14 +405,25 @@ router.post("/resetpassword", async (req, res) => {
     });
   }
 
+  let strongPassword = new RegExp("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])");
+
+  if (!strongPassword.test(req.body.password)) {
+    return res.status(200).json({
+      status: "error",
+      error:
+        "Password should contain at least 1 capital letter and 1 numeric value"
+    });
+  }
+
   const salt = await bcrypt.genSalt(10);
   const secPass = await bcrypt.hash(req.body.password, salt);
 
   if (user) {
     try {
-      await User.findByIdAndUpdate(
+      await User.updateOne(
         { _id: user._id },
-        { password: secPass, token: "" }
+        { password: secPass, token: "" },
+        { upsert: true }
       );
     } catch (error) {
       console.log(error);
@@ -434,6 +446,7 @@ router.post("/resetpassword", async (req, res) => {
       });
     } catch (err) {
       console.log(err);
+      res.status(200).send({ status: "error" });
     }
     res.status(200).send({ status: "success" });
   } else {

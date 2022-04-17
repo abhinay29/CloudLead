@@ -10,6 +10,7 @@ import { countryGroup } from "../Data/countries";
 import { useDispatch } from "react-redux";
 import { progressLoading } from "../../states/action-creator";
 import { Link } from "react-router-dom";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -372,7 +373,13 @@ const Filter = (props) => {
               className="p-3"
             >
               <div className="d-flex selectAllCheckbox align-items-center mb-2">
-                <h6 className="fw-bold me-3 mb-0">Search By Company Type</h6>
+                <h6 className="fw-bold me-2 mb-0">Search By Company Type</h6>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={<Tooltip>Applies only for India</Tooltip>}
+                >
+                  <i className="fas fa-info-circle me-2"></i>
+                </OverlayTrigger>
                 <span>Select</span>{" "}
                 <span
                   className="selectBtn"
@@ -407,6 +414,17 @@ const Filter = (props) => {
                       htmlFor="indias-top-1000"
                     >
                       India's Top 1000
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip>
+                            Companies with highest turnover/employee head
+                            count/brand equity etc.
+                          </Tooltip>
+                        }
+                      >
+                        <i className="fas fa-info-circle ms-2"></i>
+                      </OverlayTrigger>
                     </label>
                   </div>
                 </div>
@@ -421,6 +439,16 @@ const Filter = (props) => {
                     />
                     <label className="form-check-label" htmlFor="mnc">
                       MNC
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip>
+                            Overseas companies having presence in India
+                          </Tooltip>
+                        }
+                      >
+                        <i className="fas fa-info-circle ms-2"></i>
+                      </OverlayTrigger>
                     </label>
                   </div>
                 </div>
@@ -435,6 +463,17 @@ const Filter = (props) => {
                     />
                     <label className="form-check-label" htmlFor="industry-top">
                       Industry Leaders
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip>
+                            Best companies according to our research in each
+                            sector
+                          </Tooltip>
+                        }
+                      >
+                        <i className="fas fa-info-circle ms-2"></i>
+                      </OverlayTrigger>
                     </label>
                   </div>
                 </div>
@@ -451,6 +490,17 @@ const Filter = (props) => {
                     />
                     <label className="form-check-label" htmlFor="smes">
                       SMEs/MSMEs
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip>
+                            Mostly Companies with less than 20 Cr turn over
+                            (Product), &amp; 5 Cr turnover (Services)
+                          </Tooltip>
+                        }
+                      >
+                        <i className="fas fa-info-circle ms-2"></i>
+                      </OverlayTrigger>
                     </label>
                   </div>
                 </div>
@@ -465,6 +515,18 @@ const Filter = (props) => {
                     />
                     <label className="form-check-label" htmlFor="startups">
                       Startups
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip>
+                            New, Young organizations, generally on tech
+                            /E-commerce platform belonging to any industry
+                            sector
+                          </Tooltip>
+                        }
+                      >
+                        <i className="fas fa-info-circle ms-2"></i>
+                      </OverlayTrigger>
                     </label>
                   </div>
                 </div>
@@ -473,16 +535,6 @@ const Filter = (props) => {
               <h6 className="fw-bold">Search by Company</h6>
               <div className="row mb-3">
                 <div className="col-md-4 col-lg-4 position-relative">
-                  {/* <CreatableSelect
-                    defaultValue={[]}
-                    name="company_name"
-                    value={defaultValue.company_name}
-                    onChange={handleSelectChange}
-                    noOptionsMessage={({ inputValue }) => ""}
-                    isMulti
-                    className="basic-multi-select"
-                    placeholder="Company Name"
-                  /> */}
                   <CreatableSelect
                     defaultValue={[]}
                     name="company_name"
@@ -495,6 +547,7 @@ const Filter = (props) => {
                     isMulti
                     className="basic-multi-select"
                     placeholder="Company Name"
+                    createOptionPosition="first"
                   />
                   <p style={{ fontSize: "12px" }} className="mb-0 mt-1">
                     Use tab/enter for multi selection.
@@ -591,7 +644,20 @@ const Filter = (props) => {
                 </div>
               </div>
 
-              <h6 className="fw-bold">Search by Website & Keywords</h6>
+              <div className="d-flex">
+                <h6 className="fw-bold">Search by Website & Keywords</h6>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={
+                    <Tooltip>
+                      Please enter a specific product/service/solution you wish
+                      to search.
+                    </Tooltip>
+                  }
+                >
+                  <i className="fas fa-info-circle ms-2"></i>
+                </OverlayTrigger>
+              </div>
               <div className="row">
                 <div className="col-md-4 col-lg-4 position-relative">
                   <CreatableSelect
@@ -639,7 +705,7 @@ const Filter = (props) => {
                 onClick={() => {
                   window.location.reload(false);
                 }}
-                className="btn btn-outline-secondary"
+                className="btn btn-secondary"
               >
                 Reset
               </button>
@@ -647,15 +713,14 @@ const Filter = (props) => {
                 type="submit"
                 className="btn btn-primary mx-3"
                 id="search_btn"
-                style={{ width: "160px" }}
                 disabled={disSearchBtn && "disabled"}
               >
-                Run Search Query
+                Search
               </button>
               <span className="dropup">
                 <button
                   type="button"
-                  className="btn btn-outline-secondary"
+                  className="btn btn-warning"
                   data-bs-auto-close="false"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
@@ -678,22 +743,31 @@ const Filter = (props) => {
                       placeholder="Type to search"
                     />
                   </div>
-                  <h6 className="fw-bold">Last 5 Searches</h6>
+                  {/* <h6 className="fw-bold">Last 5 Searches</h6>
                   <div>
                     <span className="badge bg-success me-1">Search 1</span>
                     <span className="badge bg-success me-1">Search 2</span>
                     <span className="badge bg-success me-1">Search 3</span>
                     <span className="badge bg-success me-1">Search 4</span>
                     <span className="badge bg-success me-1">Search 5</span>
-                  </div>
+                  </div> */}
                 </div>
               </span>
-              <Link
-                to="/radar/company/watchlist"
-                className="btn btn-primary ms-3"
+              <OverlayTrigger
+                placement="top"
+                overlay={
+                  <Tooltip>
+                    The company added by you are moved to watchlist.
+                  </Tooltip>
+                }
               >
-                <i className="fas fa-bookmark"></i> Watchlist
-              </Link>
+                <Link
+                  to="/radar/company/watchlist"
+                  className="btn btn-success ms-3"
+                >
+                  <i className="fas fa-bookmark"></i> Watchlist
+                </Link>
+              </OverlayTrigger>
             </div>
           </form>
         </div>

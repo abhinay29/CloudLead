@@ -2,11 +2,15 @@ import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import GoogleLogin from "react-google-login";
+import Logo from "./Logo";
+import LoginImages from "./LoginImages";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const Login = (props) => {
   let history = useHistory();
+
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
 
   const responseGoogleSuccess = async (response) => {
     setDisabled(true);
@@ -98,27 +102,25 @@ const Login = (props) => {
       className="d-flex w-100 justify-content-center align-items-center"
       style={{ height: "100vh" }}
     >
+      <LoginImages />
       <div
-        className="bg order-1 order-md-2 w-50"
-        style={{
-          backgroundImage: "url(/assets/images/login.jpg)",
-          backgroundPosition: "center",
-          height: "100vh"
-        }}
-      ></div>
-      <div className="contents order-2 order-md-1 w-50">
+        className="contents order-2 order-md-1 position-relative d-flex justify-content-center align-items-center"
+        style={{ width: "35%", height: "100vh" }}
+      >
+        <Logo />
         <div className="container">
           <div className="row align-items-center justify-content-center">
-            <div className="col-md-6">
+            <div className="col-md-8">
               <div className="mb-3">
-                <h4 className="text-uppercase fw-bold">Cloudlead</h4>
                 <h3 className="fw-bold">Sign In</h3>
-                <p className="mb-3 text-muted">
-                  Lorem ipsum dolor sit amet elit. Sapiente sit aut eos
-                  consectetur adipisicing.
-                </p>
+                <p className="mb-3 text-muted">Sign in to your account.</p>
               </div>
-              <form action="#" method="post" onSubmit={handleSubmit}>
+              <form
+                action="#"
+                method="post"
+                onSubmit={handleSubmit}
+                autoComplete="off"
+              >
                 <div className="input-group">
                   <input
                     type="email"
@@ -126,15 +128,15 @@ const Login = (props) => {
                     onChange={onChange}
                     id="email"
                     name="email"
-                    autoComplete="username"
+                    autoComplete="work-email"
                     required
                   />
                   <span className="bar"></span>
-                  <label htmlFor="username">Email</label>
+                  <label htmlFor="email">Work Email</label>
                 </div>
-                <div className="input-group">
+                <div className="input-group inputGroupWithShowHide">
                   <input
-                    type="password"
+                    type={showCurrentPassword ? "text" : "password"}
                     value={credentials.password}
                     onChange={onChange}
                     name="password"
@@ -142,6 +144,22 @@ const Login = (props) => {
                     autoComplete="current-password"
                     required
                   />
+                  {!showCurrentPassword && (
+                    <span
+                      className="showBtn"
+                      onClick={() => setShowCurrentPassword(true)}
+                    >
+                      <i className="fas fa-eye text-muted"></i>
+                    </span>
+                  )}
+                  {showCurrentPassword && (
+                    <span
+                      className="hideBtn"
+                      onClick={() => setShowCurrentPassword(false)}
+                    >
+                      <i className="fas fa-eye-slash text-muted"></i>
+                    </span>
+                  )}
                   <span className="bar"></span>
                   <label htmlFor="password">Password</label>
                 </div>

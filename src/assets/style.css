@@ -383,6 +383,7 @@ table th {
   width: 100%;
   height: 100%;
   background-color: #fff;
+  overflow-y: scroll;
 }
 
 .rounded-lg {
@@ -685,14 +686,67 @@ table th {
   display: -ms-grid;
   display: grid;
   place-content: center;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+.signup-content h5 {
+  font-size: 1.6rem;
+  text-shadow: 1px 0 10px #1c1c1c;
+  font-weight: 700;
 }
 
 .signup-content ul {
-  max-width: 600px;
-  font-size: 1.4rem;
+  max-width: 720px;
+  font-size: 1.5rem;
   font-weight: 600;
-  color: #fff;
+  color: #ffcc00;
   line-height: 1.6;
+}
+
+.signup-content ul li {
+  position: relative;
+  padding-left: 35px;
+  text-shadow: 1px 0 10px #1c1c1c;
+}
+
+.signup-content ul li .fa-check {
+  position: absolute;
+  left: 0;
+  top: 5px;
+}
+
+.result-screenshot {
+  width: 100%;
+  padding: 20px;
+  position: relative;
+  height: 500px;
+}
+
+.result-screenshot .image-one {
+  width: 85%;
+  position: absolute;
+  top: 0;
+  left: 25px;
+}
+
+.result-screenshot .image-one img {
+  width: 100%;
+}
+
+.result-screenshot .image-two {
+  width: 85%;
+  position: absolute;
+  bottom: 25px;
+  right: 25px;
+  -webkit-box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.25);
+          box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.25);
+}
+
+.result-screenshot .image-two img {
+  width: 100%;
 }
 
 .input-group {
@@ -895,5 +949,106 @@ table th {
 
 .tooltip-inner {
   max-width: 260px;
+}
+
+.inputGroupWithShowHide {
+  position: relative;
+  width: 100%;
+}
+
+.inputGroupWithShowHide .showBtn {
+  position: absolute;
+  right: 10px;
+  display: block;
+  top: 10px;
+  cursor: pointer;
+}
+
+.inputGroupWithShowHide .hideBtn {
+  position: absolute;
+  right: 10px;
+  display: block;
+  top: 10px;
+  cursor: pointer;
+}
+
+.pricingTable {
+  width: 100%;
+}
+
+.pricingTable tr.feature-row {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  position: relative;
+}
+
+.pricingTable tr:last-child td {
+  border: 0;
+}
+
+.pricingTable th {
+  background-color: #f3ba17 !important;
+  padding: 15px 0;
+  text-align: center;
+  font-size: 1.4rem;
+  vertical-align: bottom;
+}
+
+.pricingTable th h6 {
+  margin: 0;
+}
+
+.pricingTable th.feature-name {
+  background-color: transparent !important;
+}
+
+.pricingTable th.feature-name .form-check {
+  text-align: left;
+}
+
+.pricingTable th.feature-name .form-check label {
+  font-size: 1rem;
+}
+
+.pricingTable td {
+  border-bottom: 1px solid #ccc;
+  padding: 10px 0;
+  width: 260px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.pricingTable td.feature-name {
+  width: calc((((100% - 240px) / 12) * 4) + 120px + 0px);
+  background-color: transparent !important;
+  text-align: left;
+}
+
+.pricingTable td.feature-name h6 {
+  margin: 0;
+  font-weight: 600;
+}
+
+.pricingTable td.feature-name p {
+  margin: 0;
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.pricingTable td:nth-child(2) {
+  background-color: rgba(19, 12, 12, 0.8);
+}
+
+.freezeHistoryTable td {
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 /*# sourceMappingURL=style.css.map */

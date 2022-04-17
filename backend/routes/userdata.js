@@ -18,6 +18,9 @@ const {
 
 const EmailSetup = require("./UserData/EmailSetup");
 const GuideStatus = require("./UserData/GuideStatus");
+const Activity = require("./UserData/Activity");
+const FreezeData = require("./UserData/FreezeData");
+const GetFreezeData = require("./UserData/GetFreezedData");
 
 const adminEmail = process.env.ADMIN_EMAIL;
 
@@ -567,5 +570,8 @@ router.post("/changepassword", fetchuser, async (req, res) => {
 
 router.post("/update/smtp", fetchuser, EmailSetup);
 router.post("/guide-status", fetchuser, GuideStatus);
+router.get("/activity", fetchuser, Activity);
+router.post("/freeze-data", fetchuser, FreezeData);
+router.get("/get-freeze-data", fetchuser, GetFreezeData);
 
 module.exports = router;

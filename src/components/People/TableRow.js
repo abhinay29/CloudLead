@@ -10,7 +10,8 @@ const API_URL = process.env.REACT_APP_API_URL;
 const TableRow = (props) => {
   const dispatch = useDispatch();
 
-  const { TableData, showCompanyInfo, selectAll, showAllContacts } = props;
+  const { TableData, showCompanyInfo, selectAll, showAllContacts, planId } =
+    props;
 
   const toogleSelectAll = (selectAll) => {
     var checkboxes = document.getElementsByClassName("selectContacts");
@@ -89,7 +90,11 @@ const TableRow = (props) => {
       unlockContainer.innerHTML = `${res.data.email.toLowerCase()} <br>${badge} <span class="ms-2" style="cursor: pointer" onClick="copyEmail(${
         res.data.email
       })"><i class="far fa-copy"></i></span>`;
-      toast.success("Contact added to watchlist");
+      if (planId === 3) {
+        toast.success("Contact unlocked successfully");
+      } else {
+        toast.success("Contact added to watchlist");
+      }
       initiateUserInfo();
     } else if (res.status === "exist") {
       toast.warning(res.msg);
@@ -111,6 +116,7 @@ const TableRow = (props) => {
                     className="form-check-input mt-0 selectContacts"
                     value={data._id}
                     data-unlocked={data.unlocked_email}
+                    disabled={planId === 3 ? true : false}
                   />
                 </span>
                 <span>

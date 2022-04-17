@@ -552,13 +552,20 @@ const Watchlist = () => {
               <i className="fas fa-sync-alt"></i>
             </button>
           </div>
-          <button
-            type="button"
-            className="btn btn-sm btn-primary bi-tooltip me-2"
-            onClick={() => openModal("searchModal")}
+          <OverlayTrigger
+            placement="bottom"
+            overlay={
+              <Tooltip>You can further filter the watchlist results</Tooltip>
+            }
           >
-            <i className="fas fa-filter"></i> Filter Watchlist
-          </button>
+            <button
+              type="button"
+              className="btn btn-sm btn-primary bi-tooltip me-2"
+              onClick={() => openModal("searchModal")}
+            >
+              <i className="fas fa-filter"></i> Filter Watchlist
+            </button>
+          </OverlayTrigger>
           <Link
             to="/radar/people"
             className="btn btn-sm btn-primary bi-tooltip me-2"

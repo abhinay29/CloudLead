@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { Link, useHistory } from "react-router-dom";
 import GoogleLogin from "react-google-login";
+import Logo from "./Logo";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -18,6 +19,8 @@ const Signup = (props) => {
     country: ""
   });
   const [countries, setCountries] = useState([]);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState(0);
 
   let history = useHistory();
 
@@ -71,11 +74,24 @@ const Signup = (props) => {
     setDisabled(false);
   };
 
+  let strongPassword = new RegExp("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])");
+
   const onChange = (e) => {
     if (e.target.name === "phone") {
       e.target.value = e.target.value.replace(/\D/, "");
     }
     setSignupInfo({ ...signupInfo, [e.target.name]: e.target.value });
+    if (e.target.name === "password") {
+      if (e.target.value === "") {
+        setPasswordStrength(0);
+      } else {
+        if (!strongPassword.test(e.target.value)) {
+          setPasswordStrength(1);
+        } else {
+          setPasswordStrength(0);
+        }
+      }
+    }
   };
   // const countrySelectChange = (inputValue, actionMeta) => {
   //   setSignupInfo({ ...signupInfo, [actionMeta.name]: inputValue });
@@ -129,15 +145,24 @@ const Signup = (props) => {
       className="d-flex w-100 justify-content-center align-items-center"
       style={{ height: "100vh" }}
     >
-      <div className="contents order-2 order-md-2" style={{ width: "35%" }}>
+      <div
+        className="contents order-2 order-md-2 position-relative d-flex justify-content-center align-items-center"
+        style={{
+          width: "35%",
+          height: "100vh"
+        }}
+      >
+        <Logo />
         <div className="container">
           <div className="row align-items-center justify-content-center">
             <div className="col-md-10 px-4">
-              <div className="mb-3">
-                <h4 className="text-uppercase fw-bold">Cloudlead</h4>
-                <h4 className="mb-4">Create Account</h4>
-              </div>
-              <form action="#" method="post" onSubmit={handleSubmit}>
+              <h4 className="mb-3">Signup</h4>
+              <form
+                action="#"
+                method="post"
+                onSubmit={handleSubmit}
+                autoComplete="off"
+              >
                 <div className="row">
                   <div className="col-md-12 col-lg-12">
                     <div className="input-group">
@@ -147,10 +172,11 @@ const Signup = (props) => {
                         onChange={onChange}
                         id="fullname"
                         name="fullname"
+                        autoComplete="full-name"
                         required
                       />
                       <span className="bar"></span>
-                      <label htmlFor="fullname">Your Full Name</label>
+                      <label htmlFor="fullname">Full Name</label>
                     </div>
                   </div>
                 </div>
@@ -165,9 +191,10 @@ const Signup = (props) => {
                         id="email"
                         name="email"
                         required
+                        autoComplete="work-email"
                       />
                       <span className="bar"></span>
-                      <label htmlFor="email">Your Email</label>
+                      <label htmlFor="email">Business Email</label>
                     </div>
                   </div>
                   <div className="col-md-12 col-lg-12">
@@ -178,27 +205,51 @@ const Signup = (props) => {
                         onChange={onChange}
                         name="company"
                         id="company"
+                        autoComplete="company"
                         required
                       />
                       <span className="bar"></span>
-                      <label htmlFor="company">Company Name</label>
+                      <label htmlFor="company">Company</label>
                     </div>
                   </div>
                 </div>
 
                 <div className="row">
                   <div className="col-md-12 col-lg-12">
-                    <div className="input-group">
+                    <div className="input-group inputGroupWithShowHide">
                       <input
-                        type="password"
+                        type={showNewPassword ? "text" : "password"}
                         value={signupInfo.password}
                         onChange={onChange}
                         name="password"
                         id="password"
+                        autoComplete="new-password"
                         required
                       />
+                      {!showNewPassword && (
+                        <span
+                          className="showBtn"
+                          onClick={() => setShowNewPassword(true)}
+                        >
+                          <i className="fas fa-eye text-muted"></i>
+                        </span>
+                      )}
+                      {showNewPassword && (
+                        <span
+                          className="hideBtn"
+                          onClick={() => setShowNewPassword(false)}
+                        >
+                          <i className="fas fa-eye-slash text-muted"></i>
+                        </span>
+                      )}
                       <span className="bar"></span>
                       <label htmlFor="password">Password</label>
+                      {passwordStrength === 1 && (
+                        <p className="text-danger small">
+                          Please enter password with atleast 1 capital letter
+                          and 1 Number
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -206,18 +257,7 @@ const Signup = (props) => {
                 <div className="row">
                   <div className="col-md-5 col-lg-5">
                     <div className="input-group">
-                      {/* <Select
-                        defaultValue={signupInfo.country}
-                        closeMenuOnSelect={true}
-                        name="country"
-                        onChange={countrySelectChange}
-                        value={signupInfo.country}
-                        options={countries}
-                        className="small w-100"
-                        placeholder="Country"
-                        styles={{ background: "#000" }}
-                      /> */}
-                      <div class="select">
+                      <div className="select">
                         <select
                           name="country"
                           id="country"
@@ -227,15 +267,15 @@ const Signup = (props) => {
                           value={signupInfo.country}
                           required
                         >
-                          <option value="" selected></option>
+                          <option value=""></option>
                           {countries &&
                             countries.map((c) => {
                               return <option value={c.value}>{c.label}</option>;
                             })}
                         </select>
-                        <span class="select-highlight"></span>
-                        <span class="select-bar"></span>
-                        <label class="select-label">Country</label>
+                        <span className="select-highlight"></span>
+                        <span className="select-bar"></span>
+                        <label className="select-label">Country</label>
                       </div>
                     </div>
                   </div>
@@ -290,20 +330,53 @@ const Signup = (props) => {
           </div>
         </div>
       </div>
-      <div className="order-1 order-md-1 signup-content">
-        <ul>
+      <div
+        className="order-1 order-md-1 signup-content"
+        style={{ backgroundImage: "url(/assets/images/slide4.jpg)" }}
+      >
+        <h5 className="fw-bold text-warning">Key Features:</h5>
+        <ul className="list-unstyled">
           <li>
-            Search Millions of Global Contacts and Companies on Cloudlead
-            plateform using advanced filters
+            <i className="fas fa-check me-3"></i>
+            Search Millions of Global Contacts and Companies using advanced
+            search filters
           </li>
-          <li>Unlock unlimited business Emails</li>
-          <li>Schedule Email lists to campaigns</li>
-          <li>Direct dials - Get access to thousands of direct dials</li>
-          <li>Connect business leads via Chrome extension</li>
-          <li>Email Verifier</li>
-          <li>Track &amp; Analyze campaigns</li>
-          <li>Custom data - B2B &amp; B2C</li>
-          <li>Automation tools</li>
+          <li>
+            <i className="fas fa-check me-3"></i> Unlock unlimited business
+            Emails
+          </li>
+          <li>
+            <i className="fas fa-check me-3"></i> Schedule Email lists to
+            campaigns
+          </li>
+          <li>
+            <i className="fas fa-check me-3"></i> Direct dials - Get access to
+            thousands of direct dials
+          </li>
+          <li>
+            <i className="fas fa-check me-3"></i> Connect business leads via
+            Chrome extension
+          </li>
+          <li>
+            <i className="fas fa-check me-3"></i>Email Verifier
+          </li>
+          <li>
+            <i className="fas fa-check me-3"></i> Track &amp; Analyze campaigns
+          </li>
+          <li>
+            <i className="fas fa-check me-3"></i> Custom data - B2B &amp; B2C
+          </li>
+          <li>
+            <i className="fas fa-check me-3"></i> Automation tools
+          </li>
+          <li>
+            <i className="fas fa-check me-3"></i> Data update every 90 days for
+            the contacts and companies
+          </li>
+          <li>
+            <i className="fas fa-check me-3"></i> Go for “custom data” if wish
+            to buy one time Business Emails/Direct dials.
+          </li>
         </ul>
       </div>
     </div>

@@ -107,7 +107,7 @@ const Watchlist = () => {
       if (checkboxes[i].checked) selectedId.push(checkboxes[i].value);
     }
     if (selectedId.length === 0) {
-      toast.error("Please select people to delete from watchlist");
+      toast.error("Please select companies to delete from watchlist");
       return false;
     }
     dispatch(progressLoading(30));
@@ -130,7 +130,7 @@ const Watchlist = () => {
 
     if (res.status === "success") {
       getWatchlist();
-      toast.success(`${res.deletedCount} contacts deleted from watchlist`);
+      toast.success(`${res.deletedCount} company deleted from watchlist`);
     } else {
       toast.error("Something went wrong, please try again later.");
     }

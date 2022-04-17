@@ -14,6 +14,7 @@ import { countryGroup } from "../Data/countries";
 import { useDispatch } from "react-redux";
 import { progressLoading } from "../../states/action-creator";
 import { toast } from "react-toastify";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -401,7 +402,13 @@ const WatchFilter = (props) => {
                 </div>
 
                 <div className="d-flex selectAllCheckbox align-items-center mb-2">
-                  <h6 className="fw-bold me-3 mb-0">Search By Company Type</h6>
+                  <h6 className="fw-bold me-2 mb-0">Search By Company Type</h6>
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={<Tooltip>Applies only for India</Tooltip>}
+                  >
+                    <i className="fas fa-info-circle me-2"></i>
+                  </OverlayTrigger>
                   <span>Select</span>{" "}
                   <span
                     className="selectBtn"
@@ -436,6 +443,17 @@ const WatchFilter = (props) => {
                         htmlFor="indias-top-1000"
                       >
                         India's Top 1000
+                        <OverlayTrigger
+                          placement="bottom"
+                          overlay={
+                            <Tooltip>
+                              Companies with highest turnover/employee head
+                              count/brand equity etc.
+                            </Tooltip>
+                          }
+                        >
+                          <i className="fas fa-info-circle ms-2"></i>
+                        </OverlayTrigger>
                       </label>
                     </div>
                   </div>
@@ -450,6 +468,16 @@ const WatchFilter = (props) => {
                       />
                       <label className="form-check-label" htmlFor="mnc">
                         MNC
+                        <OverlayTrigger
+                          placement="bottom"
+                          overlay={
+                            <Tooltip>
+                              Overseas companies having presence in India
+                            </Tooltip>
+                          }
+                        >
+                          <i className="fas fa-info-circle ms-2"></i>
+                        </OverlayTrigger>
                       </label>
                     </div>
                   </div>
@@ -467,6 +495,17 @@ const WatchFilter = (props) => {
                         htmlFor="industry-top"
                       >
                         Industry Leaders
+                        <OverlayTrigger
+                          placement="bottom"
+                          overlay={
+                            <Tooltip>
+                              Best companies according to our research in each
+                              sector
+                            </Tooltip>
+                          }
+                        >
+                          <i className="fas fa-info-circle ms-2"></i>
+                        </OverlayTrigger>
                       </label>
                     </div>
                   </div>
@@ -483,6 +522,17 @@ const WatchFilter = (props) => {
                       />
                       <label className="form-check-label" htmlFor="smes">
                         SMEs/MSMEs
+                        <OverlayTrigger
+                          placement="bottom"
+                          overlay={
+                            <Tooltip>
+                              Mostly Companies with less than 20 Cr turn over
+                              (Product), &amp; 5 Cr turnover (Services)
+                            </Tooltip>
+                          }
+                        >
+                          <i className="fas fa-info-circle ms-2"></i>
+                        </OverlayTrigger>
                       </label>
                     </div>
                   </div>
@@ -497,6 +547,18 @@ const WatchFilter = (props) => {
                       />
                       <label className="form-check-label" htmlFor="startups">
                         Startups
+                        <OverlayTrigger
+                          placement="bottom"
+                          overlay={
+                            <Tooltip>
+                              New, Young organizations, generally on tech
+                              /E-commerce platform belonging to any industry
+                              sector
+                            </Tooltip>
+                          }
+                        >
+                          <i className="fas fa-info-circle ms-2"></i>
+                        </OverlayTrigger>
                       </label>
                     </div>
                   </div>
@@ -926,7 +988,19 @@ const WatchFilter = (props) => {
                   </div>
                 </div>
 
-                <h6 className="fw-bold">Search by Title</h6>
+                <div className="d-flex">
+                  <h6 className="fw-bold">Search by Title</h6>
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={
+                      <Tooltip>
+                        You can enter any title. Exact match is not required
+                      </Tooltip>
+                    }
+                  >
+                    <i className="fas fa-info-circle ms-2"></i>
+                  </OverlayTrigger>
+                </div>
                 <div className="row mb-3">
                   <div className="col-md-4 col-lg-4">
                     <CreatableSelect
@@ -1083,7 +1157,20 @@ const WatchFilter = (props) => {
                   </div>
                 </div>
 
-                <h6 className="fw-bold">Search by Website & Keywords</h6>
+                <div className="d-flex">
+                  <h6 className="fw-bold">Search by Website & Keywords</h6>
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={
+                      <Tooltip>
+                        Please enter a specific product/service/solution you
+                        wish to search.
+                      </Tooltip>
+                    }
+                  >
+                    <i className="fas fa-info-circle ms-2"></i>
+                  </OverlayTrigger>
+                </div>
                 <div className="row">
                   <div className="col-md-4 col-lg-4 title-relative">
                     <CreatableSelect

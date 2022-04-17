@@ -16,8 +16,10 @@ const adminEmail = process.env.ADMIN_EMAIL;
 const JWT_SECRET = process.env.JWT_SECRET;
 
 router.post("/orders", async (req, res) => {
-  let planId = req.body.planId;
-  const plan = await Plans.findOne({ plan_id: planId });
+  const planId = req.body.planId;
+  const annualBill = req.body.annualBill;
+
+  let plan = await Plans.findOne({ plan_id: planId });
 
   if (!plan || plan.price_inr === 0) {
     return res
@@ -31,7 +33,13 @@ router.post("/orders", async (req, res) => {
       key_secret: process.env.RAZORPAY_SECRET
     });
 
-    let planAmount = parseInt(plan.price_inr);
+    let planAmount = 0;
+
+    if (annualBill === 1) {
+      planAmount = parseInt(plan.annual_price_inr);
+    } else {
+      planAmount = parseInt(plan.price_inr);
+    }
     let cgst = (planAmount * 9) / 100;
     let sgst = (planAmount * 9) / 100;
     let totalAmount = planAmount + cgst + sgst;
@@ -47,7 +55,7 @@ router.post("/orders", async (req, res) => {
 
     res.json(order);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).json({ error: error });
   }
 });
 

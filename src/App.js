@@ -1,5 +1,9 @@
 import "./assets/style.css";
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { cockpitData } from "./states/action-creator";
+import axios from "axios";
+
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Routes } from "./routes";
 
@@ -24,6 +28,8 @@ import ResetPassword from "./components/Auth/ResetPassword";
 import Sequences from "./components/User/Sequences";
 import Templates from "./components/User/Templates";
 import CreateTemplate from "./components/User/CreateTemplate";
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 const RouteWithoutNavbar = ({ component: Component, ...rest }) => {
   return (
@@ -56,6 +62,33 @@ const RouteWithNavbar = ({ component: Component, ...rest }) => {
 };
 
 function App() {
+  const dispatch = useDispatch();
+
+  const initiateActivity = async () => {
+    await axios({
+      method: "GET",
+      url: `${API_URL}/api/user/activity`,
+      headers: {
+        "auth-token": localStorage.getItem("token"),
+        "Content-Type": "application/json"
+      }
+    })
+      .then(function (response) {
+        if (response.data.status === "success") {
+          dispatch(cockpitData({ unlocks: response.data.unlocks }));
+        } else {
+          console.log(response);
+        }
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+  };
+
+  // useEffect(() => {
+  //   initiateActivity();
+  // }, []);
+
   return (
     <>
       <Router>

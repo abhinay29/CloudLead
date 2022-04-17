@@ -63,7 +63,7 @@ module.exports = async (req, res) => {
       });
     }
 
-    let checkWatchlistCount = await Watchlist.count({ user: req.user.id });
+    // let checkWatchlistCount = await Watchlist.count({ user: req.user.id });
 
     let dailyUnlock = userData.dailyUnlock ? userData.dailyUnlock : 0;
     let monthlyUnlock = userData.monthlyUnlock ? userData.monthlyUnlock : 0;
@@ -77,7 +77,7 @@ module.exports = async (req, res) => {
       // }
       return res.status(200).json({
         status: "limit_reached",
-        msg: "Your daily unlock limit is reached, upgrade your plan or visit again tomorrow"
+        msg: "You have unlocked too many contacts too fast! You need to take a little break & try after some time."
       });
     }
 

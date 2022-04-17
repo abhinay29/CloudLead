@@ -1,44 +1,53 @@
 export const progressLoading = (progress) => {
   return (dispatch) => {
     dispatch({
-      type: 'loadingProgress',
+      type: "loadingProgress",
       payload: progress
-    })
-  }
-}
+    });
+  };
+};
 
 export const userInfo = (userData) => {
   return (dispatch) => {
     dispatch({
-      type: 'userData',
+      type: "userData",
       payload: userData
-    })
-  }
-}
+    });
+  };
+};
+
+export const cockpitData = (data) => {
+  return (dispatch) => {
+    dispatch({
+      type: "cockpitData",
+      payload: data
+    });
+  };
+};
 
 export const watchList = (watchListData) => {
   return (dispatch) => {
     dispatch({
-      type: 'watchList',
+      type: "watchList",
       payload: watchListData
-    })
-  }
-}
+    });
+  };
+};
 
 export const setPeopleSearchResults = (searchData) => {
   return (dispatch) => {
     dispatch({
-      type: 'peopleSearchResult',
+      type: "peopleSearchResult",
       payload: searchData
-    })
-  }
-}
+    });
+  };
+};
 
 export const setSequenceList = (listObj) => {
   return (dispatch) => {
     dispatch({
-      type: 'sequenceList',
+      type: "sequenceList",
       payload: listObj
-    })
-  }
-}
+    });
+  };
+};

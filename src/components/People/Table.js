@@ -49,6 +49,11 @@ const Table = (props) => {
   const [directDial, setDirectDial] = useState(0);
   const [backToResultStatus, setBackToResultStatus] = useState(false);
 
+  const [freezeData, setFreezeData] = useState({
+    search_name: "",
+    search_filter: ""
+  });
+
   if (showFilters === "yes") {
     // queryParams.delete("showFilters");
     window.history.replaceState({}, document.title, "/radar/peoples");
@@ -58,6 +63,7 @@ const Table = (props) => {
     setShowFilter(true);
     setShowTable(false);
     setPage(1);
+    setDisSaveBtn(false);
     dispatch(progressLoading(100));
     localStorage.removeItem("searchQuery");
   }
@@ -406,21 +412,84 @@ const Table = (props) => {
     searchPeople();
   };
 
+  const handleFreezeDataInput = (e) => {
+    setFreezeData({ ...freezeData, search_name: e.target.value });
+  };
+
+  const sendFreezeData = async (e) => {
+    e.preventDefault();
+
+    setFreezeData({
+      ...freezeData,
+      search_filter: JSON.parse(localStorage.getItem("currentQuery"))
+    });
+
+    let data = await fetch(`${API_URL}/api/user/freeze-data`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": localStorage.getItem("token")
+      },
+      body: JSON.stringify(freezeData)
+    });
+
+    if (!data) {
+      return toast.error("Something went wrong, please try again later.");
+    }
+    const res = await data.json();
+    if (res.status === "success") {
+      var btn = document.getElementById("freezeDataBoxBtn");
+      btn.click();
+      return toast.success(
+        "Data freezed successfully, you will recieved email with further information."
+      );
+    } else {
+      return toast.error(res.error);
+    }
+  };
+
+  const [freezeHistory, setFreezeHistory] = useState({
+    show: false,
+    data: []
+  });
+  const showFreezeHistory = async () => {
+    let data = await fetch(`${API_URL}/api/user/get-freeze-data`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": localStorage.getItem("token")
+      }
+    });
+
+    if (!data) {
+      return toast.error("Something went wrong, please try again later.");
+    }
+    const res = await data.json();
+    if (res.status === "success") {
+      setFreezeHistory({ ...freezeHistory, show: true, data: res.data });
+      openModal("freezeHistoryModal");
+    } else {
+      return toast.error(res.error);
+    }
+  };
+
   useEffect(() => {
     getSequenceList();
-    if (peopleSearchResults) {
-      if (peopleSearchResults.totalResults === 0) {
-        searchPeople();
+    if (showFilters !== "yes") {
+      if (peopleSearchResults) {
+        if (peopleSearchResults.totalResults === 0) {
+          searchPeople();
+        } else {
+          getPeoples(peopleSearchResults);
+          setTotalPeople(peopleSearchResults.totalResults);
+          setPage(peopleSearchResults.page);
+          setSelectAll(false);
+          setUniqueComp(peopleSearchResults.uniqueCompany);
+          setSkeletonLoading(false);
+        }
       } else {
-        getPeoples(peopleSearchResults);
-        setTotalPeople(peopleSearchResults.totalResults);
-        setPage(peopleSearchResults.page);
-        setSelectAll(false);
-        setUniqueComp(peopleSearchResults.uniqueCompany);
-        setSkeletonLoading(false);
+        searchPeople();
       }
-    } else {
-      searchPeople();
     }
     // eslint-disable-next-line
   }, []);
@@ -525,7 +594,7 @@ const Table = (props) => {
               <span className="dropdown">
                 <OverlayTrigger
                   placement="bottom"
-                  overlay={<Tooltip>Add to List</Tooltip>}
+                  overlay={<Tooltip>Add to List (For sequences)</Tooltip>}
                 >
                   <button
                     className="btn btn-sm btn-outline-primary"
@@ -598,27 +667,111 @@ const Table = (props) => {
             <button
               type="button"
               className="btn btn-sm btn-danger me-2"
-              title="Back to Search"
               onClick={backToSearch}
             >
               <i className="fas fa-search"></i> Back to Search
             </button>
-            <button
-              type="button"
-              className="btn btn-sm btn-success me-2"
-              onClick={() => {
-                getContacts();
-              }}
-              title="Get Contacts"
-            >
-              <i className="fas fa-envelope"></i> Get Email
-            </button>
-            <Link
-              to="/radar/people/watchlist"
-              className="btn btn-sm btn-warning me-2"
-            >
-              <i className="fas fa-bookmark"></i> My Watchlist
-            </Link>
+            {userState.plan_id !== 3 && (
+              <>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={<Tooltip>Bulk Selection</Tooltip>}
+                >
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-success me-2"
+                    onClick={() => {
+                      getContacts();
+                    }}
+                  >
+                    <i className="fas fa-envelope"></i> Get Email
+                  </button>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={
+                    <Tooltip>
+                      The contacts unlocked by you are moved to My watchlist for
+                      csv download and email sequences
+                    </Tooltip>
+                  }
+                >
+                  <Link
+                    to="/radar/people/watchlist"
+                    className="btn btn-sm btn-warning me-2"
+                  >
+                    <i className="fas fa-bookmark"></i> My Watchlist
+                  </Link>
+                </OverlayTrigger>
+              </>
+            )}
+
+            {userState.plan_id === 3 && (
+              <>
+                <span className="dropdown">
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={
+                      <Tooltip>
+                        Freeze search filter to request download
+                      </Tooltip>
+                    }
+                  >
+                    <button
+                      className="btn btn-sm btn-primary px-3"
+                      type="button"
+                      data-bs-auto-close="false"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                      id="freezeDataBoxBtn"
+                    >
+                      Freeze Data
+                    </button>
+                  </OverlayTrigger>
+                  <div
+                    className="dropdown-menu shadow p-3"
+                    aria-labelledby="addList"
+                  >
+                    <h5 className="text-center">Freeze Data</h5>
+                    <form action="" onSubmit={sendFreezeData}>
+                      <div className="mb-3">
+                        <label
+                          htmlFor="newListName"
+                          className="form-label small"
+                        >
+                          Search Name <span className="small">(Optional)</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="freeze-data-name"
+                          id="freeze-data-name"
+                          className="form-control"
+                          style={{ width: "260px" }}
+                          placeholder="Provide name for filter"
+                          maxLength="50"
+                          value={freezeData.search_name}
+                          onChange={handleFreezeDataInput}
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        className="btn btn-primary w-100"
+                        disabled={disAddBtn && "disabled"}
+                      >
+                        Freeze
+                      </button>
+                    </form>
+                  </div>
+                </span>
+                <button
+                  className="btn btn-sm btn-warning ms-2"
+                  onClick={() => showFreezeHistory()}
+                >
+                  Freeze History
+                </button>
+              </>
+            )}
+
             {backToResultStatus && (
               <button
                 type="button"
@@ -626,7 +779,6 @@ const Table = (props) => {
                 onClick={() => {
                   backToResult();
                 }}
-                title="Back to Result"
               >
                 <i className="fas fa-chevron-left"></i> Back to Result
               </button>
@@ -652,7 +804,7 @@ const Table = (props) => {
                           setSelectAll(e.target.checked);
                         }}
                         className="form-check-input mt-0 me-3"
-                        title="Select all rows"
+                        disabled={userState.plan_id === 3 ? true : false}
                       />
                       <span>Person's Name</span>
                     </div>
@@ -677,6 +829,7 @@ const Table = (props) => {
                     showCompanyInfo={getCompanyInfo}
                     selectAll={selectAll}
                     showAllContacts={showAllContacts}
+                    planId={userState.plan_id}
                   />
                 ) : (
                   <NoRecordFound />
@@ -786,6 +939,90 @@ const Table = (props) => {
                 className="btn btn-secondary"
                 onClick={() => {
                   closeModal("showCompany");
+                }}
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="modal fade"
+        id="freezeHistoryModal"
+        tabIndex="-1"
+        role="dialog"
+      >
+        <div
+          className="modal-dialog modal-lg modal-dialog-scrollable"
+          role="document"
+        >
+          <div className="modal-content shadow-lg">
+            <div className="modal-header">
+              <h5 className="modal-title">Freeze History</h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                onClick={() => closeModal("freezeHistoryModal")}
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              {freezeHistory.show === false ? (
+                <div className="p-5 text-center">Loading...</div>
+              ) : (
+                <>
+                  <table className="table freezeHistoryTable">
+                    <tbody>
+                      {freezeHistory.data.map((fh, count = 0) => {
+                        count++;
+                        return (
+                          <>
+                            <tr>
+                              <td className="border-0">{count}</td>
+                              <td className="border-0 fw-bold">
+                                {fh.search_name}
+                              </td>
+                              <td className="border-0"></td>
+                              <td className="border-0 text-end">{fh.date}</td>
+                            </tr>
+                            <tr>
+                              <td></td>
+                              <td colSpan="3">
+                                {fh.search_filter.city ? (
+                                  <div>
+                                    City: {String(fh.search_filter.city)}
+                                  </div>
+                                ) : (
+                                  ""
+                                )}
+                                {fh.search_filter.seniority_level ? (
+                                  <div>
+                                    Seniority:{" "}
+                                    {fh.search_filter.seniority_level}
+                                  </div>
+                                ) : (
+                                  ""
+                                )}
+                              </td>
+                            </tr>
+                          </>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </>
+              )}
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => {
+                  closeModal("freezeHistoryModal");
                 }}
                 data-bs-dismiss="modal"
               >

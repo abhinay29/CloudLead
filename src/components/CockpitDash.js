@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios";
-import { userInfo } from "../states/action-creator";
+import { userInfo, cockpitData } from "../states/action-creator";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const CockpitDash = () => {
   const userState = useSelector((state) => state.setUserData);
+  const dashboard = useSelector((state) => state.CockpitData);
   const [showGuide, setShowGuide] = useState(true);
   const dispatch = useDispatch();
 
@@ -24,6 +25,27 @@ const CockpitDash = () => {
         if (response.data.status === "success") {
           dispatch(userInfo(response.data.userdata));
           localStorage.removeItem("searchQuery");
+        } else {
+          console.log(response);
+        }
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+  };
+
+  const initiateActivity = async () => {
+    await axios({
+      method: "GET",
+      url: `${API_URL}/api/user/activity`,
+      headers: {
+        "auth-token": localStorage.getItem("token"),
+        "Content-Type": "application/json"
+      }
+    })
+      .then(function (response) {
+        if (response.data.status === "success") {
+          dispatch(cockpitData(response.data));
         } else {
           console.log(response);
         }
@@ -63,6 +85,7 @@ const CockpitDash = () => {
 
   useEffect(() => {
     setShowGuide(userState.showGuide);
+    initiateActivity();
   }, []);
 
   return (
@@ -100,6 +123,7 @@ const CockpitDash = () => {
                   <div>
                     <h5 className="text-dark-50 mb-5">Contact Unlocked</h5>
                     <h1 className="text-dark">
+                      {/* {dashboard.unlocks ? dashboard.unlocks : 0} */}
                       {userState.dailyUnlock ? userState.dailyUnlock : 0}
                     </h1>
                   </div>

@@ -33,8 +33,8 @@ const UserSchema = new Schema({
     default: null
   },
   plan_id: {
-    type: String,
-    default: null
+    type: Number,
+    default: 0
   },
   status: {
     type: Number,
@@ -68,8 +68,7 @@ const UserSchema = new Schema({
   },
   token: {
     type: String,
-    default: null,
-    unique: true
+    default: null
   },
   loginHistory: {
     type: Array
@@ -93,6 +92,9 @@ const UserSchema = new Schema({
   showGuide: {
     type: Boolean,
     default: true
+  },
+  unlockHistory: {
+    type: Array
   }
 });
 const User = mongoose.model("users", UserSchema);

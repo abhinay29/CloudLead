@@ -10,18 +10,20 @@ import {
 } from "../Data/data";
 import { industryGrpOpt } from "../Data/industries";
 import { countryGroup } from "../Data/countries";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   progressLoading,
   setPeopleSearchResults
 } from "../../states/action-creator";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const Filter = (props) => {
   // const loadingState = useSelector(state => state.reducer)
+  const userState = useSelector((state) => state.setUserData);
   const dispatch = useDispatch();
 
   const context = useContext(PeopleContext);
@@ -866,6 +868,52 @@ const Filter = (props) => {
     })
   ];
 
+  const [freezeHistory, setFreezeHistory] = useState({
+    show: false,
+    data: []
+  });
+  const showFreezeHistory = async (e) => {
+    let data = await fetch(`${API_URL}/api/user/get-freeze-data`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": localStorage.getItem("token")
+      }
+    });
+
+    if (!data) {
+      return toast.error("Something went wrong, please try again later.");
+    }
+    const res = await data.json();
+    if (res.status === "success") {
+      setFreezeHistory({ ...freezeHistory, show: true, data: res.data });
+      openModal("freezeHistoryModal");
+    } else {
+      return toast.error(res.error);
+    }
+  };
+
+  const openModal = (modalId) => {
+    document.body.classList.add("modal-open");
+    document.body.style.overflow = "hidden";
+    var modal = document.getElementById(modalId);
+    modal.classList.add("show");
+    modal.style.display = "block";
+    let modalBackdrop = document.getElementById("modal-backdrop");
+    modalBackdrop.style.display = "block";
+  };
+
+  const closeModal = (modalId) => {
+    document.body.classList.remove("modal-open");
+    document.body.style.overflow = "visible";
+    document.body.style.padding = "0";
+    var modal = document.getElementById(modalId);
+    modal.classList.remove("show");
+    modal.style.display = "none";
+    let modalBackdrop = document.getElementById("modal-backdrop");
+    modalBackdrop.style.display = "none";
+  };
+
   return (
     <>
       <div
@@ -918,7 +966,13 @@ const Filter = (props) => {
                 </div>
 
                 <div className="d-flex selectAllCheckbox align-items-center mb-2">
-                  <h6 className="fw-bold me-3 mb-0">Search By Company Type</h6>
+                  <h6 className="fw-bold me-2 mb-0">Search By Company Type</h6>
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={<Tooltip>Applies only for India</Tooltip>}
+                  >
+                    <i className="fas fa-info-circle me-2"></i>
+                  </OverlayTrigger>
                   <span>Select</span>{" "}
                   <span
                     className="selectBtn"
@@ -953,6 +1007,17 @@ const Filter = (props) => {
                         htmlFor="indias-top-1000"
                       >
                         India's Top 1000
+                        <OverlayTrigger
+                          placement="bottom"
+                          overlay={
+                            <Tooltip>
+                              Companies with highest turnover/employee head
+                              count/brand equity etc.
+                            </Tooltip>
+                          }
+                        >
+                          <i className="fas fa-info-circle ms-2"></i>
+                        </OverlayTrigger>
                       </label>
                     </div>
                   </div>
@@ -967,6 +1032,16 @@ const Filter = (props) => {
                       />
                       <label className="form-check-label" htmlFor="mnc">
                         MNC
+                        <OverlayTrigger
+                          placement="bottom"
+                          overlay={
+                            <Tooltip>
+                              Overseas companies having presence in India
+                            </Tooltip>
+                          }
+                        >
+                          <i className="fas fa-info-circle ms-2"></i>
+                        </OverlayTrigger>
                       </label>
                     </div>
                   </div>
@@ -984,6 +1059,17 @@ const Filter = (props) => {
                         htmlFor="industry-top"
                       >
                         Industry Leaders
+                        <OverlayTrigger
+                          placement="bottom"
+                          overlay={
+                            <Tooltip>
+                              Best companies according to our research in each
+                              sector
+                            </Tooltip>
+                          }
+                        >
+                          <i className="fas fa-info-circle ms-2"></i>
+                        </OverlayTrigger>
                       </label>
                     </div>
                   </div>
@@ -1000,6 +1086,17 @@ const Filter = (props) => {
                       />
                       <label className="form-check-label" htmlFor="smes">
                         SMEs/MSMEs
+                        <OverlayTrigger
+                          placement="bottom"
+                          overlay={
+                            <Tooltip>
+                              Mostly Companies with less than 20 Cr turn over
+                              (Product), &amp; 5 Cr turnover (Services)
+                            </Tooltip>
+                          }
+                        >
+                          <i className="fas fa-info-circle ms-2"></i>
+                        </OverlayTrigger>
                       </label>
                     </div>
                   </div>
@@ -1014,6 +1111,18 @@ const Filter = (props) => {
                       />
                       <label className="form-check-label" htmlFor="startups">
                         Startups
+                        <OverlayTrigger
+                          placement="bottom"
+                          overlay={
+                            <Tooltip>
+                              New, Young organizations, generally on tech
+                              /E-commerce platform belonging to any industry
+                              sector
+                            </Tooltip>
+                          }
+                        >
+                          <i className="fas fa-info-circle ms-2"></i>
+                        </OverlayTrigger>
                       </label>
                     </div>
                   </div>
@@ -1445,7 +1554,19 @@ const Filter = (props) => {
                   </div>
                 </div>
 
-                <h6 className="fw-bold">Search by Title</h6>
+                <div className="d-flex">
+                  <h6 className="fw-bold">Search by Title</h6>
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={
+                      <Tooltip>
+                        You can enter any title. Exact match is not required
+                      </Tooltip>
+                    }
+                  >
+                    <i className="fas fa-info-circle ms-2"></i>
+                  </OverlayTrigger>
+                </div>
                 <div className="row mb-3">
                   <div className="col-md-4 col-lg-4">
                     <CreatableSelect
@@ -1524,6 +1645,7 @@ const Filter = (props) => {
                       isMulti
                       className="basic-multi-select"
                       placeholder="Company Name"
+                      createOptionPosition="first"
                     />
                     <p style={{ fontSize: "12px" }} className="mb-0 mt-1">
                       Use tab/enter for multi selection.
@@ -1602,7 +1724,20 @@ const Filter = (props) => {
                   </div>
                 </div>
 
-                <h6 className="fw-bold">Search by Website & Keywords</h6>
+                <div className="d-flex">
+                  <h6 className="fw-bold">Search by Website & Keywords</h6>
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={
+                      <Tooltip>
+                        Please enter a specific product/service/solution you
+                        wish to search.
+                      </Tooltip>
+                    }
+                  >
+                    <i className="fas fa-info-circle ms-2"></i>
+                  </OverlayTrigger>
+                </div>
                 <div className="row">
                   <div className="col-md-4 col-lg-4 title-relative">
                     <CreatableSelect
@@ -1668,7 +1803,7 @@ const Filter = (props) => {
                 <span className="dropup">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-success"
                     id="savedSearchBtn"
                     data-bs-auto-close="false"
                     data-bs-toggle="dropdown"
@@ -1703,17 +1838,127 @@ const Filter = (props) => {
                     </div> */}
                   </div>
                 </span>
-                <Link
-                  to="/radar/people/watchlist"
-                  className="btn btn-primary d-flex align-items-center ms-3"
-                >
-                  <i className="fas fa-bookmark me-2"></i> My Watchlist
-                </Link>
+                {userState.plan_id === 3 ? (
+                  <button
+                    type="button"
+                    className="btn btn-warning ms-3"
+                    onClick={() => showFreezeHistory()}
+                  >
+                    Freeze History
+                  </button>
+                ) : (
+                  <OverlayTrigger
+                    placement="top"
+                    overlay={
+                      <Tooltip>
+                        The contacts unlocked by you are moved to My watchlist
+                        for csv download and email sequences.
+                      </Tooltip>
+                    }
+                  >
+                    <Link
+                      to="/radar/people/watchlist"
+                      className="btn btn-success d-flex align-items-center ms-3"
+                    >
+                      <i className="fas fa-bookmark me-2"></i> My Watchlist
+                    </Link>
+                  </OverlayTrigger>
+                )}
               </div>
             </form>
           </div>
         </div>
       </div>
+
+      <div
+        className="modal fade"
+        id="freezeHistoryModal"
+        tabIndex="-1"
+        role="dialog"
+      >
+        <div
+          className="modal-dialog modal-lg modal-dialog-scrollable"
+          role="document"
+        >
+          <div className="modal-content shadow-lg">
+            <div className="modal-header">
+              <h5 className="modal-title">Freeze History</h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                onClick={() => closeModal("freezeHistoryModal")}
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              {freezeHistory.show === false ? (
+                <div className="p-5 text-center">Loading...</div>
+              ) : (
+                <>
+                  <table className="table freezeHistoryTable">
+                    <tbody>
+                      {freezeHistory.data.map((fh, count = 0) => {
+                        count++;
+                        return (
+                          <>
+                            <tr>
+                              <td className="border-0">{count}</td>
+                              <td className="border-0 fw-bold">
+                                {fh.search_name}
+                              </td>
+                              <td className="border-0"></td>
+                              <td className="border-0 text-end">{fh.date}</td>
+                            </tr>
+                            <tr>
+                              <td></td>
+                              <td colSpan="3">
+                                {fh.search_filter.city ? (
+                                  <div>
+                                    City: {String(fh.search_filter.city)}
+                                  </div>
+                                ) : (
+                                  ""
+                                )}
+                                {fh.search_filter.seniority_level ? (
+                                  <div>
+                                    Seniority:{" "}
+                                    {fh.search_filter.seniority_level}
+                                  </div>
+                                ) : (
+                                  ""
+                                )}
+                              </td>
+                            </tr>
+                          </>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </>
+              )}
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => {
+                  closeModal("freezeHistoryModal");
+                }}
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="modal-backdrop"
+        id="modal-backdrop"
+        style={{ display: "none", opacity: ".5" }}
+      ></div>
     </>
   );
 };

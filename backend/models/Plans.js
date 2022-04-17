@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const PlansDB = new Schema({
   plan_id: {
     type: Number,
-    required: true,
+    required: true
   },
   name: {
     type: String,
@@ -49,9 +49,13 @@ const PlansDB = new Schema({
   price_usd: {
     type: Number,
     required: true
+  },
+  annual_price_inr: {
+    type: Number,
+    required: true
   }
 });
 
-const Plans = mongoose.model('plans', PlansDB);
+const Plans = mongoose.model("plans", PlansDB);
 
 module.exports = Plans;
