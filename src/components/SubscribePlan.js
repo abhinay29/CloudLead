@@ -58,7 +58,7 @@ function SubscribePlan() {
     let Plan = await fetch(`${API_URL}/api/plans/${pid}`);
     let res = await Plan.json();
     setSelectedPlan(res);
-    if (pid === 1) {
+    if (pid === 1 || pid === 3) {
       return openModal("tosModal");
     }
     openModal("billingInformation");
@@ -186,7 +186,7 @@ function SubscribePlan() {
 
     const result = await axios.post(`${API_URL}/api/payment/orders`, {
       planId: selectedPlan.plan_id,
-      annualBill: annualBill ? 1 : 0
+      annualBill: 1
     });
 
     if (!result) {
@@ -200,13 +200,11 @@ function SubscribePlan() {
       key: "rzp_test_SqK219lnN6lSiA",
       amount: amount.toString(),
       currency: currency,
-      name: "TB.net",
+      name: "cloudlead.AI",
       description: "Transaction for " + selectedPlan.name,
-      image: "/logo.png",
+      image: "/cl_logo_192x192.png",
       order_id: order_id,
       handler: async function (response) {
-        console.log(response);
-
         const data = {
           name: uname,
           email: uemail,
@@ -284,12 +282,12 @@ function SubscribePlan() {
                 <th className="feature-name"></th>
                 <th className="feature-name"></th>
                 <th className="feature-name ps-5">
-                  <Form.Check
+                  {/* <Form.Check
                     type="switch"
                     id="custom-switch"
                     label="Monthly/Annually"
                     onChange={() => setAnnualBill(!annualBill)}
-                  />
+                  /> */}
                   <Form.Check
                     type="switch"
                     id="disabled-custom-switch"
@@ -306,7 +304,8 @@ function SubscribePlan() {
                   <h6 className="fw-bold mb-3">
                     {usd ? "USD 72" : "INR 5500 + GST"} <br />
                     (per user, per month) <br />
-                    {annualBill ? "Billed Annually" : "Billed Monthly"}
+                    {/* {annualBill ? "Billed Annually" : "Billed Monthly"} */}
+                    Billed Annually
                   </h6>
                   Basic
                 </th>
@@ -567,7 +566,7 @@ function SubscribePlan() {
                   type="button"
                   className="btn btn-primary"
                   onClick={
-                    selectedPlan.plan_id === 1
+                    selectedPlan.plan_id === 1 || selectedPlan.plan_id === 3
                       ? handleSubscribePlan
                       : acceptTerms
                   }
@@ -907,16 +906,17 @@ function SubscribePlan() {
                       </h6>
                     </td>
                     <td className="text-end">
-                      ₹{" "}
-                      {annualBill
+                      ₹ {selectedPlan.annual_price_inr}
+                      {/* {annualBill
                         ? selectedPlan.annual_price_inr
-                        : selectedPlan.price_inr}
+                        : selectedPlan.price_inr} */}
                     </td>
                   </tr>
                   <tr className="border-bottom">
                     <td colSpan="2" style={{ width: "70%" }}>
                       <ul>
-                        <li>1 {annualBill ? "Year" : "Month"}</li>
+                        {/* <li>1 {annualBill ? "Year" : "Month"}</li> */}
+                        <li>1 Year</li>
                         <li>{selectedPlan.unlock_daily} Daily Unlock</li>
                         <li>{selectedPlan.unlock_month} Monthly Unlock</li>
                         <li>{selectedPlan.download} Downloads</li>
@@ -928,10 +928,10 @@ function SubscribePlan() {
                       <h6 className="mb-0 fw-bold">SUBTOTAL</h6>
                     </td>
                     <td className="text-end fw-bold">
-                      ₹{" "}
-                      {annualBill
+                      ₹ {selectedPlan.annual_price_inr}
+                      {/* {annualBill
                         ? selectedPlan.annual_price_inr
-                        : selectedPlan.price_inr}
+                        : selectedPlan.price_inr} */}
                     </td>
                   </tr>
                   <tr>
@@ -939,10 +939,10 @@ function SubscribePlan() {
                       <h6 className="mb-0">CGST 9%</h6>
                     </td>
                     <td className="text-end">
-                      ₹{" "}
-                      {annualBill
+                      ₹ {(selectedPlan.annual_price_inr * 9) / 100}
+                      {/* {annualBill
                         ? (selectedPlan.annual_price_inr * 9) / 100
-                        : (selectedPlan.price_inr * 9) / 100}
+                        : (selectedPlan.price_inr * 9) / 100} */}
                     </td>
                   </tr>
                   <tr>
@@ -950,10 +950,10 @@ function SubscribePlan() {
                       <h6 className="mb-0">SGST 9%</h6>
                     </td>
                     <td className="text-end">
-                      ₹{" "}
-                      {annualBill
+                      ₹ {(selectedPlan.annual_price_inr * 9) / 100}
+                      {/* {annualBill
                         ? (selectedPlan.annual_price_inr * 9) / 100
-                        : (selectedPlan.price_inr * 9) / 100}
+                        : (selectedPlan.price_inr * 9) / 100} */}
                     </td>
                   </tr>
                   <tr className="border-top">
@@ -962,11 +962,13 @@ function SubscribePlan() {
                     </td>
                     <td className="text-end text-primary fw-bold">
                       ₹{" "}
-                      {annualBill
+                      {parseInt(selectedPlan.annual_price_inr) +
+                        ((selectedPlan.annual_price_inr * 9) / 100) * 2}
+                      {/* {annualBill
                         ? parseInt(selectedPlan.annual_price_inr) +
                           ((selectedPlan.annual_price_inr * 9) / 100) * 2
                         : selectedPlan.price_inr +
-                          ((selectedPlan.price_inr * 9) / 100) * 2}
+                          ((selectedPlan.price_inr * 9) / 100) * 2} */}
                     </td>
                   </tr>
                 </tbody>

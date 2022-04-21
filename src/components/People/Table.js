@@ -17,6 +17,7 @@ import NoRecordFound from "./NoRecordFound";
 import Select from "react-select";
 import axios from "axios";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import FreezeHistoryTable from "./FreezeHistoryTable";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -424,7 +425,7 @@ const Table = (props) => {
       search_filter: JSON.parse(localStorage.getItem("currentQuery"))
     });
 
-    let data = await fetch(`${API_URL}/api/user/freeze-data`, {
+    let data = await fetch(`${API_URL}/api/user/add-to-freeze-list`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -467,7 +468,7 @@ const Table = (props) => {
     const res = await data.json();
     if (res.status === "success") {
       setFreezeHistory({ ...freezeHistory, show: true, data: res.data });
-      openModal("freezeHistoryModal");
+      openModal("freezeHistoryModalTable");
     } else {
       return toast.error(res.error);
     }
@@ -713,7 +714,7 @@ const Table = (props) => {
                     placement="bottom"
                     overlay={
                       <Tooltip>
-                        Freeze search filter to request download
+                        Add current search filter into freeze list.
                       </Tooltip>
                     }
                   >
@@ -725,10 +726,10 @@ const Table = (props) => {
                       aria-expanded="false"
                       id="freezeDataBoxBtn"
                     >
-                      Freeze Data
+                      Add to Freeze List
                     </button>
                   </OverlayTrigger>
-                  <div
+                  {/* <div
                     className="dropdown-menu shadow p-3"
                     aria-labelledby="addList"
                   >
@@ -761,9 +762,17 @@ const Table = (props) => {
                         Freeze
                       </button>
                     </form>
-                  </div>
+                  </div> */}
                 </span>
                 <button
+                  className="btn btn-sm btn-success px-3 ms-2"
+                  type="button"
+                  aria-expanded="false"
+                >
+                  Freeze List
+                </button>
+                <button
+                  type="button"
                   className="btn btn-sm btn-warning ms-2"
                   onClick={() => showFreezeHistory()}
                 >
@@ -951,7 +960,7 @@ const Table = (props) => {
 
       <div
         className="modal fade"
-        id="freezeHistoryModal"
+        id="freezeHistoryModalTable"
         tabIndex="-1"
         role="dialog"
       >
@@ -966,7 +975,7 @@ const Table = (props) => {
                 type="button"
                 className="btn-close"
                 data-bs-dismiss="modal"
-                onClick={() => closeModal("freezeHistoryModal")}
+                onClick={() => closeModal("freezeHistoryModalTable")}
                 aria-label="Close"
               ></button>
             </div>
@@ -974,47 +983,7 @@ const Table = (props) => {
               {freezeHistory.show === false ? (
                 <div className="p-5 text-center">Loading...</div>
               ) : (
-                <>
-                  <table className="table freezeHistoryTable">
-                    <tbody>
-                      {freezeHistory.data.map((fh, count = 0) => {
-                        count++;
-                        return (
-                          <>
-                            <tr>
-                              <td className="border-0">{count}</td>
-                              <td className="border-0 fw-bold">
-                                {fh.search_name}
-                              </td>
-                              <td className="border-0"></td>
-                              <td className="border-0 text-end">{fh.date}</td>
-                            </tr>
-                            <tr>
-                              <td></td>
-                              <td colSpan="3">
-                                {fh.search_filter.city ? (
-                                  <div>
-                                    City: {String(fh.search_filter.city)}
-                                  </div>
-                                ) : (
-                                  ""
-                                )}
-                                {fh.search_filter.seniority_level ? (
-                                  <div>
-                                    Seniority:{" "}
-                                    {fh.search_filter.seniority_level}
-                                  </div>
-                                ) : (
-                                  ""
-                                )}
-                              </td>
-                            </tr>
-                          </>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </>
+                <FreezeHistoryTable freezeHistory={freezeHistory} />
               )}
             </div>
             <div className="modal-footer">
@@ -1022,7 +991,7 @@ const Table = (props) => {
                 type="button"
                 className="btn btn-secondary"
                 onClick={() => {
-                  closeModal("freezeHistoryModal");
+                  closeModal("freezeHistoryModalTable");
                 }}
                 data-bs-dismiss="modal"
               >

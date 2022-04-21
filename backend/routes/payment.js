@@ -148,7 +148,7 @@ router.post("/success", fetchuser, async (req, res) => {
               marginRight: 25,
               marginLeft: 25,
               marginBottom: 25,
-              logo: "https://app.cloudlead.ai/cl_logo.png",
+              logo: "https://app.cloudlead.ai/cl_logo_192x192.png",
               // "background": "https://public.easyinvoice.cloud/img/watermark-draft.jpg", //or base64 //img or pdf
               sender: {
                 company: "Cloudlead",
@@ -174,7 +174,7 @@ router.post("/success", fetchuser, async (req, res) => {
               invoiceDate: date,
               products: [
                 {
-                  quantity: "1",
+                  quantity: "12",
                   description: plan.name,
                   tax: 18,
                   price: plan.price_inr
@@ -248,7 +248,7 @@ router.post("/invoice", fetchuser, async (req, res) => {
     marginRight: 25,
     marginLeft: 25,
     marginBottom: 25,
-    logo: "https://app.cloudlead.ai/cl_logo.png",
+    logo: "https://app.cloudlead.ai/cl_logo_192x192.png",
     // "background": "https://public.easyinvoice.cloud/img/watermark-draft.jpg", //or base64 //img or pdf
     sender: {
       company: "Cloudlead",

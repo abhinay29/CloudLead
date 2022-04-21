@@ -571,7 +571,7 @@ router.post("/changepassword", fetchuser, async (req, res) => {
 router.post("/update/smtp", fetchuser, EmailSetup);
 router.post("/guide-status", fetchuser, GuideStatus);
 router.get("/activity", fetchuser, Activity);
-router.post("/freeze-data", fetchuser, FreezeData);
+router.post("/add-to-freeze-list", fetchuser, FreezeData);
 router.get("/get-freeze-data", fetchuser, GetFreezeData);
 
 module.exports = router;

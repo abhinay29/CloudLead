@@ -50,7 +50,7 @@ function Billing() {
     fetchTransactions();
     fetchPlanDetails();
     // eslint-disable-next-line
-  }, []);
+  }, [userState]);
 
   useEffect(() => {
     if (userState.billing_info) {
@@ -407,7 +407,9 @@ function Billing() {
                                     Net Amount
                                   </td>
                                   <td className="fw-bold h6 text-end border-bottom py-3">
-                                    ₹ {plan.price_inr}
+                                    {plan.price_inr
+                                      ? `₹ ${plan.price_inr}`
+                                      : "--"}
                                   </td>
                                 </tr>
                                 <tr>
@@ -415,7 +417,9 @@ function Billing() {
                                     Total Amount
                                   </td>
                                   <td className="fw-bold h6 text-end py-3">
-                                    ₹ {plan.price_inr}
+                                    {plan.price_inr
+                                      ? `₹ ${plan.price_inr}`
+                                      : "--"}
                                   </td>
                                 </tr>
                               </tbody>
@@ -701,6 +705,7 @@ function Billing() {
           </div>
         </div>
       </div>
+
       <div
         className="modal-backdrop"
         id="modal-backdrop"

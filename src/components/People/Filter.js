@@ -18,6 +18,7 @@ import {
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import FreezeHistoryTable from "./FreezeHistoryTable";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -1895,47 +1896,7 @@ const Filter = (props) => {
               {freezeHistory.show === false ? (
                 <div className="p-5 text-center">Loading...</div>
               ) : (
-                <>
-                  <table className="table freezeHistoryTable">
-                    <tbody>
-                      {freezeHistory.data.map((fh, count = 0) => {
-                        count++;
-                        return (
-                          <>
-                            <tr>
-                              <td className="border-0">{count}</td>
-                              <td className="border-0 fw-bold">
-                                {fh.search_name}
-                              </td>
-                              <td className="border-0"></td>
-                              <td className="border-0 text-end">{fh.date}</td>
-                            </tr>
-                            <tr>
-                              <td></td>
-                              <td colSpan="3">
-                                {fh.search_filter.city ? (
-                                  <div>
-                                    City: {String(fh.search_filter.city)}
-                                  </div>
-                                ) : (
-                                  ""
-                                )}
-                                {fh.search_filter.seniority_level ? (
-                                  <div>
-                                    Seniority:{" "}
-                                    {fh.search_filter.seniority_level}
-                                  </div>
-                                ) : (
-                                  ""
-                                )}
-                              </td>
-                            </tr>
-                          </>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </>
+                <FreezeHistoryTable freezeHistory={freezeHistory} />
               )}
             </div>
             <div className="modal-footer">

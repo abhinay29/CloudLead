@@ -3,6 +3,8 @@ const Contacts = require("../../models/Contacts");
 const Watchlist = require("../../models/Watchlist");
 
 module.exports = async (req, res) => {
+  var start = new Date();
+
   if (
     req.query.first_name ||
     req.query.last_name ||
@@ -75,7 +77,7 @@ module.exports = async (req, res) => {
   }
 
   if (req.query.company_type && req.query.company_type !== "") {
-    newQuery["organization.company_type"] = new Fields(
+    newQuery["organization.organization_type"] = new Fields(
       req.query.company_type
     ).create();
   }
@@ -194,20 +196,25 @@ module.exports = async (req, res) => {
 
   console.log(newQuery);
 
+  var end = new Date() - start;
+  console.log("Time taken - query processing : ", end);
+
   try {
     const features = new APIfeatures(
-      Contacts.find().select([
-        "_id",
-        "company_id",
-        "first_name",
-        "last_name",
-        "title",
-        "country",
-        "city",
-        "linkedin_id",
-        "direct_dial",
-        "organization"
-      ]),
+      Contacts.find()
+        .select([
+          "_id",
+          "company_id",
+          "first_name",
+          "last_name",
+          "title",
+          "country",
+          "city",
+          "linkedin_id",
+          "direct_dial",
+          "organization"
+        ])
+        .allowDiskUse(),
       newQuery
     )
       .filtering()
@@ -215,15 +222,23 @@ module.exports = async (req, res) => {
       .paginating();
 
     const contacts = await features.query;
+    var end = new Date() - start;
+    console.log("Time taken - find query run: ", end);
     // const totalContacts = await Contacts.count({});
     const totalResults = await Contacts.count(newQuery);
+
     const uniqueComp = await Contacts.find(newQuery).distinct("company_id");
+    var end = new Date() - start;
+    console.log("Time taken - distinct: ", end);
     newQuery.direct_dial = "available";
     const directDial = await Contacts.count(newQuery);
     // let reqLimit = 50;
     // if (req.query.limit) {
     //   reqLimit = parseInt(req.query.limit);
     // }
+
+    var end = new Date() - start;
+    console.log("Time taken - count & unique comp & directDial Count: ", end);
 
     async function getEmail(cid) {
       let checkWatchlist = await Watchlist.findOne({
@@ -249,16 +264,22 @@ module.exports = async (req, res) => {
       var temp = JSON.parse(JSON.stringify(contact));
       temp.unlocked_email = await getEmail(contact._id);
       // temp.company = await getCompany(contact.company_id);
-      if (!contact.organization.organization_name) {
-        contact.organization.organization_name = " ";
-      }
+      // if (!contact.organization.organization_name) {
+      //   contact.organization.organization_name = " ";
+      // }
       Conts.push(temp);
     });
 
     await Promise.all(checkUnlock);
 
+    var end = new Date() - start;
+    console.log("Time taken - checkUnlock : ", end);
+
+    // console.log(Conts);
+
     res.status(200).json({
       status: "success",
+      time: `It took ${end}ms`,
       // total: totalContacts,
       totalResults: totalResults,
       directDial: directDial,
