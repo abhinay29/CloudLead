@@ -18,6 +18,6 @@ module.exports = async (req, res) => {
       unlocks: activityData.unlocks
     });
   } catch (err) {
-    return res.status(500).json({ status: "Error", error: err });
+    return res.status(200).json({ status: "Error", error: err });
   }
 };

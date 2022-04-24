@@ -21,6 +21,7 @@ const GuideStatus = require("./UserData/GuideStatus");
 const Activity = require("./UserData/Activity");
 const FreezeData = require("./UserData/FreezeData");
 const GetFreezeData = require("./UserData/GetFreezedData");
+const RemoveFreezeData = require("./UserData/RemoveFreezeData");
 
 const adminEmail = process.env.ADMIN_EMAIL;
 
@@ -92,7 +93,6 @@ router.post("/savesearch", fetchuser, async (req, res) => {
 
       res.status(200).json({ status: "success" });
     } catch {
-      console.log("Create");
       let CreateSearch = await savedSearch.create({
         userId: user_id,
         data: [
@@ -148,7 +148,6 @@ router.post("/savecompanysearch", fetchuser, async (req, res) => {
 
       res.status(200).json({ status: "success" });
     } catch {
-      console.log("Create");
       let CreateSearch = await savedCompanySearch.create({
         userId: user_id,
         data: [
@@ -573,5 +572,6 @@ router.post("/guide-status", fetchuser, GuideStatus);
 router.get("/activity", fetchuser, Activity);
 router.post("/add-to-freeze-list", fetchuser, FreezeData);
 router.get("/get-freeze-data", fetchuser, GetFreezeData);
+router.post("/delete-freezelist", fetchuser, RemoveFreezeData);
 
 module.exports = router;

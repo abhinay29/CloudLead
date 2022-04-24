@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
+import { userInfo } from "../../states/action-creator";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 function SettingsEmailSetup() {
+  const dispatch = useDispatch();
   const userState = useSelector((state) => state.setUserData);
   const [formData, setFormData] = useState({
     smtp_host: "",
@@ -33,9 +36,32 @@ function SettingsEmailSetup() {
     let parsedData = await data.json();
     if (parsedData.status === "success") {
       toast.success(parsedData.message);
+      initiateUserInfo();
     } else {
       toast.error(parsedData.error);
     }
+  };
+
+  const initiateUserInfo = async () => {
+    await axios({
+      method: "GET",
+      url: `${API_URL}/api/auth/getuser`,
+      headers: {
+        "auth-token": localStorage.getItem("token"),
+        "Content-Type": "application/json"
+      }
+    })
+      .then(function (response) {
+        if (response.data.status === "success") {
+          dispatch(userInfo(response.data.userdata));
+          localStorage.removeItem("searchQuery");
+        } else {
+          console.log(response);
+        }
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
   };
 
   useEffect(() => {

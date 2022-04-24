@@ -7,18 +7,30 @@ const FreezeDataSchema = new Schema({
     ref: "users",
     required: true
   },
+  search_id: {
+    type: String,
+    default: null
+  },
   search_name: {
     type: String,
     default: null
   },
-  search_filter: {
+  search_details: {
     type: Object,
     default: {}
+  },
+  email_count: {
+    type: Number,
+    default: 0
+  },
+  directDial_count: {
+    type: Number,
+    default: 0
   },
   date: {
     type: Date,
     default: Date.now()
   }
 });
-const FreezedData = mongoose.model("freezed_data", FreezeDataSchema);
+const FreezedData = mongoose.model("freeze_list", FreezeDataSchema);
 module.exports = FreezedData;

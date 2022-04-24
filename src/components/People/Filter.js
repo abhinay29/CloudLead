@@ -17,7 +17,7 @@ import {
 } from "../../states/action-creator";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { OverlayTrigger, Tooltip, Popover } from "react-bootstrap";
 import FreezeHistoryTable from "./FreezeHistoryTable";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -46,6 +46,8 @@ const Filter = (props) => {
   const [cities, setCities] = useState([]);
   const [states, setStates] = useState([]);
   const [companySuggestions, setCompanySuggestions] = useState([]);
+
+  const backToSearch = () => {};
 
   const handleDepartment = (e) => {
     if (!e.target.checked) {
@@ -873,7 +875,7 @@ const Filter = (props) => {
     show: false,
     data: []
   });
-  const showFreezeHistory = async (e) => {
+  const getFreezeHistory = async () => {
     let data = await fetch(`${API_URL}/api/user/get-freeze-data`, {
       method: "GET",
       headers: {
@@ -888,10 +890,15 @@ const Filter = (props) => {
     const res = await data.json();
     if (res.status === "success") {
       setFreezeHistory({ ...freezeHistory, show: true, data: res.data });
-      openModal("freezeHistoryModal");
+      return true;
     } else {
-      return toast.error(res.error);
+      toast.error(res.error);
+      return false;
     }
+  };
+  const showFreezeHistory = () => {
+    getFreezeHistory();
+    openModal("freezeHistoryModal");
   };
 
   const openModal = (modalId) => {
@@ -1845,7 +1852,7 @@ const Filter = (props) => {
                     className="btn btn-warning ms-3"
                     onClick={() => showFreezeHistory()}
                   >
-                    Freeze History
+                    My Freezes
                   </button>
                 ) : (
                   <OverlayTrigger
@@ -1859,7 +1866,7 @@ const Filter = (props) => {
                   >
                     <Link
                       to="/radar/people/watchlist"
-                      className="btn btn-success d-flex align-items-center ms-3"
+                      className="btn btn-warning d-flex align-items-center ms-3"
                     >
                       <i className="fas fa-bookmark me-2"></i> My Watchlist
                     </Link>
@@ -1878,12 +1885,62 @@ const Filter = (props) => {
         role="dialog"
       >
         <div
-          className="modal-dialog modal-lg modal-dialog-scrollable"
+          className="modal-dialog modal-xl modal-dialog-scrollable"
           role="document"
         >
           <div className="modal-content shadow-lg">
             <div className="modal-header">
               <h5 className="modal-title">Freeze History</h5>
+              <OverlayTrigger
+                trigger={["hover", "focus"]}
+                key="bottom"
+                placement="bottom"
+                className="shadow max-w-440"
+                overlay={
+                  <Popover className="shadow">
+                    <Popover.Body>
+                      <table className="table table-bordered">
+                        <thead>
+                          <tr>
+                            <th>Upto contacts</th>
+                            <th>INR price Per contact</th>
+                            <th>Total price INR</th>
+                          </tr>
+                        </thead>
+                        <tbody className="text-end">
+                          <tr>
+                            <td>2000</td>
+                            <td>2.50</td>
+                            <td>5000</td>
+                          </tr>
+                          <tr>
+                            <td>2001 - 5000</td>
+                            <td>1.75</td>
+                            <td>5250</td>
+                          </tr>
+                          <tr>
+                            <td>5001 - 10000</td>
+                            <td>1.00</td>
+                            <td>5000</td>
+                          </tr>
+                          <tr>
+                            <td>10001 - 20000</td>
+                            <td>0.70</td>
+                            <td>7000</td>
+                          </tr>
+                          <tr>
+                            <td>20001 - 40000</td>
+                            <td>0.50</td>
+                            <td>10000</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </Popover.Body>
+                  </Popover>
+                }
+              >
+                <button className="btn btn-link">Pricing</button>
+              </OverlayTrigger>
               <button
                 type="button"
                 className="btn-close"
@@ -1896,20 +1953,13 @@ const Filter = (props) => {
               {freezeHistory.show === false ? (
                 <div className="p-5 text-center">Loading...</div>
               ) : (
-                <FreezeHistoryTable freezeHistory={freezeHistory} />
+                <FreezeHistoryTable
+                  freezeHistory={freezeHistory}
+                  backToSearch={backToSearch}
+                  closeHistoryModal={() => closeModal("freezeHistoryModal")}
+                  getFreezeHistory={getFreezeHistory}
+                />
               )}
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={() => {
-                  closeModal("freezeHistoryModal");
-                }}
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
             </div>
           </div>
         </div>

@@ -328,31 +328,31 @@ function SubscribePlan() {
                                 <th>Total price INR</th>
                               </tr>
                             </thead>
-                            <tbody className="text-end fw-bold">
+                            <tbody className="text-end">
                               <tr>
                                 <td>2000</td>
                                 <td>2.50</td>
                                 <td>5000</td>
                               </tr>
                               <tr>
-                                <td>5000</td>
-                                <td>2.00</td>
-                                <td>10000</td>
+                                <td>2001 - 5000</td>
+                                <td>1.75</td>
+                                <td>5250</td>
                               </tr>
                               <tr>
-                                <td>10000</td>
-                                <td>1.50</td>
-                                <td>15000</td>
-                              </tr>
-                              <tr>
-                                <td>20000</td>
+                                <td>5001 - 10000</td>
                                 <td>1.00</td>
-                                <td>20000</td>
+                                <td>5000</td>
                               </tr>
                               <tr>
-                                <td>40000</td>
-                                <td>0.80</td>
-                                <td>32000</td>
+                                <td>10001 - 20000</td>
+                                <td>0.70</td>
+                                <td>7000</td>
+                              </tr>
+                              <tr>
+                                <td>20001 - 40000</td>
+                                <td>0.50</td>
+                                <td>10000</td>
                               </tr>
                             </tbody>
                           </table>

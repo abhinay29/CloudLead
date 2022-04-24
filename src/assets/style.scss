@@ -1126,3 +1126,24 @@ table th {
     padding-bottom: 5px;
   }
 }
+
+.max-w-440 {
+  max-width: 440px;
+}
+
+.hover-btn {
+  .btn {
+    display: none;
+    font-size: 12px;
+    width: 100px;
+    padding: 3px 5px;
+  }
+  &:hover {
+    .btn {
+      display: block;
+    }
+    .count {
+      display: none;
+    }
+  }
+}

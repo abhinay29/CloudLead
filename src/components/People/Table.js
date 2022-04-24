@@ -16,10 +16,16 @@ import TableSkeleton from "../Skeleton/TableSkeleton";
 import NoRecordFound from "./NoRecordFound";
 import Select from "react-select";
 import axios from "axios";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { OverlayTrigger, Tooltip, Popover } from "react-bootstrap";
 import FreezeHistoryTable from "./FreezeHistoryTable";
+import SearchStrings from "./SearchStrings";
 
 const API_URL = process.env.REACT_APP_API_URL;
+
+function CreateSearchId(len = 8) {
+  var p = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  return [...Array(len)].reduce((a) => a + p[~~(Math.random() * p.length)], "");
+}
 
 const Table = (props) => {
   const dispatch = useDispatch();
@@ -198,7 +204,6 @@ const Table = (props) => {
   };
 
   const refreshWatchlist = async () => {
-    console.log("Refresh watchlist");
     await axios({
       method: "GET",
       url: `${API_URL}/api/contacts/watchlist?page=1&limit=25`,
@@ -413,25 +418,52 @@ const Table = (props) => {
     searchPeople();
   };
 
-  const handleFreezeDataInput = (e) => {
-    setFreezeData({ ...freezeData, search_name: e.target.value });
+  // const [freezeDataTable, setFreezeDataTable] = useState({});
+
+  // const handleFreezeDataInput = (e) => {
+  //   setFreezeData({ ...freezeData, search_name: e.target.value });
+  // };
+
+  const [addToFreezeListTable, setAddToFreezeListTable] = useState({
+    searchId: "",
+    searchName: "",
+    searchString: {},
+    emailCount: 0,
+    companyCount: 0,
+    direactDial: 0,
+    emailCheck: false,
+    directDialCheck: false
+  });
+  const [showRenameOption, setShowRenameOption] = useState(false);
+  const [showSearchNameInput, setShowSearchNameInput] = useState(false);
+
+  const addToFreezeList = () => {
+    setAddToFreezeListTable({
+      ...addToFreezeListTable,
+      searchId: CreateSearchId(),
+      searchString: JSON.parse(localStorage.getItem("currentQuery")),
+      emailCount: peoples.totalResults,
+      companyCount: peoples.uniqueCompany,
+      direactDial: peoples.directDial
+    });
+    openModal("addToFreezeListModal");
   };
 
-  const sendFreezeData = async (e) => {
-    e.preventDefault();
-
-    setFreezeData({
-      ...freezeData,
-      search_filter: JSON.parse(localStorage.getItem("currentQuery"))
+  const handleCheckBox = (e) => {
+    setAddToFreezeListTable({
+      ...addToFreezeListTable,
+      [e.target.name]: e.target.checked
     });
+  };
 
+  const submitHandleAddtoFreezeList = async () => {
     let data = await fetch(`${API_URL}/api/user/add-to-freeze-list`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("token")
       },
-      body: JSON.stringify(freezeData)
+      body: JSON.stringify(addToFreezeListTable)
     });
 
     if (!data) {
@@ -439,11 +471,14 @@ const Table = (props) => {
     }
     const res = await data.json();
     if (res.status === "success") {
-      var btn = document.getElementById("freezeDataBoxBtn");
-      btn.click();
-      return toast.success(
-        "Data freezed successfully, you will recieved email with further information."
-      );
+      closeModal("addToFreezeListModal");
+      setShowSearchNameInput(false);
+      setShowRenameOption(false);
+      setAddToFreezeListTable({
+        ...addToFreezeListTable,
+        searchName: ""
+      });
+      return toast.success(res.msg);
     } else {
       return toast.error(res.error);
     }
@@ -453,7 +488,8 @@ const Table = (props) => {
     show: false,
     data: []
   });
-  const showFreezeHistory = async () => {
+
+  const getFreezeHistory = async () => {
     let data = await fetch(`${API_URL}/api/user/get-freeze-data`, {
       method: "GET",
       headers: {
@@ -468,10 +504,15 @@ const Table = (props) => {
     const res = await data.json();
     if (res.status === "success") {
       setFreezeHistory({ ...freezeHistory, show: true, data: res.data });
-      openModal("freezeHistoryModalTable");
+      return true;
     } else {
-      return toast.error(res.error);
+      toast.error(res.error);
+      return false;
     }
+  };
+  const showFreezeHistory = () => {
+    getFreezeHistory();
+    openModal("freezeHistoryModalTable");
   };
 
   useEffect(() => {
@@ -721,9 +762,7 @@ const Table = (props) => {
                     <button
                       className="btn btn-sm btn-primary px-3"
                       type="button"
-                      data-bs-auto-close="false"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
+                      onClick={() => addToFreezeList()}
                       id="freezeDataBoxBtn"
                     >
                       Add to Freeze List
@@ -768,15 +807,9 @@ const Table = (props) => {
                   className="btn btn-sm btn-success px-3 ms-2"
                   type="button"
                   aria-expanded="false"
-                >
-                  Freeze List
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-warning ms-2"
                   onClick={() => showFreezeHistory()}
                 >
-                  Freeze History
+                  My freezes
                 </button>
               </>
             )}
@@ -965,12 +998,62 @@ const Table = (props) => {
         role="dialog"
       >
         <div
-          className="modal-dialog modal-lg modal-dialog-scrollable"
+          className="modal-dialog modal-xl modal-dialog-scrollable"
           role="document"
         >
           <div className="modal-content shadow-lg">
             <div className="modal-header">
-              <h5 className="modal-title">Freeze History</h5>
+              <h5 className="modal-title">My Freezes</h5>
+              <OverlayTrigger
+                trigger={["hover", "focus"]}
+                key="bottom"
+                placement="bottom"
+                className="shadow max-w-440"
+                overlay={
+                  <Popover className="shadow">
+                    <Popover.Body>
+                      <table className="table table-bordered">
+                        <thead>
+                          <tr>
+                            <th>Upto contacts</th>
+                            <th>INR price Per contact</th>
+                            <th>Total price INR</th>
+                          </tr>
+                        </thead>
+                        <tbody className="text-end">
+                          <tr>
+                            <td>2000</td>
+                            <td>2.50</td>
+                            <td>5000</td>
+                          </tr>
+                          <tr>
+                            <td>2001 - 5000</td>
+                            <td>1.75</td>
+                            <td>5250</td>
+                          </tr>
+                          <tr>
+                            <td>5001 - 10000</td>
+                            <td>1.00</td>
+                            <td>5000</td>
+                          </tr>
+                          <tr>
+                            <td>10001 - 20000</td>
+                            <td>0.70</td>
+                            <td>7000</td>
+                          </tr>
+                          <tr>
+                            <td>20001 - 40000</td>
+                            <td>0.50</td>
+                            <td>10000</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </Popover.Body>
+                  </Popover>
+                }
+              >
+                <button className="btn btn-link">Pricing</button>
+              </OverlayTrigger>
               <button
                 type="button"
                 className="btn-close"
@@ -980,13 +1063,67 @@ const Table = (props) => {
               ></button>
             </div>
             <div className="modal-body">
-              {freezeHistory.show === false ? (
-                <div className="p-5 text-center">Loading...</div>
-              ) : (
-                <FreezeHistoryTable freezeHistory={freezeHistory} />
-              )}
+              <nav>
+                <div className="nav nav-tabs" id="nav-tab" role="tablist">
+                  <button
+                    className="nav-link active"
+                    id="nav-profile-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#billingHistory"
+                    type="button"
+                    role="tab"
+                    aria-controls="billingHistory"
+                    aria-selected="false"
+                  >
+                    Freezes
+                  </button>
+                  <button
+                    className="nav-link"
+                    id="nav-profile-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#currentPlan"
+                    type="button"
+                    role="tab"
+                    aria-controls="currentPlan"
+                    aria-selected="false"
+                  >
+                    Freeze History
+                  </button>
+                </div>
+              </nav>
+              <div className="tab-content mt-3" id="nav-tabContent">
+                <div
+                  className="tab-pane fade show active"
+                  id="billingHistory"
+                  role="tabpanel"
+                  aria-labelledby="billingHistory-tab"
+                >
+                  {freezeHistory.show === false ? (
+                    <div className="p-5 text-center">Loading...</div>
+                  ) : (
+                    <FreezeHistoryTable
+                      freezeHistory={freezeHistory}
+                      backToSearch={backToSearch}
+                      closeHistoryModal={() =>
+                        closeModal("freezeHistoryModalTable")
+                      }
+                      getFreezeHistory={getFreezeHistory}
+                    />
+                  )}
+                </div>
+                <div
+                  className="tab-pane fade"
+                  id="currentPlan"
+                  role="tabpanel"
+                  aria-labelledby="currentPlan-tab"
+                >
+                  <div className="text-center p-4">
+                    <h5>No data found!!!</h5>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="modal-footer">
+            {/* <div className="modal-footer">
               <button
                 type="button"
                 className="btn btn-secondary"
@@ -996,6 +1133,164 @@ const Table = (props) => {
                 data-bs-dismiss="modal"
               >
                 Close
+              </button>
+            </div> */}
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="modal fade"
+        id="addToFreezeListModal"
+        tabIndex="-1"
+        role="dialog"
+      >
+        <div className="modal-dialog modal-dialog-scrollable" role="document">
+          <div className="modal-content shadow-lg">
+            <div className="modal-header">
+              <h5 className="modal-title">Add to Freeze List</h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                onClick={() => {
+                  closeModal("addToFreezeListModal");
+                  setShowRenameOption(false);
+                }}
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <td>
+                      Search ID: <b>{addToFreezeListTable.searchId}</b>
+                    </td>
+                    <td className="text-end">Count</td>
+                    <td className="text-center">Select</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <p className="mb-0 text-primary">Search Details :-</p>
+                      <SearchStrings fh={addToFreezeListTable.searchString} />
+                    </td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Email</td>
+                    <td className="text-end">
+                      {addToFreezeListTable.emailCount}
+                    </td>
+                    <td style={{ width: "100px" }} className="text-center">
+                      <input
+                        type="checkbox"
+                        name="emailCheck"
+                        onChange={handleCheckBox}
+                        value=""
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Company</td>
+                    <td className="text-end">
+                      {addToFreezeListTable.companyCount}
+                    </td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Direct Dial</td>
+                    <td className="text-end">
+                      {addToFreezeListTable.direactDial}
+                    </td>
+                    <td className="text-center">
+                      <input
+                        type="checkbox"
+                        name="directDialCheck"
+                        onChange={handleCheckBox}
+                        value=""
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="modal-footer">
+              {showRenameOption ? (
+                <>
+                  {showSearchNameInput ? (
+                    <>
+                      <input
+                        type="text"
+                        name="searchName"
+                        className="form-control"
+                        value={addToFreezeListTable.searchName}
+                        onChange={(e) =>
+                          setAddToFreezeListTable({
+                            ...addToFreezeListTable,
+                            searchName: e.target.value
+                          })
+                        }
+                        placeholder="Enter name for this search"
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-success"
+                        onClick={submitHandleAddtoFreezeList}
+                      >
+                        Save
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <p>Do you wish to save/rename this search?</p>
+                      <button
+                        type="button"
+                        className="btn btn-success"
+                        onClick={() => setShowSearchNameInput(true)}
+                      >
+                        Yes
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-danger"
+                        data-bs-dismiss="modal"
+                        onClick={submitHandleAddtoFreezeList}
+                      >
+                        No
+                      </button>
+                    </>
+                  )}
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="btn btn-warning"
+                    onClick={() => {
+                      setShowRenameOption(true);
+                    }}
+                    disabled={addToFreezeListTable.emailCheck ? false : true}
+                  >
+                    Add to Freeze List
+                  </button>
+                </>
+              )}
+              <br />
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => {
+                  closeModal("addToFreezeListModal");
+                  setShowRenameOption(false);
+                  setShowSearchNameInput(false);
+                }}
+                data-bs-dismiss="modal"
+              >
+                Cancel
               </button>
             </div>
           </div>

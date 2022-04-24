@@ -1051,4 +1051,23 @@ table th {
   padding-top: 5px;
   padding-bottom: 5px;
 }
+
+.max-w-440 {
+  max-width: 440px;
+}
+
+.hover-btn .btn {
+  display: none;
+  font-size: 12px;
+  width: 100px;
+  padding: 3px 5px;
+}
+
+.hover-btn:hover .btn {
+  display: block;
+}
+
+.hover-btn:hover .count {
+  display: none;
+}
 /*# sourceMappingURL=style.css.map */

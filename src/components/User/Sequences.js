@@ -4,6 +4,7 @@ import { progressLoading } from "../../states/action-creator";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import ContactTableRow from "../People/TableRow";
+import SettingsEmailSetup from "./SettingsEmailSetup";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -174,9 +175,14 @@ function Sequences() {
             <div className="cardTitle mb-4 d-flex justify-content-between align-items-center">
               <h5>Sequences</h5>
               <div>
-                <Link className="btn btn-sm btn-primary me-2" to="/settings">
+                <button
+                  className="btn btn-sm btn-primary me-2"
+                  onClick={() => {
+                    openModal("emailSettings");
+                  }}
+                >
                   <i className="fas fa-cog me-2"></i> Email Settings
-                </Link>
+                </button>
                 <Link to="/templates" className="btn btn-sm btn-primary">
                   <i className="fas fa-pencil-ruler me-2"></i> Templates
                 </Link>
@@ -341,6 +347,25 @@ function Sequences() {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="modal" id="emailSettings" tabIndex="-1">
+        <div className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5>Email Settings</h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={() => closeModal("emailSettings")}
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <SettingsEmailSetup />
             </div>
           </div>
         </div>
