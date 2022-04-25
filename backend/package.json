@@ -12,6 +12,8 @@
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
+    "draft-js-plugins-editor": "^3.0.0",
+    "draft-js-static-toolbar-plugin": "^3.0.1",
     "easyinvoice": "^1.0.148",
     "express": "^4.17.1",
     "express-validator": "^6.12.1",

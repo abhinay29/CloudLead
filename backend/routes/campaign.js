@@ -22,10 +22,10 @@ class APIMailer {
         host: this.host,
         port: this.port,
         secure: false,
-        // auth: {
-        //   user: this.user,
-        //   pass: this.pass
-        // },
+        auth: {
+          user: this.user,
+          pass: this.pass
+        },
         tls: {
           rejectUnauthorized: false
         }
@@ -56,10 +56,10 @@ router.get("/", async (req, res) => {
   };
 
   try {
-    const docs = await campaign.findOne();
+    const docs = await campaign.findOne({ sent: false });
 
     if (!docs) {
-      return res.status(200).json({ status: "No campaign to send." });
+      return res.status(200).send("No campaign to send.");
     }
 
     let settings = await smtpSettings(docs.userId);
@@ -91,12 +91,13 @@ router.get("/", async (req, res) => {
     });
 
     if (!List) {
-      return res.status(200).json({ status: "List not found" });
+      return res.status(200).send("List not found");
     }
 
     let templateData = await templates.findOne({
       _id: docs.template_id,
-      userId: docs.userId
+      userId: docs.userId,
+      sent: false
     });
 
     try {
@@ -118,7 +119,15 @@ router.get("/", async (req, res) => {
       console.log(e);
     }
 
-    res.status(200).json({ status: "success" });
+    await campaign.updateOne(
+      {
+        _id: docs._id
+      },
+      { $set: { sent: true } },
+      { $upsert: true }
+    );
+
+    res.status(200).send("Campaign sent successfully");
   } catch (error) {
     console.error(error.message);
   }

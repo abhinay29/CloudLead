@@ -119,6 +119,10 @@ const Campaign = new Schema({
     required: true,
     unique: false
   },
+  sent: {
+    type: Boolean,
+    default: false
+  },
   added_at: {
     type: Date,
     default: Date.now

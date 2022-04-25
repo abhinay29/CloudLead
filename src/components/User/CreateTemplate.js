@@ -1,19 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { Editor } from "react-draft-wysiwyg";
-import { EditorState } from "draft-js";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { stateToHTML } from "draft-js-export-html";
+// import { Editor } from "react-draft-wysiwyg";
+// import tinymce from "tinymce/tinymce";
+// import "tinymce/plugins/code";
+import { Editor } from "@tinymce/tinymce-react";
+// import createToolbarPlugin from "draft-js-static-toolbar-plugin";
+// import { EditorState } from "draft-js";
+// import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+// import { stateToHTML } from "draft-js-export-html";
 import { toast } from "react-toastify";
+
+// const staticToolbarPlugin = createToolbarPlugin();
+// const { Toolbar } = staticToolbarPlugin;
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 function CreateTemplate() {
   let history = useHistory();
 
-  const [editorState, setEditorState] = React.useState(() =>
-    EditorState.createEmpty()
-  );
+  // const [editorState, setEditorState] = React.useState(() =>
+  //   EditorState.createEmpty()
+  // );
+
+  const editorRef = useRef(null);
+  // const log = () => {
+  //   if (editorRef.current) {
+  //     console.log(editorRef.current.getContent());
+  //   }
+  // };
 
   const [formData, setFormData] = useState({
     name: "",
@@ -21,10 +35,10 @@ function CreateTemplate() {
     content: ""
   });
 
-  const handleEditorChange = () => {
-    let html = stateToHTML(editorState.getCurrentContent());
-    setFormData({ ...formData, content: html });
-  };
+  // const handleEditorChange = (value) => {
+  //   // let html = stateToHTML(editorState.getCurrentContent());
+  //   setFormData({ ...formData, content:  });
+  // };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -106,10 +120,41 @@ function CreateTemplate() {
                 Template Content
               </label>
               <div className="border rounded" style={{ minHeight: "400px" }}>
-                <Editor
+                {/* <textarea
+                  id="mytextarea"
+                  name="content"
+                  onChange={handleChange}
+                ></textarea> */}
+                {/* <Editor
                   editorState={editorState}
                   onEditorStateChange={setEditorState}
                   onChange={handleEditorChange}
+                  plugins={[staticToolbarPlugin]}
+                /> */}
+                <Editor
+                  // tinymceScriptSrc="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.0.1/tinymce.min.js"
+                  apiKey="sxt1kih1qcrwb6opd8zec1phvncx1qmzl7mh5ft1ld9fo4u0"
+                  onInit={(evt, editor) => (editorRef.current = editor)}
+                  init={{
+                    height: 400,
+                    menubar: false,
+                    plugins: [
+                      "advlist autolink lists link image charmap print preview anchor",
+                      "searchreplace visualblocks code fullscreen",
+                      "insertdatetime media table paste code help wordcount"
+                    ],
+                    toolbar:
+                      "undo redo | formatselect | " +
+                      "bold italic backcolor | alignleft aligncenter " +
+                      "alignright alignjustify | bullist numlist outdent indent | " +
+                      "removeformat | help"
+                    // content_style:
+                    //   "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }"
+                  }}
+                  // outputFormat="html"
+                  onEditorChange={(newValue, editor) =>
+                    setFormData({ ...formData, content: newValue })
+                  }
                 />
               </div>
             </div>
