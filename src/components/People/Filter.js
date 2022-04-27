@@ -897,6 +897,7 @@ const Filter = (props) => {
     }
   };
   const showFreezeHistory = () => {
+    localStorage.setItem("carryForward", JSON.stringify({ count: 0, cost: 0 }));
     getFreezeHistory();
     openModal("freezeHistoryModal");
   };
@@ -1697,7 +1698,7 @@ const Filter = (props) => {
                       name="company_country"
                       options={countryOptionsCompany[0]}
                       className="basic-multi-select"
-                      placeholder="Comapany's Country"
+                      placeholder="Company's Country"
                     />
                   </div>
                   <div className="col-md-4 col-lg-4 title-relative">

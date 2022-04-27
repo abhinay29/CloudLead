@@ -511,6 +511,7 @@ const Table = (props) => {
     }
   };
   const showFreezeHistory = () => {
+    localStorage.setItem("carryForward", JSON.stringify({ count: 0, cost: 0 }));
     getFreezeHistory();
     openModal("freezeHistoryModalTable");
   };
