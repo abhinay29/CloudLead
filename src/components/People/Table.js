@@ -486,7 +486,9 @@ const Table = (props) => {
 
   const [freezeHistory, setFreezeHistory] = useState({
     show: false,
-    data: []
+    data: [],
+    totalCount: 0,
+    totalPrice: 0
   });
 
   const getFreezeHistory = async () => {
@@ -503,7 +505,13 @@ const Table = (props) => {
     }
     const res = await data.json();
     if (res.status === "success") {
-      setFreezeHistory({ ...freezeHistory, show: true, data: res.data });
+      setFreezeHistory({
+        ...freezeHistory,
+        show: true,
+        data: res.data,
+        totalCount: res.totalCount,
+        totalPrice: res.totalPrice
+      });
       return true;
     } else {
       toast.error(res.error);
@@ -511,7 +519,7 @@ const Table = (props) => {
     }
   };
   const showFreezeHistory = () => {
-    localStorage.setItem("carryForward", JSON.stringify({ count: 0, cost: 0 }));
+    // localStorage.setItem("carryForward", JSON.stringify({ count: 0, cost: 0 }));
     getFreezeHistory();
     openModal("freezeHistoryModalTable");
   };
@@ -1070,10 +1078,10 @@ const Table = (props) => {
                     className="nav-link active"
                     id="nav-profile-tab"
                     data-bs-toggle="tab"
-                    data-bs-target="#billingHistory"
+                    data-bs-target="#freezes"
                     type="button"
                     role="tab"
-                    aria-controls="billingHistory"
+                    aria-controls="freezes"
                     aria-selected="false"
                   >
                     Freezes
@@ -1082,10 +1090,10 @@ const Table = (props) => {
                     className="nav-link"
                     id="nav-profile-tab"
                     data-bs-toggle="tab"
-                    data-bs-target="#currentPlan"
+                    data-bs-target="#freezeHistory"
                     type="button"
                     role="tab"
-                    aria-controls="currentPlan"
+                    aria-controls="freezeHistory"
                     aria-selected="false"
                   >
                     Freeze History
@@ -1095,13 +1103,11 @@ const Table = (props) => {
               <div className="tab-content mt-3" id="nav-tabContent">
                 <div
                   className="tab-pane fade show active"
-                  id="billingHistory"
+                  id="freezes"
                   role="tabpanel"
-                  aria-labelledby="billingHistory-tab"
+                  aria-labelledby="freezes-tab"
                 >
-                  {freezeHistory.show === false ? (
-                    <div className="p-5 text-center">Loading...</div>
-                  ) : (
+                  {freezeHistory.data ? (
                     <FreezeHistoryTable
                       freezeHistory={freezeHistory}
                       backToSearch={backToSearch}
@@ -1110,13 +1116,15 @@ const Table = (props) => {
                       }
                       getFreezeHistory={getFreezeHistory}
                     />
+                  ) : (
+                    <div className="p-5 text-center">Loading...</div>
                   )}
                 </div>
                 <div
                   className="tab-pane fade"
-                  id="currentPlan"
+                  id="freezeHistory"
                   role="tabpanel"
-                  aria-labelledby="currentPlan-tab"
+                  aria-labelledby="freezeHistory-tab"
                 >
                   <div className="text-center p-4">
                     <h5>No data found!!!</h5>

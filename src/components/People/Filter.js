@@ -873,8 +873,11 @@ const Filter = (props) => {
 
   const [freezeHistory, setFreezeHistory] = useState({
     show: false,
-    data: []
+    data: [],
+    totalCount: 0,
+    totalPrice: 0
   });
+
   const getFreezeHistory = async () => {
     let data = await fetch(`${API_URL}/api/user/get-freeze-data`, {
       method: "GET",
@@ -889,7 +892,13 @@ const Filter = (props) => {
     }
     const res = await data.json();
     if (res.status === "success") {
-      setFreezeHistory({ ...freezeHistory, show: true, data: res.data });
+      setFreezeHistory({
+        ...freezeHistory,
+        show: true,
+        data: res.data,
+        totalCount: res.totalCount,
+        totalPrice: res.totalPrice
+      });
       return true;
     } else {
       toast.error(res.error);
@@ -897,7 +906,6 @@ const Filter = (props) => {
     }
   };
   const showFreezeHistory = () => {
-    localStorage.setItem("carryForward", JSON.stringify({ count: 0, cost: 0 }));
     getFreezeHistory();
     openModal("freezeHistoryModal");
   };
@@ -1588,6 +1596,7 @@ const Filter = (props) => {
                       options={titleOptions}
                       className="basic-multi-select"
                       placeholder="Select Title"
+                      createOptionPosition="first"
                     />
                   </div>
                 </div>
@@ -1951,15 +1960,15 @@ const Filter = (props) => {
               ></button>
             </div>
             <div className="modal-body">
-              {freezeHistory.show === false ? (
-                <div className="p-5 text-center">Loading...</div>
-              ) : (
+              {freezeHistory.data ? (
                 <FreezeHistoryTable
                   freezeHistory={freezeHistory}
                   backToSearch={backToSearch}
                   closeHistoryModal={() => closeModal("freezeHistoryModal")}
                   getFreezeHistory={getFreezeHistory}
                 />
+              ) : (
+                <div className="p-5 text-center">Loading...</div>
               )}
             </div>
           </div>

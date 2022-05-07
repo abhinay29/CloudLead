@@ -43,6 +43,41 @@ function Sequences() {
     modalBackdrop.style.display = "none";
   };
 
+  const [sequenceName, setSequenceName] = useState("");
+
+  const createSequence = async (e) => {
+    e.preventDefault();
+    dispatch(progressLoading(30));
+    const addList = await fetch(`${API_URL}/api/user/list/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": localStorage.getItem("token")
+      },
+      body: JSON.stringify({
+        ids: [],
+        name: sequenceName
+      })
+    });
+
+    if (!addList)
+      return toast.error("Something went wrong, please try again later");
+
+    const res = await addList.json();
+
+    if (res.status === "success") {
+      closeModal("createSequenceModal");
+      setSequenceName("");
+      toast.success("Sequence created successfully.");
+    } else if (res.status === "error") {
+      toast.error(res.error);
+    } else {
+      toast.error("Something went wrong.");
+    }
+    dispatch(progressLoading(100));
+    getSequence();
+  };
+
   const viewList = async (id) => {
     dispatch(progressLoading(30));
     let url = `${API_URL}/api/user/list/view/${id}`;
@@ -177,14 +212,20 @@ function Sequences() {
               <div>
                 <button
                   className="btn btn-sm btn-primary me-2"
+                  onClick={() => openModal("createSequenceModal")}
+                >
+                  <i className="fas fa-plus me-1"></i> Create Sequence
+                </button>
+                <button
+                  className="btn btn-sm btn-primary me-2"
                   onClick={() => {
                     openModal("emailSettings");
                   }}
                 >
-                  <i className="fas fa-cog me-2"></i> Email Settings
+                  <i className="fas fa-cog me-1"></i> Email Settings
                 </button>
                 <Link to="/templates" className="btn btn-sm btn-primary">
-                  <i className="fas fa-pencil-ruler me-2"></i> Templates
+                  <i className="fas fa-pencil-ruler me-1"></i> Templates
                 </Link>
               </div>
             </div>
@@ -366,6 +407,41 @@ function Sequences() {
             </div>
             <div className="modal-body">
               <SettingsEmailSetup />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="modal" id="createSequenceModal" tabIndex="-1">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5>Create Sequence</h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={() => closeModal("createSequenceModal")}
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <form onSubmit={createSequence}>
+                <label htmlFor="sequenceName" className="form-label">
+                  Name for Sequence
+                </label>
+                <input
+                  type="text"
+                  id="sequenceName"
+                  className="form-control"
+                  value={sequenceName}
+                  onChange={(e) => {
+                    setSequenceName(e.target.value);
+                  }}
+                />
+                <button type="submit" className="mt-3 btn btn-sm btn-success">
+                  Create
+                </button>
+              </form>
             </div>
           </div>
         </div>

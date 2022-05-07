@@ -146,17 +146,19 @@ const Signup = (props) => {
       style={{ height: "100vh" }}
     >
       <div
-        className="contents order-2 order-md-2 position-relative d-flex justify-content-center align-items-center"
+        className="contents order-2 order-md-2 position-relative d-flex justify-content-center"
         style={{
           width: "35%",
-          height: "100vh"
+          height: "100vh",
+          paddingTop: "60px",
+          paddingBottom: "20px"
         }}
       >
         <Logo />
         <div className="container">
           <div className="row align-items-center justify-content-center">
             <div className="col-md-10 px-4">
-              <h4 className="mb-3">Signup</h4>
+              <h3 className="fw-bold">Signup</h3>
               <form
                 action="#"
                 method="post"

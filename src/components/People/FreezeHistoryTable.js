@@ -9,16 +9,16 @@ const API_URL = process.env.REACT_APP_API_URL;
 //     this.count = count;
 //     this.cost = cost;
 //   }
-function setCf(count, cost) {
-  console.log("Class Count: ", count);
-  localStorage.setItem(
-    "carryForward",
-    JSON.stringify({ count: count, cost: cost })
-  );
-}
-function getCf() {
-  return JSON.parse(localStorage.getItem("carryForward"));
-}
+// function setCf(count, cost) {
+//   console.log("Class Count: ", count);
+//   localStorage.setItem(
+//     "carryForward",
+//     JSON.stringify({ count: count, cost: cost })
+//   );
+// }
+// function getCf() {
+//   return JSON.parse(localStorage.getItem("carryForward"));
+// }
 // }
 
 // const setCarryForward = (count, cost) => {
@@ -60,140 +60,140 @@ function FreezeHistoryTable(props) {
     modalBackdrop.style.display = "none";
   };
 
-  const priceCalulator = (ec) => {
-    let remain = 0;
-    let price = 0;
-    let count = 0;
-    let preVal = getCf();
-    console.log("PreVal: ", preVal);
-    let carryForwardCount = 0;
-    // var tempCount = [];
-    // tempCount.push(ec);
-    // setCountValue(tempCount);
-    // console.log(countValue);
+  // const priceCalulator = (ec) => {
+  //   let remain = 0;
+  //   let price = 0;
+  //   let count = 0;
+  //   let preVal = getCf();
+  //   console.log("PreVal: ", preVal);
+  //   let carryForwardCount = 0;
+  //   // var tempCount = [];
+  //   // tempCount.push(ec);
+  //   // setCountValue(tempCount);
+  //   // console.log(countValue);
 
-    // count = ec - preVal.count;
+  //   // count = ec - preVal.count;
 
-    if (preVal.count > 0) {
-      price = preVal.count * preVal.cost;
-      count = ec - preVal.count;
-    } else {
-      count = ec;
-    }
+  //   if (preVal.count > 0) {
+  //     price = preVal.count * preVal.cost;
+  //     count = ec - preVal.count;
+  //   } else {
+  //     count = ec;
+  //   }
 
-    // count = ec;
+  //   // count = ec;
 
-    // if (preVal.cost === 2.5) {
-    //   if (count > 3000) {
-    //     price = price + 3000 * 1.75;
-    //     remain = remain - 3000;
-    //     if (remain > 5000) {
-    //       price = price + 5000 * 1;
-    //       remain = remain - 5000;
-    //       if (remain > 10000) {
-    //         price = price + 10000 * 0.7;
-    //         remain = remain - 10000;
-    //         if (remain > 0) {
-    //           price = price + remain * 0.5;
-    //         }
-    //       } else {
-    //         price = price + remain * 0.7;
-    //         carryForwardCount = 10000 - remain;
-    //         setCarryForward(carryForwardCount, 0.7);
-    //       }
-    //     } else {
-    //       price = price + remain * 1;
-    //       carryForwardCount = 5000 - remain;
-    //       setCarryForward(carryForwardCount, 1);
-    //     }
-    //   } else {
-    //     price = price + preVal.count * 2.5;
-    //     carryForwardCount = 3000 - preVal.count;
-    //     setCarryForward(carryForwardCount, 1.75);
-    //   }
-    // } else if (preVal.cost === 1.75) {
-    //   if (count > 5000) {
-    //     price = price + 5000 * 1;
-    //     remain = remain - 5000;
-    //     if (remain > 10000) {
-    //       price = price + 10000 * 0.7;
-    //       remain = remain - 10000;
-    //       if (remain > 0) {
-    //         price = price + remain * 0.5;
-    //       }
-    //     } else {
-    //       price = price + remain * 0.7;
-    //       carryForwardCount = 10000 - remain;
-    //       setCarryForward(carryForwardCount, 0.7);
-    //     }
-    //   } else {
-    //     price = price + remain * 1;
-    //     carryForwardCount = 5000 - remain;
-    //     setCarryForward(carryForwardCount, 1);
-    //   }
-    // } else if (preVal.cost === 1) {
-    //   if (remain > 10000) {
-    //     price = price + 10000 * 0.7;
-    //     remain = remain - 10000;
-    //     if (remain > 0) {
-    //       price = price + remain * 0.5;
-    //     }
-    //   } else {
-    //     price = price + remain * 0.7;
-    //     carryForwardCount = 10000 - remain;
-    //     setCarryForward(carryForwardCount, 0.7);
-    //   }
-    // } else if (preVal.cost === 0.7) {
-    //   if (remain > 0) {
-    //     price = price + remain * 0.5;
-    //   }
-    // }
+  //   // if (preVal.cost === 2.5) {
+  //   //   if (count > 3000) {
+  //   //     price = price + 3000 * 1.75;
+  //   //     remain = remain - 3000;
+  //   //     if (remain > 5000) {
+  //   //       price = price + 5000 * 1;
+  //   //       remain = remain - 5000;
+  //   //       if (remain > 10000) {
+  //   //         price = price + 10000 * 0.7;
+  //   //         remain = remain - 10000;
+  //   //         if (remain > 0) {
+  //   //           price = price + remain * 0.5;
+  //   //         }
+  //   //       } else {
+  //   //         price = price + remain * 0.7;
+  //   //         carryForwardCount = 10000 - remain;
+  //   //         setCarryForward(carryForwardCount, 0.7);
+  //   //       }
+  //   //     } else {
+  //   //       price = price + remain * 1;
+  //   //       carryForwardCount = 5000 - remain;
+  //   //       setCarryForward(carryForwardCount, 1);
+  //   //     }
+  //   //   } else {
+  //   //     price = price + preVal.count * 2.5;
+  //   //     carryForwardCount = 3000 - preVal.count;
+  //   //     setCarryForward(carryForwardCount, 1.75);
+  //   //   }
+  //   // } else if (preVal.cost === 1.75) {
+  //   //   if (count > 5000) {
+  //   //     price = price + 5000 * 1;
+  //   //     remain = remain - 5000;
+  //   //     if (remain > 10000) {
+  //   //       price = price + 10000 * 0.7;
+  //   //       remain = remain - 10000;
+  //   //       if (remain > 0) {
+  //   //         price = price + remain * 0.5;
+  //   //       }
+  //   //     } else {
+  //   //       price = price + remain * 0.7;
+  //   //       carryForwardCount = 10000 - remain;
+  //   //       setCarryForward(carryForwardCount, 0.7);
+  //   //     }
+  //   //   } else {
+  //   //     price = price + remain * 1;
+  //   //     carryForwardCount = 5000 - remain;
+  //   //     setCarryForward(carryForwardCount, 1);
+  //   //   }
+  //   // } else if (preVal.cost === 1) {
+  //   //   if (remain > 10000) {
+  //   //     price = price + 10000 * 0.7;
+  //   //     remain = remain - 10000;
+  //   //     if (remain > 0) {
+  //   //       price = price + remain * 0.5;
+  //   //     }
+  //   //   } else {
+  //   //     price = price + remain * 0.7;
+  //   //     carryForwardCount = 10000 - remain;
+  //   //     setCarryForward(carryForwardCount, 0.7);
+  //   //   }
+  //   // } else if (preVal.cost === 0.7) {
+  //   //   if (remain > 0) {
+  //   //     price = price + remain * 0.5;
+  //   //   }
+  //   // }
 
-    if (count > 2000) {
-      price = 2000 * 2.5;
-      remain = count - 2000;
-      if (remain > 3000) {
-        price = price + 3000 * 1.75;
-        remain = remain - 3000;
-        if (remain > 5000) {
-          price = price + 5000 * 1;
-          remain = remain - 5000;
-          if (remain > 10000) {
-            price = price + 10000 * 0.7;
-            remain = remain - 10000;
-            if (remain > 0) {
-              price = price + remain * 0.5;
-            }
-          } else {
-            price = price + remain * 0.7;
-            carryForwardCount = 10000 - remain;
-            // setCarryForward();
-            setCf(carryForwardCount, 0.7);
-            console.log("Email Count: ", ec);
-            console.log("Under 10001 - 20000: ", carryForwardCount);
-          }
-        } else {
-          price = price + remain * 1;
-          carryForwardCount = 5000 - remain;
-          setCf(carryForwardCount, 1);
-          console.log("Email Count: ", ec);
-          console.log("Under 5001 - 10000: ", carryForwardCount);
-        }
-      } else {
-        price = price + remain * 1.75;
-        carryForwardCount = 3000 - remain;
-        setCf(carryForwardCount, 1.75);
-        console.log("Email Count: ", ec);
-        console.log("Under 2001 - 5000: ", carryForwardCount);
-      }
-    } else {
-      price = count * 2.5;
-      carryForwardCount = 2000 - count;
-      setCf(carryForwardCount, 2.5);
-    }
-    console.log("Final Price", price);
-    return price;
-  };
+  //   if (count > 2000) {
+  //     price = 2000 * 2.5;
+  //     remain = count - 2000;
+  //     if (remain > 3000) {
+  //       price = price + 3000 * 1.75;
+  //       remain = remain - 3000;
+  //       if (remain > 5000) {
+  //         price = price + 5000 * 1;
+  //         remain = remain - 5000;
+  //         if (remain > 10000) {
+  //           price = price + 10000 * 0.7;
+  //           remain = remain - 10000;
+  //           if (remain > 0) {
+  //             price = price + remain * 0.5;
+  //           }
+  //         } else {
+  //           price = price + remain * 0.7;
+  //           carryForwardCount = 10000 - remain;
+  //           // setCarryForward();
+  //           setCf(carryForwardCount, 0.7);
+  //           console.log("Email Count: ", ec);
+  //           console.log("Under 10001 - 20000: ", carryForwardCount);
+  //         }
+  //       } else {
+  //         price = price + remain * 1;
+  //         carryForwardCount = 5000 - remain;
+  //         setCf(carryForwardCount, 1);
+  //         console.log("Email Count: ", ec);
+  //         console.log("Under 5001 - 10000: ", carryForwardCount);
+  //       }
+  //     } else {
+  //       price = price + remain * 1.75;
+  //       carryForwardCount = 3000 - remain;
+  //       setCf(carryForwardCount, 1.75);
+  //       console.log("Email Count: ", ec);
+  //       console.log("Under 2001 - 5000: ", carryForwardCount);
+  //     }
+  //   } else {
+  //     price = count * 2.5;
+  //     carryForwardCount = 2000 - count;
+  //     setCf(carryForwardCount, 2.5);
+  //   }
+  //   console.log("Final Price", price);
+  //   return price;
+  // };
 
   const direactDialPrice = (c) => {
     return parseInt(c) * 8;
@@ -244,8 +244,8 @@ function FreezeHistoryTable(props) {
             <th>Search Details</th>
             <th style={{ width: "120px" }}>Email Count</th>
             <th>Direct Dial Count</th>
-            <th>Email Cost</th>
-            <th>Direct Dial Cost</th>
+            {/* <th>Email Cost</th> */}
+            {/* <th>Direct Dial Cost</th> */}
             <th>Action</th>
           </tr>
         </thead>
@@ -257,15 +257,15 @@ function FreezeHistoryTable(props) {
               </td>
             </tr>
           )}
-          {freezeHistory.data.map((fh) => {
+          {freezeHistory.data.map((fh, index) => {
             return (
               <>
-                <tr key={fh.search_id} id={fh.search_id}>
+                <tr key={index} id={fh.search_id}>
                   <td></td>
                   <td></td>
-                  <td>{fh.date ? new Date(fh.date).toLocaleString() : ""}</td>
+                  <td>{fh.date}</td>
                   <td>{fh.search_id}</td>
-                  <td>{fh.search_name}</td>
+                  <td>{fh.search_name ? fh.search_name : "-"}</td>
                   <td>
                     {fh.search_details.first_name ? (
                       <div>
@@ -413,17 +413,14 @@ function FreezeHistoryTable(props) {
                       </OverlayTrigger>
                     )}
                   </td>
-                  <td className="text-end" style={{ width: "100px" }}>
-                    {/* {fh.email_count === 0
-                      ? 0
-                      : "₹ " + priceCalulator(fh.email_count)} */}
+                  {/* <td className="text-end" style={{ width: "100px" }}>
                     {fh.email_cost}
                   </td>
                   <td className="text-end">
                     {fh.directDial_count === 0
                       ? 0
                       : "₹ " + direactDialPrice(fh.directDial_count)}
-                  </td>
+                  </td> */}
                   <td className="text-center">
                     <button
                       type="button"
@@ -440,7 +437,16 @@ function FreezeHistoryTable(props) {
         </tbody>
       </table>
       <div className="d-flex justify-content-between">
-        <div></div>
+        <div>
+          <span>
+            Total Email: {"  "}
+            {freezeHistory.totalCount ? freezeHistory.totalCount : 0}
+          </span>
+          <span className="ms-3">
+            Total Cost: {"  "}
+            {freezeHistory.totalPrice ? freezeHistory.totalPrice : 0}
+          </span>
+        </div>
         <button
           type="button"
           className="btn btn-success"

@@ -92,14 +92,22 @@ function Sidebar() {
             <span className="title">Sequences</span>
           </Link>
         </li>
-        {/* <li>
-          <Link to="/profile">
+        <li className={`${location.pathname === "/list" ? "active" : ""}`}>
+          <Link to="/list">
             <span className="icon">
-              <i className="fas fa-cogs"></i>
+              <i className="fas fa-th-list"></i>
             </span>
-            <span className="title">Preference</span>
+            <span className="title">list</span>
           </Link>
-        </li> */}
+        </li>
+        <li className={`${location.pathname === "/templates" ? "active" : ""}`}>
+          <Link to="/templates">
+            <span className="icon">
+              <i className="fas fa-pencil-ruler"></i>
+            </span>
+            <span className="title">Templates</span>
+          </Link>
+        </li>
       </ul>
     </div>
   );
