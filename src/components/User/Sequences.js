@@ -21,6 +21,7 @@ function Sequences() {
     listId: null,
     templateId: null
   });
+  const [showSchedule, setShowSchedule] = useState(false);
 
   const openModal = (modalId) => {
     document.body.classList.add("modal-open");
@@ -47,6 +48,18 @@ function Sequences() {
 
   const createSequence = async (e) => {
     e.preventDefault();
+
+    let checkImmediate = document.getElementById("immediate");
+    let checkScheduled = document.getElementById("scheduled");
+
+    if (!sequenceName) {
+      return toast.error("Please enter name for sequence");
+    }
+
+    if (!checkImmediate.checked && !checkScheduled.checked) {
+      return toast.error("Please select Immediate/Schedule");
+    }
+
     dispatch(progressLoading(30));
     const addList = await fetch(`${API_URL}/api/user/list/add`, {
       method: "POST",
@@ -103,9 +116,9 @@ function Sequences() {
     dispatch(progressLoading(100));
   };
 
-  const getSequence = async () => {
+  const getSequence = async (seqName = "") => {
     dispatch(progressLoading(30));
-    const url = `${API_URL}/api/user/list/detailed`;
+    const url = `${API_URL}/api/user/list/detailed?s=${seqName}`;
     let data = await fetch(url, {
       method: "GET",
       headers: {
@@ -197,6 +210,13 @@ function Sequences() {
     setCampaignForm({ ...campaignForm, templateId: e.target.value });
   };
 
+  const handleSequenceSearch = async (e) => {
+    setTimeout(() => {
+      // console.log(e.target.value);
+      getSequence(e.target.value);
+    }, 800);
+  };
+
   useEffect(() => {
     getSequence();
     // eslint-disable-next-line
@@ -209,7 +229,18 @@ function Sequences() {
           <div className="card-body">
             <div className="cardTitle mb-4 d-flex justify-content-between align-items-center">
               <h5>Sequences</h5>
-              <div>
+              <div className="d-flex align-items-center">
+                <input
+                  type="search"
+                  name="searchSequence"
+                  id="searchSequence"
+                  placeholder="Type to Search..."
+                  className="form-control form-control-sm me-2"
+                  style={{
+                    width: "200px"
+                  }}
+                  onInput={handleSequenceSearch}
+                />
                 <button
                   className="btn btn-sm btn-primary me-2"
                   onClick={() => openModal("createSequenceModal")}
@@ -271,6 +302,13 @@ function Sequences() {
                         </tr>
                       );
                     })}
+                  {sequence.length === 0 && (
+                    <tr>
+                      <td colSpan="3" className="py-4 text-center">
+                        <h5 className="mb-0">No result found</h5>
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -426,19 +464,150 @@ function Sequences() {
             </div>
             <div className="modal-body">
               <form onSubmit={createSequence}>
-                <label htmlFor="sequenceName" className="form-label">
-                  Name for Sequence
-                </label>
-                <input
-                  type="text"
-                  id="sequenceName"
-                  className="form-control"
-                  value={sequenceName}
-                  onChange={(e) => {
-                    setSequenceName(e.target.value);
-                  }}
-                />
-                <button type="submit" className="mt-3 btn btn-sm btn-success">
+                <div className="mb-3">
+                  <label htmlFor="sequenceName" className="form-label">
+                    Name for Sequence
+                  </label>
+                  <input
+                    type="text"
+                    id="sequenceName"
+                    className="form-control"
+                    value={sequenceName}
+                    onChange={(e) => {
+                      setSequenceName(e.target.value);
+                    }}
+                  />
+                </div>
+                <div className="mb-3">
+                  <div className="form-check form-check-inline">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="schedule"
+                      id="immediate"
+                      value="immediate"
+                      onClick={() => {
+                        setShowSchedule(false);
+                      }}
+                    />
+                    <label className="form-check-label" htmlFor="immediate">
+                      Send immediately
+                    </label>
+                  </div>
+                  <div className="form-check form-check-inline">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="schedule"
+                      id="scheduled"
+                      value="scheduled"
+                      onClick={() => {
+                        setShowSchedule(true);
+                      }}
+                    />
+                    <label className="form-check-label" htmlFor="scheduled">
+                      Schedule my Sequence
+                    </label>
+                  </div>
+                </div>
+                {showSchedule && (
+                  <>
+                    <div className="mb-3">
+                      <label className="form-label">Select Days</label>
+                      <br />
+                      <div className="form-check form-check-inline">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          id="monday"
+                          value="monday"
+                        />
+                        <label className="form-check-label" htmlFor="monday">
+                          Monday
+                        </label>
+                      </div>
+                      <div className="form-check form-check-inline">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          id="tuesday"
+                          value="tuesday"
+                        />
+                        <label className="form-check-label" htmlFor="tuesday">
+                          Tuesday
+                        </label>
+                      </div>
+                      <div className="form-check form-check-inline">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          id="wednesday"
+                          value="wednesday"
+                        />
+                        <label className="form-check-label" htmlFor="wednesday">
+                          Wednesday
+                        </label>
+                      </div>
+                      <div className="form-check form-check-inline">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          id="thursday"
+                          value="thursday"
+                        />
+                        <label className="form-check-label" htmlFor="thursday">
+                          Thursday
+                        </label>
+                      </div>
+                      <div className="form-check form-check-inline">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          id="friday"
+                          value="friday"
+                        />
+                        <label className="form-check-label" htmlFor="friday">
+                          Friday
+                        </label>
+                      </div>
+                      <div className="form-check form-check-inline">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          id="saturday"
+                          value="saturday"
+                        />
+                        <label className="form-check-label" htmlFor="saturday">
+                          Saturday
+                        </label>
+                      </div>
+                      <div className="form-check form-check-inline">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          id="sunday"
+                          value="sunday"
+                        />
+                        <label className="form-check-label" htmlFor="sunday">
+                          Sunday
+                        </label>
+                      </div>
+                    </div>
+                    <div className="mb-3">
+                      <label htmlFor="startDate" className="form-label">
+                        Start From
+                      </label>
+                      {/* <input type="date" id="startDate" className="form-control" /> */}
+                      <input
+                        type="datetime-local"
+                        name="startDate"
+                        id="startDate"
+                        className="form-control"
+                      />
+                    </div>
+                  </>
+                )}
+                <button type="submit" className="btn btn-sm btn-success">
                   Create
                 </button>
               </form>

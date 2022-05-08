@@ -232,8 +232,15 @@ router.get("/list", fetchuser, async (req, res) => {
 });
 
 router.get("/list/detailed", fetchuser, async (req, res) => {
+  let query = { userId: req.user.id };
+  if (req.query.s) {
+    query = {
+      userId: req.user.id,
+      list_name: { $regex: req.query.s, $options: "i" }
+    };
+  }
   let lists = await sequenceList
-    .find({ userId: req.user.id })
+    .find(query)
     .select(["list_name", "list_data", "_id"]);
   if (lists) {
     res.status(200).json({
