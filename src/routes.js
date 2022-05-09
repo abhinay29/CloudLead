@@ -16,6 +16,7 @@ export const Routes = {
   ChangePassword: { path: "/change-password" },
   Unsubscribe: { path: "/unsubscribe" },
   Sequences: { path: "/sequences" },
+  Lists: { path: "/lists" },
   Templates: { path: "/templates" },
   CreateTemplate: { path: "/sequences/template/create" }
 };

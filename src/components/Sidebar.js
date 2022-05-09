@@ -93,11 +93,11 @@ function Sidebar() {
           </Link>
         </li>
         <li className={`${location.pathname === "/list" ? "active" : ""}`}>
-          <Link to="/list">
+          <Link to="/lists">
             <span className="icon">
               <i className="fas fa-th-list"></i>
             </span>
-            <span className="title">list</span>
+            <span className="title">Lists</span>
           </Link>
         </li>
         <li className={`${location.pathname === "/templates" ? "active" : ""}`}>

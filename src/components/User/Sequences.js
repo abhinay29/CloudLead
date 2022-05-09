@@ -22,6 +22,7 @@ function Sequences() {
     templateId: null
   });
   const [showSchedule, setShowSchedule] = useState(false);
+  const [lists, setLists] = useState([]);
 
   const openModal = (modalId) => {
     document.body.classList.add("modal-open");
@@ -45,6 +46,26 @@ function Sequences() {
   };
 
   const [sequenceName, setSequenceName] = useState("");
+  const [seqFeq, setSeqFeq] = useState("");
+  const [seqDays, setSeqDays] = useState({
+    mon: 0,
+    tue: 0,
+    wed: 0,
+    thu: 0,
+    fri: 0,
+    sat: 0,
+    sun: 0
+  });
+  const [seqStartDate, setSeqStartDate] = useState("");
+  const [seqStartTime, setSeqStartTime] = useState("");
+
+  const handleDays = (e) => {
+    if (e.target.checked) {
+      setSeqDays({ ...seqDays, [e.target.value]: 1 });
+    } else {
+      setSeqDays({ ...seqDays, [e.target.value]: 0 });
+    }
+  };
 
   const createSequence = async (e) => {
     e.preventDefault();
@@ -61,15 +82,18 @@ function Sequences() {
     }
 
     dispatch(progressLoading(30));
-    const addList = await fetch(`${API_URL}/api/user/list/add`, {
+    const addList = await fetch(`${API_URL}/api/user/sequence/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "auth-token": localStorage.getItem("token")
       },
       body: JSON.stringify({
-        ids: [],
-        name: sequenceName
+        name: sequenceName,
+        frequency: seqFeq,
+        days: seqDays,
+        sdate: seqStartDate,
+        stime: seqStartTime
       })
     });
 
@@ -81,7 +105,7 @@ function Sequences() {
     if (res.status === "success") {
       closeModal("createSequenceModal");
       setSequenceName("");
-      toast.success("Sequence created successfully.");
+      toast.success(res.message);
     } else if (res.status === "error") {
       toast.error(res.error);
     } else {
@@ -89,6 +113,24 @@ function Sequences() {
     }
     dispatch(progressLoading(100));
     getSequence();
+  };
+
+  const getLists = async (seqName = "") => {
+    dispatch(progressLoading(30));
+    const url = `${API_URL}/api/user/list/detailed?s=${seqName}`;
+    let data = await fetch(url, {
+      method: "GET",
+      headers: {
+        "auth-token": localStorage.getItem("token"),
+        "Content-Type": "application/json"
+      }
+    });
+    dispatch(progressLoading(50));
+    let parsedData = await data.json();
+    if (parsedData.status === "success") {
+      setLists(parsedData.lists);
+    }
+    dispatch(progressLoading(100));
   };
 
   const viewList = async (id) => {
@@ -118,7 +160,7 @@ function Sequences() {
 
   const getSequence = async (seqName = "") => {
     dispatch(progressLoading(30));
-    const url = `${API_URL}/api/user/list/detailed?s=${seqName}`;
+    const url = `${API_URL}/api/user/sequence?s=${seqName}`;
     let data = await fetch(url, {
       method: "GET",
       headers: {
@@ -129,7 +171,7 @@ function Sequences() {
     dispatch(progressLoading(50));
     let parsedData = await data.json();
     if (parsedData.status === "success") {
-      setSequence(parsedData.lists);
+      setSequence(parsedData.sequenceList);
     }
     dispatch(progressLoading(100));
   };
@@ -264,8 +306,9 @@ function Sequences() {
               <table className="table">
                 <thead>
                   <tr>
-                    <th>Name</th>
-                    <th>Recipients</th>
+                    <th>Sequence Name</th>
+                    <th>Contact Count</th>
+                    <th>Schedule</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -275,7 +318,8 @@ function Sequences() {
                       return (
                         <tr key={seq.id}>
                           <td className="fw-bold">{seq.name}</td>
-                          <td>{seq.rcptcount}</td>
+                          <td>{seq.contact_count}</td>
+                          <td>{seq.frequency}</td>
                           <td>
                             <button
                               type="button"
@@ -458,7 +502,10 @@ function Sequences() {
               <button
                 type="button"
                 className="btn-close"
-                onClick={() => closeModal("createSequenceModal")}
+                onClick={() => {
+                  closeModal("createSequenceModal");
+                  getLists();
+                }}
                 aria-label="Close"
               ></button>
             </div>
@@ -486,8 +533,9 @@ function Sequences() {
                       name="schedule"
                       id="immediate"
                       value="immediate"
-                      onClick={() => {
+                      onClick={(e) => {
                         setShowSchedule(false);
+                        setSeqFeq("immediate");
                       }}
                     />
                     <label className="form-check-label" htmlFor="immediate">
@@ -503,6 +551,7 @@ function Sequences() {
                       value="scheduled"
                       onClick={() => {
                         setShowSchedule(true);
+                        setSeqFeq("scheduled");
                       }}
                     />
                     <label className="form-check-label" htmlFor="scheduled">
@@ -519,10 +568,11 @@ function Sequences() {
                         <input
                           className="form-check-input"
                           type="checkbox"
-                          id="monday"
-                          value="monday"
+                          id="mon"
+                          value="mon"
+                          onChange={handleDays}
                         />
-                        <label className="form-check-label" htmlFor="monday">
+                        <label className="form-check-label" htmlFor="mon">
                           Monday
                         </label>
                       </div>
@@ -530,10 +580,11 @@ function Sequences() {
                         <input
                           className="form-check-input"
                           type="checkbox"
-                          id="tuesday"
-                          value="tuesday"
+                          id="tue"
+                          value="tue"
+                          onChange={handleDays}
                         />
-                        <label className="form-check-label" htmlFor="tuesday">
+                        <label className="form-check-label" htmlFor="tue">
                           Tuesday
                         </label>
                       </div>
@@ -541,10 +592,11 @@ function Sequences() {
                         <input
                           className="form-check-input"
                           type="checkbox"
-                          id="wednesday"
-                          value="wednesday"
+                          id="wed"
+                          value="wed"
+                          onChange={handleDays}
                         />
-                        <label className="form-check-label" htmlFor="wednesday">
+                        <label className="form-check-label" htmlFor="wed">
                           Wednesday
                         </label>
                       </div>
@@ -552,10 +604,11 @@ function Sequences() {
                         <input
                           className="form-check-input"
                           type="checkbox"
-                          id="thursday"
-                          value="thursday"
+                          id="thu"
+                          value="thu"
+                          onChange={handleDays}
                         />
-                        <label className="form-check-label" htmlFor="thursday">
+                        <label className="form-check-label" htmlFor="thu">
                           Thursday
                         </label>
                       </div>
@@ -563,10 +616,11 @@ function Sequences() {
                         <input
                           className="form-check-input"
                           type="checkbox"
-                          id="friday"
-                          value="friday"
+                          id="fri"
+                          value="fri"
+                          onChange={handleDays}
                         />
-                        <label className="form-check-label" htmlFor="friday">
+                        <label className="form-check-label" htmlFor="fri">
                           Friday
                         </label>
                       </div>
@@ -574,10 +628,11 @@ function Sequences() {
                         <input
                           className="form-check-input"
                           type="checkbox"
-                          id="saturday"
-                          value="saturday"
+                          id="sat"
+                          value="sat"
+                          onChange={handleDays}
                         />
-                        <label className="form-check-label" htmlFor="saturday">
+                        <label className="form-check-label" htmlFor="sat">
                           Saturday
                         </label>
                       </div>
@@ -585,10 +640,11 @@ function Sequences() {
                         <input
                           className="form-check-input"
                           type="checkbox"
-                          id="sunday"
-                          value="sunday"
+                          id="sun"
+                          value="sun"
+                          onChange={handleDays}
                         />
-                        <label className="form-check-label" htmlFor="sunday">
+                        <label className="form-check-label" htmlFor="sun">
                           Sunday
                         </label>
                       </div>
@@ -607,6 +663,25 @@ function Sequences() {
                     </div>
                   </>
                 )}
+                <div className="mb-3"></div>
+                <div className="mb-3">
+                  <label htmlFor="selectFrmList" className="form-label">
+                    Select List
+                  </label>
+                  <select className="form-select" id="selectFrmList">
+                    <option value="">--</option>
+                    {lists.length > 0 &&
+                      lists.map((l) => {
+                        return (
+                          <option value={l.id}>
+                            {l.name} ({l.rcptcount})
+                          </option>
+                        );
+                      })}
+                  </select>
+                </div>
+                <div className="py-2 text-center"> -- or --</div>
+                <div className="mb-3"></div>
                 <button type="submit" className="btn btn-sm btn-success">
                   Create
                 </button>

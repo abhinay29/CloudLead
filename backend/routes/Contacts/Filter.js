@@ -222,14 +222,14 @@ module.exports = async (req, res) => {
       .paginating();
 
     const contacts = await features.query;
-    var end = new Date() - start;
-    console.log("Time taken - find query run: ", end);
+    // var end = new Date() - start;
+    // console.log("Time taken - find query run: ", end);
     // const totalContacts = await Contacts.count({});
     const totalResults = await Contacts.count(newQuery);
 
     const uniqueComp = await Contacts.find(newQuery).distinct("company_id");
-    var end = new Date() - start;
-    console.log("Time taken - distinct: ", end);
+    // var end = new Date() - start;
+    // console.log("Time taken - distinct: ", end);
     newQuery.direct_dial = "available";
     const directDial = await Contacts.count(newQuery);
     // let reqLimit = 50;
@@ -237,8 +237,8 @@ module.exports = async (req, res) => {
     //   reqLimit = parseInt(req.query.limit);
     // }
 
-    var end = new Date() - start;
-    console.log("Time taken - count & unique comp & directDial Count: ", end);
+    // var end = new Date() - start;
+      // console.log("Time taken - count & unique comp & directDial Count: ", end);
 
     async function getEmail(cid) {
       let checkWatchlist = await Watchlist.findOne({

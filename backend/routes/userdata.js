@@ -11,6 +11,7 @@ const Contacts = require("../models/Contacts");
 const {
   savedSearch,
   savedCompanySearch,
+  Lists,
   sequenceList,
   templates,
   campaign
@@ -22,6 +23,11 @@ const Activity = require("./UserData/Activity");
 const FreezeData = require("./UserData/FreezeData");
 const GetFreezeData = require("./UserData/GetFreezedData");
 const RemoveFreezeData = require("./UserData/RemoveFreezeData");
+const GetLists = require("./UserData/Lists/GetLists");
+const GetListDetails = require("./UserData/Lists/GetListDetails");
+
+const CreateSequence = require("./UserData/Sequence/CreateSequence");
+const GetSequence = require("./UserData/Sequence/GetSequence");
 
 const adminEmail = process.env.ADMIN_EMAIL;
 
@@ -215,48 +221,8 @@ router.post("/add-to-list", fetchuser, async (req, res) => {
   }
 });
 
-router.get("/list", fetchuser, async (req, res) => {
-  let lists = await sequenceList
-    .find({ userId: req.user.id })
-    .select(["list_name", "-_id"]);
-  if (lists) {
-    res.status(200).json({
-      status: "success",
-      lists: lists.map((l) => {
-        return l.list_name;
-      })
-    });
-  } else {
-    res.status(200).send(false);
-  }
-});
-
-router.get("/list/detailed", fetchuser, async (req, res) => {
-  let query = { userId: req.user.id };
-  if (req.query.s) {
-    query = {
-      userId: req.user.id,
-      list_name: { $regex: req.query.s, $options: "i" }
-    };
-  }
-  let lists = await sequenceList
-    .find(query)
-    .select(["list_name", "list_data", "_id"]);
-  if (lists) {
-    res.status(200).json({
-      status: "success",
-      lists: lists.map((l) => {
-        return {
-          id: l._id,
-          name: l.list_name,
-          rcptcount: l.list_data.length ? l.list_data.length : 0
-        };
-      })
-    });
-  } else {
-    res.status(200).send(false);
-  }
-});
+router.get("/list", fetchuser, GetLists);
+router.get("/list/detailed", fetchuser, GetListDetails);
 
 router.get("/list/view/:id", fetchuser, async (req, res) => {
   let seqId = req.params.id;
@@ -284,7 +250,7 @@ router.get("/list/view/:id", fetchuser, async (req, res) => {
 router.delete("/list/:id", fetchuser, async (req, res) => {
   let seqId = req.params.id;
   try {
-    let lists = await sequenceList.deleteOne({
+    let lists = await lists.deleteOne({
       _id: seqId,
       userId: req.user.id
     });
@@ -307,12 +273,12 @@ router.post("/list/add", fetchuser, async (req, res) => {
 
   // Check list exist
 
-  let check = await sequenceList.findOne({
+  let check = await Lists.findOne({
     userId: user_id,
     list_name: listName
   });
   if (!check) {
-    const addList = await sequenceList.create({
+    const addList = await Lists.create({
       userId: user_id,
       list_name: listName,
       list_data: ids
@@ -338,7 +304,7 @@ router.post("/list/add", fetchuser, async (req, res) => {
 
     count = newList.length - count;
 
-    const updateList = await sequenceList.findByIdAndUpdate(
+    const updateList = await Lists.findByIdAndUpdate(
       { _id: check._id },
       {
         list_data: newList
@@ -580,5 +546,8 @@ router.get("/activity", fetchuser, Activity);
 router.post("/add-to-freeze-list", fetchuser, FreezeData);
 router.get("/get-freeze-data", fetchuser, GetFreezeData);
 router.post("/delete-freezelist", fetchuser, RemoveFreezeData);
+
+router.post("/sequence/create", fetchuser, CreateSequence);
+router.get("/sequence", fetchuser, GetSequence);
 
 module.exports = router;

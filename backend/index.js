@@ -1,11 +1,23 @@
 require("dotenv").config();
 const connectToMongo = require("./db");
 const express = require("express");
+var logger = require("morgan");
 var cors = require("cors");
+const fs = require("fs");
 
 connectToMongo();
 const app = express();
 const port = process.env.PORT;
+// app.use(
+//   morgan(":method :url :status :res[content-length] - :response-time ms")
+// );
+
+app.use(
+  logger("common", {
+    stream: fs.createWriteStream("./access.log", { flags: "a" })
+  })
+);
+app.use(logger("dev"));
 
 app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ extended: true, limit: "100mb" }));

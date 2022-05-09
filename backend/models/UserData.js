@@ -71,7 +71,43 @@ const List = new Schema({
   }
 });
 
-const sequenceList = mongoose.model("sequences", List);
+const lists = mongoose.model("lists", List);
+
+const Sequences = new Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "users",
+    required: true,
+    unique: false
+  },
+  name: {
+    type: String,
+    default: ""
+  },
+  frequency: {
+    type: String
+  },
+  days: {
+    type: Object,
+    default: {}
+  },
+  start_date: {
+    type: String
+  },
+  start_time: {
+    type: String
+  },
+  emails: {
+    type: Array,
+    default: []
+  },
+  created_at: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+const sequences = mongoose.model("sequences", Sequences);
 
 const Templates = new Schema({
   userId: {
@@ -134,7 +170,8 @@ const campaign = mongoose.model("campaign", Campaign);
 module.exports = {
   savedSearch: savedSearch,
   savedCompanySearch: savedCompanySearch,
-  sequenceList: sequenceList,
+  sequenceList: sequences,
+  Lists: lists,
   templates: templates,
   campaign: campaign
 };

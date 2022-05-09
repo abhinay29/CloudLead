@@ -26,6 +26,7 @@ import Sidebar from "./components/Sidebar";
 import ForgotPassword from "./components/Auth/ForgotPassword";
 import ResetPassword from "./components/Auth/ResetPassword";
 import Sequences from "./components/User/Sequences";
+import Lists from "./components/User/Lists";
 import Templates from "./components/User/Templates";
 import CreateTemplate from "./components/User/CreateTemplate";
 
@@ -148,6 +149,7 @@ function App() {
             path={Routes.Sequences.path}
             component={Sequences}
           />
+          <RouteWithNavbar exact path={Routes.Lists.path} component={Lists} />
           <RouteWithNavbar
             exact
             path={Routes.Templates.path}
