@@ -22,6 +22,8 @@ function Sequences() {
     templateId: null
   });
   const [showSchedule, setShowSchedule] = useState(false);
+  const [showUploadOption, setShowUploadOption] = useState(false);
+  const [showListOption, setShowListOption] = useState(false);
   const [lists, setLists] = useState([]);
 
   const openModal = (modalId) => {
@@ -250,6 +252,26 @@ function Sequences() {
 
   const handleInputChange = (e) => {
     setCampaignForm({ ...campaignForm, templateId: e.target.value });
+  };
+
+  const handleListOption = (e) => {
+    if (e.target.value === "selectList") {
+      if (e.target.checked) {
+        setShowListOption(true);
+      } else {
+        setShowListOption(false);
+      }
+      setShowUploadOption(false);
+    }
+
+    if (e.target.value === "importCsv") {
+      if (e.target.checked) {
+        setShowUploadOption(true);
+      } else {
+        setShowUploadOption(false);
+      }
+      setShowListOption(false);
+    }
   };
 
   const handleSequenceSearch = async (e) => {
@@ -663,25 +685,52 @@ function Sequences() {
                     </div>
                   </>
                 )}
-                <div className="mb-3"></div>
                 <div className="mb-3">
-                  <label htmlFor="selectFrmList" className="form-label">
-                    Select List
-                  </label>
-                  <select className="form-select" id="selectFrmList">
-                    <option value="">--</option>
-                    {lists.length > 0 &&
-                      lists.map((l) => {
-                        return (
-                          <option value={l.id}>
-                            {l.name} ({l.rcptcount})
-                          </option>
-                        );
-                      })}
-                  </select>
+                  <div className="form-check form-check-inline">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="emails"
+                      id="selectList"
+                      value="selectList"
+                      onChange={handleListOption}
+                    />
+                    <label className="form-check-label" htmlFor="selectList">
+                      Select List
+                    </label>
+                  </div>
+                  <div className="form-check form-check-inline">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="emails"
+                      id="importCsv"
+                      value="importCsv"
+                      onChange={handleListOption}
+                    />
+                    <label className="form-check-label" htmlFor="importCsv">
+                      Upload CSV
+                    </label>
+                  </div>
                 </div>
-                <div className="py-2 text-center"> -- or --</div>
-                <div className="mb-3"></div>
+                {showListOption && (
+                  <div className="mb-3">
+                    <label htmlFor="selectFrmList" className="form-label">
+                      Select List
+                    </label>
+                    <select className="form-select" id="selectFrmList">
+                      <option value="">--</option>
+                      {lists.length > 0 &&
+                        lists.map((l) => {
+                          return (
+                            <option value={l.id}>
+                              {l.name} ({l.rcptcount})
+                            </option>
+                          );
+                        })}
+                    </select>
+                  </div>
+                )}
                 <button type="submit" className="btn btn-sm btn-success">
                   Create
                 </button>
