@@ -307,7 +307,10 @@ function Sequences() {
                 />
                 <button
                   className="btn btn-sm btn-primary me-2"
-                  onClick={() => openModal("createSequenceModal")}
+                  onClick={() => {
+                    openModal("createSequenceModal");
+                    getLists();
+                  }}
                 >
                   <i className="fas fa-plus me-1"></i> Create Sequence
                 </button>
@@ -526,7 +529,6 @@ function Sequences() {
                 className="btn-close"
                 onClick={() => {
                   closeModal("createSequenceModal");
-                  getLists();
                 }}
                 aria-label="Close"
               ></button>
@@ -729,6 +731,18 @@ function Sequences() {
                           );
                         })}
                     </select>
+                  </div>
+                )}
+                {showUploadOption && (
+                  <div className="mb-3">
+                    <label htmlFor="uploadCSV" className="form-label">
+                      Upload CSV File
+                    </label>
+                    <input
+                      class="form-control"
+                      type="file"
+                      id="uploadCSV"
+                    ></input>
                   </div>
                 )}
                 <button type="submit" className="btn btn-sm btn-success">
