@@ -376,15 +376,53 @@ router.get("/templates", fetchuser, async (req, res) => {
   }
 });
 
-router.post("/template/create", fetchuser, async (req, res) => {
+router.post("/template/test-email", fetchuser, async (req, res) => {
   const user_id = req.user.id;
-  const { name, subject, content } = req.body;
+  const { subject, content } = req.body;
+
+  let user = await User.findOne({ _id: user_id });
+  if (!user) {
+    return res.status(200).json({
+      status: "error",
+      error: "Invalid User."
+    });
+  }
+
+  try {
+    let sendMail = await transporter.sendMail({
+      from: `"Cloudlead" <${adminEmail}>`,
+      to: user.email,
+      subject: "Testmail: " + subject,
+      html: content
+    });
+    return res.status(200).json({
+      status: "success",
+      message: "Test email sent to your registered email."
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(200).json({
+      status: "error",
+      error: "Please try again later."
+    });
+  }
+});
+
+router.post("/template/create", fetchuser, async (req, res) => {
+  // return res.status(200).json({
+  //   status: "error",
+  //   error: "Cannot create template this time, please try again later."
+  // });
+  const user_id = req.user.id;
+  const { name, subject, content, design, type } = req.body;
 
   const addTemplate = await templates.create({
     userId: user_id,
     template_name: name,
     template_subject: subject,
-    template_content: content
+    template_content: content,
+    template_type: type,
+    template_json: design
   });
   if (!addTemplate)
     return res.status(200).json({

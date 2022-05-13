@@ -809,7 +809,7 @@ const Filter = (props) => {
     return {
       label: (() => {
         return (
-          <div className="d-flex align-items-center">
+          <div>
             <input
               type="checkbox"
               className="form-check-input me-2"
@@ -818,7 +818,7 @@ const Filter = (props) => {
                   setDefaultValueGroupFunction(options, name);
               }}
             />
-            <span className="fw-bold text-dark " style={{ fontSize: "14px" }}>
+            <span className="fw-bold text-dark" style={{ fontSize: "14px" }}>
               {groupName}
             </span>
           </div>
@@ -833,7 +833,7 @@ const Filter = (props) => {
                 <>
                   <input
                     type="checkbox"
-                    className="form-check-input mx-2 small"
+                    className="form-check-input mx-2 small "
                   />
                   {option.label}
                 </>

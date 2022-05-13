@@ -128,6 +128,14 @@ const Templates = new Schema({
     type: String,
     required: true
   },
+  template_json: {
+    type: Object,
+    default: {}
+  },
+  template_type: {
+    type: String,
+    default: ""
+  },
   created_at: {
     type: Date,
     default: Date.now

@@ -244,15 +244,18 @@ export const textilesOptions = [
 export const industryGrpOpt = [
   { label: "Finance", options: financeOptions },
   { label: "Manufacturing", options: manufacturingOptions },
-  { label: "Healthcare/Pharma", options: healthcareOptions },
+  { label: "Healthcare / Pharma", options: healthcareOptions },
   { label: "Information Technology", options: itOptions },
-  { label: "Real Estate/Construction", options: realstateOptions },
+  { label: "Real Estate / Construction", options: realstateOptions },
   { label: "Others", options: otherOptions },
-  { label: "Media/Publishing/Entertainment", options: mediaOptions },
+  { label: "Media / Publishing / Entertainment", options: mediaOptions },
   { label: "Services", options: serviceOptions },
   { label: "FMCG", options: fmcgOptions },
   { label: "Education", options: educationOptions },
-  { label: "Public Sector/Philonthropy/Associations", options: govtOptions },
+  {
+    label: "Public Sector / Philonthropy / Associations",
+    options: govtOptions
+  },
   { label: "Hospitality", options: hospitalOptions },
   { label: "Logistics and Transport", options: logisticOptions },
   { label: "Telecom", options: telcomOptions },

@@ -18,5 +18,6 @@ export const Routes = {
   Sequences: { path: "/sequences" },
   Lists: { path: "/lists" },
   Templates: { path: "/templates" },
-  CreateTemplate: { path: "/sequences/template/create" }
+  CreateTemplate: { path: "/template/create" },
+  CreateTemplateDnD: { path: "/template/create-dnd" }
 };

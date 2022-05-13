@@ -5,6 +5,7 @@ import { OverlayTrigger, Popover, Form } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useHistory } from "react-router-dom";
+import PlanFaq from "./PlanFaq";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -274,14 +275,16 @@ function ChoosePlan() {
     <>
       <div className="subscribe-container p-5">
         <Logo />
-        <h4 className="text-center mb-2">Choose a Plan</h4>
+        <h4 className="text-center mb-2">Pricing Plan</h4>
         <div className="container">
           <table className="pricingTable">
             <thead>
               <tr>
                 <th className="feature-name"></th>
-                <th className="feature-name"></th>
-                <th className="feature-name ps-5">
+                <th
+                  colSpan="3"
+                  className="feature-name d-flex justify-content-center"
+                >
                   {/* <Form.Check
                     type="switch"
                     id="custom-switch"
@@ -295,7 +298,6 @@ function ChoosePlan() {
                     onChange={() => setUsd(!usd)}
                   />
                 </th>
-                <th className="feature-name"></th>
               </tr>
               <tr>
                 <th></th>
@@ -323,36 +325,34 @@ function ChoosePlan() {
                           <table className="table table-bordered">
                             <thead>
                               <tr>
-                                <th>Upto contacts</th>
-                                <th>INR price Per contact</th>
-                                <th>Total price INR</th>
+                                <th nowrap>Upto contacts</th>
+                                <th nowrap>INR price Per contact</th>
                               </tr>
                             </thead>
                             <tbody className="text-end">
                               <tr>
                                 <td>2000</td>
                                 <td>2.50</td>
-                                <td>5000</td>
                               </tr>
                               <tr>
                                 <td>2001 - 5000</td>
                                 <td>1.75</td>
-                                <td>5250</td>
                               </tr>
                               <tr>
-                                <td>5001 - 10000</td>
+                                <td nowrap>5001 - 10000</td>
                                 <td>1.00</td>
-                                <td>5000</td>
                               </tr>
                               <tr>
-                                <td>10001 - 20000</td>
+                                <td nowrap>10001 - 20000</td>
                                 <td>0.70</td>
-                                <td>7000</td>
                               </tr>
                               <tr>
-                                <td>20001 - 40000</td>
+                                <td nowrap>20001 - 40000</td>
                                 <td>0.50</td>
-                                <td>10000</td>
+                              </tr>
+                              <tr>
+                                <td>More</td>
+                                <td>Please talk to sales</td>
                               </tr>
                             </tbody>
                           </table>
@@ -494,6 +494,7 @@ function ChoosePlan() {
             </tbody>
           </table>
         </div>
+        <PlanFaq />
       </div>
 
       <div

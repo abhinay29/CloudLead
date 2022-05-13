@@ -17,7 +17,7 @@ app.use(
     stream: fs.createWriteStream("./access.log", { flags: "a" })
   })
 );
-app.use(logger("dev"));
+app.use(logger("common"));
 
 app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ extended: true, limit: "100mb" }));

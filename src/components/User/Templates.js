@@ -57,13 +57,33 @@ function Templates() {
         <div className="card-body">
           <div className="cardTitle mb-4 d-flex justify-content-between align-items-center">
             <h5>Templates</h5>
-            <div>
-              <Link
-                to="/sequences/template/create"
-                className="btn btn-sm btn-primary me-2"
-              >
-                Create Template
-              </Link>
+            <div className="d-flex">
+              <div className="dropdown me-2">
+                <button
+                  className="btn btn-primary btn-sm dropdown-toggle"
+                  type="button"
+                  id="createTemplateDropdown"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Create Template
+                </button>
+                <ul
+                  className="dropdown-menu"
+                  aria-labelledby="createTemplateDropdown"
+                >
+                  <li>
+                    <Link to="/template/create" className="dropdown-item">
+                      Use Rich text editor
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/template/create-dnd" className="dropdown-item">
+                      Use Drag and Drop Editor
+                    </Link>
+                  </li>
+                </ul>
+              </div>
               <Link to="/sequences" className="btn btn-sm btn-primary">
                 Sequences
               </Link>

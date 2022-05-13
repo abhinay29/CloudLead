@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 // import { Editor } from "react-draft-wysiwyg";
 // import tinymce from "tinymce/tinymce";
@@ -32,7 +32,9 @@ function CreateTemplate() {
   const [formData, setFormData] = useState({
     name: "",
     subject: "",
-    content: ""
+    content: "",
+    type: "rte",
+    design: {}
   });
 
   // const handleEditorChange = (value) => {
@@ -46,6 +48,9 @@ function CreateTemplate() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    let textareatContent = document.getElementById("rteEditor");
+    setFormData({ ...formData, content: textareatContent.value });
 
     if (!formData.content) {
       return toast.error("Please fill all field, all are required");
@@ -73,81 +78,235 @@ function CreateTemplate() {
     }
   };
 
+  function loadScript(src) {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
+    });
+  }
+
+  async function loadTinyMce() {
+    const res = await loadScript("/assets/plugins/tinymce/tinymce.min.js");
+
+    if (!res) {
+      alert("TinyMce SDK failed to load.");
+      return;
+    }
+    var s = document.createElement("script");
+    s.type = "text/javascript";
+    var code =
+      'tinymce.init({ selector: "#rteEditor", plugins: [ "advlist", "lists", "autolink", "code" ], toolbar: "undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | link lists preview code | help", menubar: "edit view insert format tools", setup: function (editor) { editor.on("change", function () { editor.save() })} })';
+    s.appendChild(document.createTextNode(code));
+    document.body.appendChild(s);
+  }
+
+  const testEmail = async () => {
+    let textareatContent = document.getElementById("rteEditor");
+    setFormData({ ...formData, content: textareatContent.value });
+
+    if (!formData.subject) {
+      return toast.error("Subject is required.");
+    }
+
+    if (!formData.content) {
+      return toast.error("Template content is required.");
+    }
+
+    try {
+      let url = `${API_URL}/api/user/template/test-email`;
+      let testMail = await fetch(url, {
+        method: "POST",
+        headers: {
+          "auth-token": localStorage.getItem("token"),
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
+      let res = await testMail.json();
+      if (res.status === "success") {
+        toast.success(res.message);
+      } else {
+        toast.error(
+          "Sorry cannot send email right now, please try again later"
+        );
+      }
+    } catch (e) {
+      toast.error("Something went wrong, please try again later.");
+    }
+  };
+
+  useEffect(() => {
+    loadTinyMce();
+  }, []);
+
   return (
-    <div className="fullHeightWithNavBar p-4">
-      <div className="card">
-        <div className="card-body">
-          <div className="cardTitle mb-4 d-flex justify-content-between align-items-center">
-            <h5>Create Template</h5>
-            <div>
-              <Link to="/templates" className="btn btn-sm btn-primary me-2">
-                Templates
-              </Link>
-              <Link to="/sequences" className="btn btn-sm btn-primary">
-                Sequences
-              </Link>
+    <>
+      <div className="fullHeightWithNavBar p-4">
+        <div className="d-flex justify-content-between mb-3">
+          <button type="button" className="btn btn-sm btn-outline-secondary">
+            Back to Template
+          </button>
+          <button
+            type="button"
+            className="btn btn-sm btn-success"
+            onClick={testEmail}
+          >
+            Send Test Email
+          </button>
+        </div>
+        <div className="card">
+          <div className="card-body">
+            <div className="cardTitle mb-4 d-flex justify-content-between align-items-center">
+              <h5>Create Template</h5>
+              <div>
+                <Link to="/templates" className="btn btn-sm btn-primary me-2">
+                  Templates
+                </Link>
+                <Link to="/sequences" className="btn btn-sm btn-primary">
+                  Sequences
+                </Link>
+              </div>
             </div>
-          </div>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <label htmlFor="" className="form-label">
-                Template name
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="" className="form-label">
-                Template Subject
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                name="subject"
-                value={formData.subject}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="" className="form-label">
-                Template Content
-              </label>
-              <div className="border rounded" style={{ minHeight: "400px" }}>
-                {/* <textarea
-                  id="mytextarea"
-                  name="content"
+            <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label htmlFor="" className="form-label">
+                  Template name
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
-                ></textarea> */}
-                {/* <Editor
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="" className="form-label">
+                  Template Subject
+                </label>
+                <div className="input-group mb-3">
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    required
+                    aria-label="Template Subject"
+                  />
+                  <button
+                    className="btn btn-secondary dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Mapwords
+                  </button>
+                  <ul className="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a
+                        className="dropdown-item"
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormData({
+                            ...formData,
+                            subject: formData.subject + " {{FIRSTNAME}}"
+                          });
+                        }}
+                      >
+                        First Name
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        className="dropdown-item"
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormData({
+                            ...formData,
+                            subject: formData.subject + " {{LASTNAME}}"
+                          });
+                        }}
+                      >
+                        Last Name
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        className="dropdown-item"
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormData({
+                            ...formData,
+                            subject: formData.subject + " {{COMPANYNAME}}"
+                          });
+                        }}
+                      >
+                        Company Name
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        className="dropdown-item"
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFormData({
+                            ...formData,
+                            subject: formData.subject + " {{TITLE}}"
+                          });
+                        }}
+                      >
+                        Title
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div className="mb-3">
+                <label htmlFor="" className="form-label">
+                  Template Content
+                </label>
+                <div className="border rounded" style={{ minHeight: "400px" }}>
+                  <textarea
+                    id="rteEditor"
+                    name="content"
+                    // onChange={handleChange}
+                  ></textarea>
+                  {/* <Editor
                   editorState={editorState}
                   onEditorStateChange={setEditorState}
                   onChange={handleEditorChange}
                   plugins={[staticToolbarPlugin]}
                 /> */}
-                <Editor
-                  // tinymceScriptSrc="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.0.1/tinymce.min.js"
+                  {/* <Editor
+                  tinymceScriptSrc="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.0.1/tinymce.min.js"
                   apiKey="sxt1kih1qcrwb6opd8zec1phvncx1qmzl7mh5ft1ld9fo4u0"
                   onInit={(evt, editor) => (editorRef.current = editor)}
                   init={{
                     height: 400,
                     menubar: false,
                     plugins: [
-                      "advlist autolink lists link image charmap print preview anchor",
+                      "advlist autolink lists link image charmap preview anchor",
                       "searchreplace visualblocks code fullscreen",
-                      "insertdatetime media table paste code help wordcount"
+                      "insertdatetime media table paste help wordcount"
                     ],
                     toolbar:
                       "undo redo | formatselect | " +
                       "bold italic backcolor | alignleft aligncenter " +
                       "alignright alignjustify | bullist numlist outdent indent | " +
-                      "removeformat | help"
+                      "removeformat | link lists preview code | help"
                     // content_style:
                     //   "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }"
                   }}
@@ -155,19 +314,20 @@ function CreateTemplate() {
                   onEditorChange={(newValue, editor) =>
                     setFormData({ ...formData, content: newValue })
                   }
-                />
+                /> */}
+                </div>
               </div>
-            </div>
-            <button type="submit" className="btn btn-primary me-2">
-              Save
-            </button>
-            <Link to="/templates" className="btn btn-danger">
-              Discard
-            </Link>
-          </form>
+              <button type="submit" className="btn btn-primary me-2">
+                Save
+              </button>
+              <Link to="/templates" className="btn btn-danger">
+                Discard
+              </Link>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

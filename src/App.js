@@ -29,6 +29,7 @@ import Sequences from "./components/User/Sequences";
 import Lists from "./components/User/Lists";
 import Templates from "./components/User/Templates";
 import CreateTemplate from "./components/User/CreateTemplate";
+import CreateTemplateDnD from "./components/User/CreateTemplateDnD";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -159,6 +160,11 @@ function App() {
             exact
             path={Routes.CreateTemplate.path}
             component={CreateTemplate}
+          />
+          <RouteWithNavbar
+            exact
+            path={Routes.CreateTemplateDnD.path}
+            component={CreateTemplateDnD}
           />
           <RouteWithoutNavbar
             exact

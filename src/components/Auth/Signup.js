@@ -117,7 +117,7 @@ const Signup = (props) => {
       localStorage.setItem("uname", json.uname);
       localStorage.setItem("uemail", json.uemail);
       localStorage.removeItem("searchQuery");
-      toast.success("Welcome uname!!!");
+      toast.success(`Welcome ${json.uname}!!!`);
       history.push("/");
     } else {
       toast.error(json.error, { autoClose: 5000 });
@@ -158,7 +158,7 @@ const Signup = (props) => {
         <div className="container">
           <div className="row align-items-center justify-content-center">
             <div className="col-md-10 px-4">
-              <h3 className="fw-bold">Signup</h3>
+              <h3 className="fw-bold mb-4">Signup</h3>
               <form
                 action="#"
                 method="post"
@@ -167,7 +167,7 @@ const Signup = (props) => {
               >
                 <div className="row">
                   <div className="col-md-12 col-lg-12">
-                    <div className="input-group">
+                    <div className="input-group-custom">
                       <input
                         type="text"
                         value={signupInfo.fullname}
@@ -185,7 +185,7 @@ const Signup = (props) => {
 
                 <div className="row">
                   <div className="col-md-12 col-lg-12">
-                    <div className="input-group">
+                    <div className="input-group-custom">
                       <input
                         type="email"
                         value={signupInfo.email}
@@ -200,7 +200,7 @@ const Signup = (props) => {
                     </div>
                   </div>
                   <div className="col-md-12 col-lg-12">
-                    <div className="input-group">
+                    <div className="input-group-custom">
                       <input
                         type="text"
                         value={signupInfo.company}
@@ -218,7 +218,7 @@ const Signup = (props) => {
 
                 <div className="row">
                   <div className="col-md-12 col-lg-12">
-                    <div className="input-group inputGroupWithShowHide">
+                    <div className="input-group-custom inputGroupWithShowHide">
                       <input
                         type={showNewPassword ? "text" : "password"}
                         value={signupInfo.password}
@@ -258,7 +258,7 @@ const Signup = (props) => {
 
                 <div className="row">
                   <div className="col-md-5 col-lg-5">
-                    <div className="input-group">
+                    <div className="input-group-custom">
                       <div className="select">
                         <select
                           name="country"
@@ -282,7 +282,7 @@ const Signup = (props) => {
                     </div>
                   </div>
                   <div className="col-md-7 col-lg-7">
-                    <div className="input-group">
+                    <div className="input-group-custom">
                       <input
                         type="text"
                         value={signupInfo.phone}

@@ -720,16 +720,16 @@ table th {
 
 .result-screenshot {
   width: 100%;
-  padding: 20px;
+  padding: 50px;
   position: relative;
   height: 500px;
 }
 
 .result-screenshot .image-one {
-  width: 85%;
+  width: 75%;
   position: absolute;
   top: 0;
-  left: 25px;
+  left: 50px;
 }
 
 .result-screenshot .image-one img {
@@ -737,10 +737,10 @@ table th {
 }
 
 .result-screenshot .image-two {
-  width: 85%;
+  width: 75%;
   position: absolute;
-  bottom: 25px;
-  right: 25px;
+  bottom: 50px;
+  right: 50px;
   -webkit-box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.25);
           box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.25);
 }
@@ -749,9 +749,9 @@ table th {
   width: 100%;
 }
 
-.input-group {
+.input-group-custom {
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   /* Remove focus */
   /* Use custom arrow */
   /* LABEL ======================================= */
@@ -761,8 +761,8 @@ table th {
   /* HIGHLIGHTER ================================== */
 }
 
-.input-group input,
-.input-group textarea {
+.input-group-custom input,
+.input-group-custom textarea {
   background: none;
   color: #212529;
   font-size: 1rem;
@@ -774,51 +774,51 @@ table th {
   border-bottom: 1px solid #949fb1;
 }
 
-.input-group input:focus,
-.input-group textarea:focus {
+.input-group-custom input:focus,
+.input-group-custom textarea:focus {
   outline: none;
 }
 
-.input-group input:focus ~ label,
-.input-group input:valid ~ label,
-.input-group textarea:focus ~ label,
-.input-group textarea:valid ~ label {
-  top: -14px;
+.input-group-custom input:focus ~ label,
+.input-group-custom input:valid ~ label,
+.input-group-custom textarea:focus ~ label,
+.input-group-custom textarea:valid ~ label {
+  top: -23px;
   font-size: 14px;
   font-weight: 600;
   color: var(--primary-color);
 }
 
-.input-group input:focus ~ .bar:before,
-.input-group textarea:focus ~ .bar:before {
+.input-group-custom input:focus ~ .bar:before,
+.input-group-custom textarea:focus ~ .bar:before {
   width: 100%;
 }
 
-.input-group input::-webkit-input-placeholder,
-.input-group textarea::-webkit-input-placeholder {
+.input-group-custom input::-webkit-input-placeholder,
+.input-group-custom textarea::-webkit-input-placeholder {
   color: #949fb1;
 }
 
-.input-group input:-ms-input-placeholder,
-.input-group textarea:-ms-input-placeholder {
+.input-group-custom input:-ms-input-placeholder,
+.input-group-custom textarea:-ms-input-placeholder {
   color: #949fb1;
 }
 
-.input-group input::-ms-input-placeholder,
-.input-group textarea::-ms-input-placeholder {
+.input-group-custom input::-ms-input-placeholder,
+.input-group-custom textarea::-ms-input-placeholder {
   color: #949fb1;
 }
 
-.input-group input::placeholder,
-.input-group textarea::placeholder {
+.input-group-custom input::placeholder,
+.input-group-custom textarea::placeholder {
   color: #949fb1;
 }
 
-.input-group input[type="password"] {
+.input-group-custom input[type="password"] {
   letter-spacing: 0.3em;
 }
 
-.input-group label {
+.input-group-custom label {
   color: #949fb1;
   font-size: 1rem;
   font-weight: 500;
@@ -830,13 +830,13 @@ table th {
   transition: 300ms ease all;
 }
 
-.input-group .bar {
+.input-group-custom .bar {
   position: relative;
   display: block;
   width: 100%;
 }
 
-.input-group .bar:before {
+.input-group-custom .bar:before {
   content: "";
   height: 2px;
   width: 0;
@@ -848,7 +848,7 @@ table th {
   left: 0%;
 }
 
-.input-group .select-text {
+.input-group-custom .select-text {
   position: relative;
   font-family: inherit;
   background-color: transparent;
@@ -860,17 +860,17 @@ table th {
   border-bottom: 1px solid #949fb1;
 }
 
-.input-group .select-text:focus {
+.input-group-custom .select-text:focus {
   outline: none;
 }
 
-.input-group .select .select-text {
+.input-group-custom .select .select-text {
   -moz-appearance: none;
        appearance: none;
   -webkit-appearance: none;
 }
 
-.input-group .select:after {
+.input-group-custom .select:after {
   position: absolute;
   top: 18px;
   right: 10px;
@@ -885,7 +885,7 @@ table th {
   pointer-events: none;
 }
 
-.input-group .select-label {
+.input-group-custom .select-label {
   color: #949fb1;
   font-size: 1rem;
   font-weight: 500;
@@ -897,8 +897,8 @@ table th {
   transition: 300ms ease all;
 }
 
-.input-group .select-text:focus ~ .select-label,
-.input-group .select-text:valid ~ .select-label {
+.input-group-custom .select-text:focus ~ .select-label,
+.input-group-custom .select-text:valid ~ .select-label {
   color: var(--primary-color);
   top: -14px;
   -webkit-transition: 300ms ease all;
@@ -907,13 +907,13 @@ table th {
   font-weight: 600;
 }
 
-.input-group .select-bar {
+.input-group-custom .select-bar {
   position: relative;
   display: block;
   width: 100%;
 }
 
-.input-group .select-bar:before {
+.input-group-custom .select-bar:before {
   content: "";
   height: 2px;
   width: 0;
@@ -925,11 +925,11 @@ table th {
   left: 0%;
 }
 
-.input-group .select-text:focus ~ .select-bar:before {
+.input-group-custom .select-text:focus ~ .select-bar:before {
   width: 100%;
 }
 
-.input-group .select-highlight {
+.input-group-custom .select-highlight {
   position: absolute;
   height: 60%;
   width: 100px;
@@ -1000,6 +1000,11 @@ table th {
   text-align: center;
   font-size: 1.4rem;
   vertical-align: bottom;
+  border-right: 1px solid #ccc;
+}
+
+.pricingTable th:last-child {
+  border-right: 0;
 }
 
 .pricingTable th h6 {
@@ -1008,9 +1013,11 @@ table th {
 
 .pricingTable th.feature-name {
   background-color: transparent !important;
+  border: 0;
 }
 
 .pricingTable th.feature-name .form-check {
+  border-color: #ff2121;
   text-align: left;
 }
 
@@ -1018,12 +1025,27 @@ table th {
   font-size: 1rem;
 }
 
+.pricingTable th.feature-name .form-check-input:checked {
+  background-color: #ff2121;
+  border-color: #ff2121;
+}
+
+.pricingTable th.feature-name .form-check-input:focus {
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
 .pricingTable td {
   border-bottom: 1px solid #ccc;
+  border-right: 1px solid #d5d5d5;
   padding: 10px 0;
   width: 260px;
   text-align: center;
   font-weight: 600;
+}
+
+.pricingTable td:last-child {
+  border-right: 0;
 }
 
 .pricingTable td.feature-name {
@@ -1069,5 +1091,9 @@ table th {
 
 .hover-btn:hover .count {
   display: none;
+}
+
+.popover {
+  max-width: 100%;
 }
 /*# sourceMappingURL=style.css.map */

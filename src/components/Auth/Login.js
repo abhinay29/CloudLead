@@ -33,7 +33,6 @@ const Login = (props) => {
         localStorage.setItem("lastLogin", json.lastLogin);
       }
       localStorage.removeItem("searchQuery");
-      toast.success(`Welcome back!!!`);
       history.push("/");
     } else {
       toast.error(json.error, { autoClose: 5000 });
@@ -76,7 +75,6 @@ const Login = (props) => {
           localStorage.setItem("lastLogin", json.lastLogin);
         }
         localStorage.removeItem("searchQuery");
-        toast.success("Welcome back!!!");
         history.push("/");
       } else {
         if (json.error) {
@@ -111,7 +109,7 @@ const Login = (props) => {
         <div className="container">
           <div className="row align-items-center justify-content-center">
             <div className="col-md-8">
-              <div className="mb-3">
+              <div className="mb-4">
                 <h3 className="fw-bold">Sign In</h3>
                 <p className="mb-3 text-muted">Sign in to your account.</p>
               </div>
@@ -121,7 +119,7 @@ const Login = (props) => {
                 onSubmit={handleSubmit}
                 autoComplete="off"
               >
-                <div className="input-group">
+                <div className="input-group-custom">
                   <input
                     type="email"
                     value={credentials.email}
@@ -134,7 +132,7 @@ const Login = (props) => {
                   <span className="bar"></span>
                   <label htmlFor="email">Work Email</label>
                 </div>
-                <div className="input-group inputGroupWithShowHide">
+                <div className="input-group-custom inputGroupWithShowHide">
                   <input
                     type={showCurrentPassword ? "text" : "password"}
                     value={credentials.password}

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import ContactTableRow from "../People/TableRow";
 import SettingsEmailSetup from "./SettingsEmailSetup";
+import Select from "react-select";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -25,6 +26,7 @@ function Sequences() {
   const [showUploadOption, setShowUploadOption] = useState(false);
   const [showListOption, setShowListOption] = useState(false);
   const [lists, setLists] = useState([]);
+  const [selectedList, setSelectedList] = useState("");
 
   const openModal = (modalId) => {
     document.body.classList.add("modal-open");
@@ -130,7 +132,10 @@ function Sequences() {
     dispatch(progressLoading(50));
     let parsedData = await data.json();
     if (parsedData.status === "success") {
-      setLists(parsedData.lists);
+      var tempList = await parsedData.lists.map((l) => {
+        return { label: `${l.name} (${l.rcptcount})`, value: l.id };
+      });
+      setLists(tempList);
     }
     dispatch(progressLoading(100));
   };
@@ -720,7 +725,18 @@ function Sequences() {
                     <label htmlFor="selectFrmList" className="form-label">
                       Select List
                     </label>
-                    <select className="form-select" id="selectFrmList">
+                    <Select
+                      defaultValue={[]}
+                      closeMenuOnSelect={false}
+                      value={selectedList}
+                      isMulti
+                      name="selectFrmList"
+                      options={lists}
+                      className="basic-multi-select"
+                      placeholder="Select List"
+                      onChange={setSelectedList}
+                    />
+                    {/* <select className="form-select" id="selectFrmList">
                       <option value="">--</option>
                       {lists.length > 0 &&
                         lists.map((l) => {
@@ -730,7 +746,7 @@ function Sequences() {
                             </option>
                           );
                         })}
-                    </select>
+                    </select> */}
                   </div>
                 )}
                 {showUploadOption && (
