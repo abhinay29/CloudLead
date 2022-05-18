@@ -367,7 +367,8 @@ router.get("/templates", fetchuser, async (req, res) => {
           _id: l._id,
           name: l.template_name,
           subject: l.template_subject,
-          addedon: l.created_at
+          addedon: l.created_at,
+          type: l.template_type
         };
       })
     });
@@ -436,14 +437,13 @@ router.post("/template/create", fetchuser, async (req, res) => {
   });
 });
 
-router.post("/template/delete", fetchuser, async (req, res) => {
-  const user_id = req.user.id;
-  const { temp_id } = req.body;
+router.delete("/template/:id", fetchuser, async (req, res) => {
+  let temp_id = req.params.id;
 
-  const addTemplate = await templates.deleteOne({
+  const delTemplate = await templates.deleteOne({
     _id: temp_id
   });
-  if (!addTemplate)
+  if (!delTemplate)
     return res.status(200).json({
       status: "error",
       error: "Cannot delete template this time, please try again later."

@@ -48,7 +48,7 @@ const Watchlist = () => {
       .then(function (response) {
         if (response.data.status === "success") {
           dispatch(userInfo(response.data.userdata));
-          localStorage.removeItem("searchQuery");
+          // localStorage.removeItem("searchQuery");
         } else {
           console.log(response);
         }
@@ -567,7 +567,7 @@ const Watchlist = () => {
             </button>
           </OverlayTrigger>
           <Link
-            to="/radar/people"
+            to="/radar/people?showFilters=no"
             className="btn btn-sm btn-primary bi-tooltip me-2"
           >
             <i className="fas fa-chevron-left"></i> Back to Result

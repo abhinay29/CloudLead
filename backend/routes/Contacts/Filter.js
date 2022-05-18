@@ -222,23 +222,30 @@ module.exports = async (req, res) => {
       .paginating();
 
     const contacts = await features.query;
-    // var end = new Date() - start;
-    // console.log("Time taken - find query run: ", end);
+    var end = new Date() - start;
+    console.log("Time taken - find query run: ", end);
     // const totalContacts = await Contacts.count({});
-    const totalResults = await Contacts.count(newQuery);
+    // const totalResults = await Contacts.count(newQuery);
 
-    const uniqueComp = await Contacts.find(newQuery).distinct("company_id");
+    // var end = new Date() - start;
+    // console.log("Time taken - totalResults count: ", end);
+
+    // const uniqueComp = await Contacts.find(newQuery).distinct("company_id");
     // var end = new Date() - start;
     // console.log("Time taken - distinct: ", end);
-    newQuery.direct_dial = "available";
-    const directDial = await Contacts.count(newQuery);
-    // let reqLimit = 50;
-    // if (req.query.limit) {
-    //   reqLimit = parseInt(req.query.limit);
-    // }
+    // newQuery.direct_dial = "available";
+    // const directDial = await Contacts.count(newQuery);
+    // // let reqLimit = 50;
+    // // if (req.query.limit) {
+    // //   reqLimit = parseInt(req.query.limit);
+    // // }
 
     // var end = new Date() - start;
-      // console.log("Time taken - count & unique comp & directDial Count: ", end);
+    // console.log("Time taken - directDial Count: ", end);
+
+    const totalResults = 20000;
+    const uniqueComp = 0;
+    const directDial = 0;
 
     async function getEmail(cid) {
       let checkWatchlist = await Watchlist.findOne({
@@ -279,7 +286,6 @@ module.exports = async (req, res) => {
 
     res.status(200).json({
       status: "success",
-      time: `It took ${end}ms`,
       // total: totalContacts,
       totalResults: totalResults,
       directDial: directDial,

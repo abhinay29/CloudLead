@@ -72,9 +72,7 @@ const WatchListTableRow = (props) => {
               </button>
             </td>
             <td className="industry align-middle">{data.industry}</td>
-            <td className="head-count align-middle">
-              {data.estimated_employees_headcount}
-            </td>
+            <td className="head-count align-middle">{data.size_range}</td>
             <td className="align-middle">
               <strong>{data.org_country}</strong>
               <br />

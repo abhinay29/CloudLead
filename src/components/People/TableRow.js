@@ -56,7 +56,7 @@ const TableRow = (props) => {
       .then(function (response) {
         if (response.data.status === "success") {
           dispatch(userInfo(response.data.userdata));
-          localStorage.removeItem("searchQuery");
+          // localStorage.removeItem("searchQuery");
         } else {
           console.log(response);
         }

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import PeopleContext from "../Context/People/PeopleContext";
 import { Link } from "react-router-dom";
 import Pagination from "react-js-pagination";
@@ -56,10 +56,8 @@ const Table = (props) => {
   const [directDial, setDirectDial] = useState(0);
   const [backToResultStatus, setBackToResultStatus] = useState(false);
 
-  const [freezeData, setFreezeData] = useState({
-    search_name: "",
-    search_filter: ""
-  });
+  const pageLimit = useRef(25);
+  const pageNumber = useRef(1);
 
   if (showFilters === "yes") {
     // queryParams.delete("showFilters");
@@ -70,6 +68,7 @@ const Table = (props) => {
     setShowFilter(true);
     setShowTable(false);
     setPage(1);
+    pageNumber.current = 1;
     setDisSaveBtn(false);
     dispatch(progressLoading(100));
     localStorage.removeItem("searchQuery");
@@ -82,6 +81,7 @@ const Table = (props) => {
     setShowFilter(true);
     setShowTable(false);
     setPage(1);
+    pageNumber.current = 1;
     setDisSaveBtn(false);
     setSelectAll(false);
     dispatch(progressLoading(100));
@@ -92,7 +92,7 @@ const Table = (props) => {
   };
 
   const handlePageChange = async (pn) => {
-    if (pn !== page) {
+    if (pn !== pageNumber.current) {
       searchPeople(pn);
     }
   };
@@ -103,13 +103,14 @@ const Table = (props) => {
     }
 
     setPage(pn);
+    pageNumber.current = pn;
     let query = localStorage.getItem("searchQuery") + `&page=${pn}`;
 
     if (query.length === 0) {
       return;
     }
     dispatch(progressLoading(30));
-    const url = `${API_URL}/api/contacts?${query}&limit=${limit}`;
+    const url = `${API_URL}/api/contacts?${query}&limit=${pageLimit.current}`;
     let data = await fetch(url, {
       method: "GET",
       headers: {
@@ -236,7 +237,7 @@ const Table = (props) => {
       .then(function (response) {
         if (response.data.status === "success") {
           dispatch(userInfo(response.data.userdata));
-          localStorage.removeItem("searchQuery");
+          // localStorage.removeItem("searchQuery");
         } else {
           console.log(response);
         }
@@ -414,8 +415,11 @@ const Table = (props) => {
   };
 
   const changeViewLimit = (e) => {
-    setLimit(e.target.value);
+    // setLimit(e.target.value);
+    pageLimit.current = e.target.value;
     searchPeople();
+
+    console.log(pageLimit.current);
   };
 
   // const [freezeDataTable, setFreezeDataTable] = useState({});
@@ -534,6 +538,7 @@ const Table = (props) => {
           getPeoples(peopleSearchResults);
           setTotalPeople(peopleSearchResults.totalResults);
           setPage(peopleSearchResults.page);
+          pageNumber.current = peopleSearchResults.page;
           setSelectAll(false);
           setUniqueComp(peopleSearchResults.uniqueCompany);
           setSkeletonLoading(false);
@@ -893,14 +898,14 @@ const Table = (props) => {
               <select
                 name="no_of_contact"
                 id="no_of_contact"
-                value={limit}
+                value={pageLimit.current}
                 onChange={(e) => changeViewLimit(e)}
                 className="form-select form-control-sm"
               >
                 <option value="25">25 Contact</option>
                 <option
                   value="50"
-                  disabled={userState.plan_id === "1" ? true : false}
+                  disabled={userState.plan_id !== 3 ? true : false}
                 >
                   50 Contact
                 </option>
@@ -908,8 +913,8 @@ const Table = (props) => {
             </div>
             <nav className="ms-auto d-flex align-items-center">
               <Pagination
-                activePage={page}
-                itemsCountPerPage={parseInt(limit)}
+                activePage={pageNumber.current}
+                itemsCountPerPage={parseInt(pageLimit.current)}
                 totalItemsCount={totalPeople}
                 pageRangeDisplayed={7}
                 onChange={handlePageChange}

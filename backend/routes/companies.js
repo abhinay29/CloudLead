@@ -160,7 +160,7 @@ router.get("/w/watchlist", fetchuser, async (req, res) => {
           "primary_phone",
           "org_country",
           "org_city",
-          "estimated_employees_headcount"
+          "size_range"
         ]),
         search
       )
