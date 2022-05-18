@@ -220,7 +220,7 @@ const Navbar = () => {
                 </div>
               </li> */}
 
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <Link
                   href="#/action-3"
                   to="/"
@@ -230,9 +230,8 @@ const Navbar = () => {
                   id="change-theme"
                 >
                   <i className="fas fa-sun mx-1"></i>
-                  {/* <i className="fas fa-moon mx-1"></i> */}
                 </Link>
-              </li>
+              </li> */}
               <li className="nav-item">
                 <Link
                   className="nav-link bi-tooltip"

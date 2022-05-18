@@ -143,6 +143,7 @@ table th {
 
 .table .name_of_contact {
   min-width: 250px;
+  max-width: 280px;
 }
 
 .table .actions {
@@ -260,7 +261,6 @@ table th {
 
 #peopleTable tbody tr,
 #compTable tbody tr {
-  height: 70px;
   border-bottom: 1px solid #dee2e6;
 }
 

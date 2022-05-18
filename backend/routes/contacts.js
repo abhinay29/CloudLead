@@ -20,6 +20,7 @@ const GetWatchlist = require("./Watchlists/getWatchlist");
 const singleUnlock = require("./Watchlists/singleUnlock");
 const bulkUnlock = require("./Watchlists/bulkUnlock");
 const deleteWatchlist = require("./Watchlists/deleteWatchlist");
+const FilterCounts = require("./Contacts/FilterCounts");
 
 const rand = () => Math.random(0).toString(36).substr(2);
 const getToken = (length = 32) =>
@@ -27,6 +28,7 @@ const getToken = (length = 32) =>
 
 router.get("/test", Test);
 router.get("/", fetchuser, Filter);
+router.get("/counts", fetchuser, FilterCounts);
 router.post("/unlock", fetchuser, singleUnlock);
 router.post("/unlockbulk", fetchuser, bulkUnlock);
 router.get("/watchlist", fetchuser, GetWatchlist);

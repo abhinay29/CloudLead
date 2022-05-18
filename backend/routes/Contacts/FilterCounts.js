@@ -1,47 +1,7 @@
 const { Fields, RoleFields, APIfeatures } = require("../Classes/clsGlobal");
 const Contacts = require("../../models/Contacts");
-const Watchlist = require("../../models/Watchlist");
 
 module.exports = async (req, res) => {
-  var start = new Date();
-
-  if (
-    req.query.first_name ||
-    req.query.last_name ||
-    req.query.company_name ||
-    req.query.title ||
-    req.query.industry ||
-    req.query.company_size_range ||
-    req.query.department ||
-    req.query.role ||
-    req.query.country ||
-    req.query.state ||
-    req.query.city ||
-    req.query.company_country ||
-    req.query.company_state ||
-    req.query.company_city ||
-    req.query.seniority_level ||
-    req.query.company_type ||
-    req.query.keyword ||
-    req.query.domain ||
-    req.query.revenue_range ||
-    req.query.company_id
-  ) {
-    // Nothing happen here jump to try {} catch {}
-  } else {
-    return res.status(200).json({
-      status: "error",
-      msg: "Invalid query string"
-    });
-  }
-
-  if (req.query.first_name === "." || req.query.last_name === ".") {
-    return res.status(200).json({
-      status: "error",
-      msg: "Invalid query string"
-    });
-  }
-
   let newQuery = {};
 
   if (req.query.page) {
@@ -192,112 +152,15 @@ module.exports = async (req, res) => {
     }
   }
 
-  newQuery.sort = "first_name, last_name";
+  const totalResults = await Contacts.count(newQuery);
+  const uniqueComp = await Contacts.find(newQuery).distinct("company_id");
+  newQuery.direct_dial = "available";
+  const directDial = await Contacts.count(newQuery);
 
-  console.log(newQuery);
-
-  var end = new Date() - start;
-  console.log("Time taken - query processing : ", end);
-
-  try {
-    const features = new APIfeatures(
-      Contacts.find()
-        .select([
-          "_id",
-          "company_id",
-          "first_name",
-          "last_name",
-          "title",
-          "country",
-          "city",
-          "linkedin_id",
-          "direct_dial",
-          "organization"
-        ])
-        .allowDiskUse(),
-      newQuery
-    )
-      .filtering()
-      .sorting()
-      .paginating();
-
-    const contacts = await features.query;
-    var end = new Date() - start;
-    console.log("Time taken - find query run: ", end);
-    // const totalContacts = await Contacts.count({});
-    // const totalResults = await Contacts.count(newQuery);
-
-    // var end = new Date() - start;
-    // console.log("Time taken - totalResults count: ", end);
-
-    // const uniqueComp = await Contacts.find(newQuery).distinct("company_id");
-    // var end = new Date() - start;
-    // console.log("Time taken - distinct: ", end);
-    // newQuery.direct_dial = "available";
-    // const directDial = await Contacts.count(newQuery);
-    // // let reqLimit = 50;
-    // // if (req.query.limit) {
-    // //   reqLimit = parseInt(req.query.limit);
-    // // }
-
-    // var end = new Date() - start;
-    // console.log("Time taken - directDial Count: ", end);
-
-    // const totalResults = 20000;
-    // const uniqueComp = 0;
-    // const directDial = 0;
-
-    async function getEmail(cid) {
-      let checkWatchlist = await Watchlist.findOne({
-        user: req.user.id,
-        contact_id: cid
-      });
-      if (checkWatchlist) {
-        return "yes";
-      } else {
-        return "no";
-      }
-    }
-
-    // async function getCompany(comp_id) {
-    //   let company = await Company.findOne({
-    //     company_id: comp_id
-    //   });
-    //   return company;
-    // }
-
-    const Conts = [];
-    const checkUnlock = contacts.map(async (contact) => {
-      var temp = JSON.parse(JSON.stringify(contact));
-      temp.unlocked_email = await getEmail(contact._id);
-      // temp.company = await getCompany(contact.company_id);
-      // if (!contact.organization.organization_name) {
-      //   contact.organization.organization_name = " ";
-      // }
-      Conts.push(temp);
-    });
-
-    await Promise.all(checkUnlock);
-
-    var end = new Date() - start;
-    console.log("Time taken - checkUnlock : ", end);
-
-    // console.log(Conts);
-
-    res.status(200).json({
-      status: "success",
-      // total: totalContacts,
-      // totalResults: totalResults,
-      // directDial: directDial,
-      // uniqueCompany: uniqueComp.length,
-      limit: contacts.length,
-      page: req.query.page ? parseInt(req.query.page) : 1,
-      data: {
-        contacts: Conts
-      }
-    });
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).send("Internal Server Error");
-  }
+  res.status(200).json({
+    status: "success",
+    totalResults: totalResults,
+    directDial: directDial,
+    uniqueCompany: uniqueComp.length
+  });
 };

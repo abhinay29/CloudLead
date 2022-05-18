@@ -47,12 +47,10 @@ const Table = (props) => {
     setSkeletonLoading,
     skeletonLoading
   } = context;
-  const [page, setPage] = useState(1);
   const [selectAll, setSelectAll] = useState(false);
   const [disSaveBtn, setDisSaveBtn] = useState(false);
   const [disAddBtn, setDisAddBtn] = useState(false);
   const { setShowFilter, setShowTable } = props;
-  const [limit, setLimit] = useState(25);
   const [directDial, setDirectDial] = useState(0);
   const [backToResultStatus, setBackToResultStatus] = useState(false);
 
@@ -67,7 +65,6 @@ const Table = (props) => {
     setTotalPeople(0);
     setShowFilter(true);
     setShowTable(false);
-    setPage(1);
     pageNumber.current = 1;
     setDisSaveBtn(false);
     dispatch(progressLoading(100));
@@ -80,7 +77,6 @@ const Table = (props) => {
     setTotalPeople(0);
     setShowFilter(true);
     setShowTable(false);
-    setPage(1);
     pageNumber.current = 1;
     setDisSaveBtn(false);
     setSelectAll(false);
@@ -102,7 +98,6 @@ const Table = (props) => {
       return false;
     }
 
-    setPage(pn);
     pageNumber.current = pn;
     let query = localStorage.getItem("searchQuery") + `&page=${pn}`;
 
@@ -126,16 +121,32 @@ const Table = (props) => {
         return;
       }
       getPeoples(parsedData);
-      setTotalPeople(parsedData.totalResults);
+      pageNumber.current = parsedData.page;
+      getCounts(query);
       setSelectAll(false);
-      setUniqueComp(parsedData.uniqueCompany);
-      setDirectDial(parsedData.directDial);
       setSkeletonLoading(false);
       dispatch(setPeopleSearchResults(parsedData));
       let allSelectorCheckbox = document.getElementById("allSelector");
       allSelectorCheckbox.checked = false;
     }
     dispatch(progressLoading(100));
+  };
+
+  const getCounts = async (query) => {
+    const url = `${API_URL}/api/contacts/counts?${query}`;
+    let data = await fetch(url, {
+      method: "GET",
+      headers: {
+        "auth-token": localStorage.getItem("token"),
+        "Content-Type": "application/json"
+      }
+    });
+    let parsedData = await data.json();
+    if (parsedData.status === "success") {
+      setTotalPeople(parsedData.totalResults);
+      setUniqueComp(parsedData.uniqueCompany);
+      setDirectDial(parsedData.directDial);
+    }
   };
 
   const [company_info, setCompInfo] = useState({});
@@ -418,8 +429,6 @@ const Table = (props) => {
     // setLimit(e.target.value);
     pageLimit.current = e.target.value;
     searchPeople();
-
-    console.log(pageLimit.current);
   };
 
   // const [freezeDataTable, setFreezeDataTable] = useState({});
@@ -537,7 +546,6 @@ const Table = (props) => {
         } else {
           getPeoples(peopleSearchResults);
           setTotalPeople(peopleSearchResults.totalResults);
-          setPage(peopleSearchResults.page);
           pageNumber.current = peopleSearchResults.page;
           setSelectAll(false);
           setUniqueComp(peopleSearchResults.uniqueCompany);
@@ -602,124 +610,124 @@ const Table = (props) => {
             <div id="no_selected_contact" className="text-primary"></div>
           </div>
           <div className="mb-2">
-            <div className="btn-group me-2" role="group" aria-label="Menu">
-              <span className="dropdown">
-                <OverlayTrigger
-                  placement="bottom"
-                  overlay={<Tooltip>Save Search</Tooltip>}
-                >
-                  <button
-                    className="btn btn-sm btn-outline-primary"
-                    type="button"
-                    id="saveSearch"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <i className="far fa-save"></i>
-                  </button>
-                </OverlayTrigger>
-                <div
-                  className="dropdown-menu shadow p-3"
-                  aria-labelledby="saveSearch"
-                >
-                  <form action="" onSubmit={saveSearchQuery}>
-                    <div className="mb-3">
-                      <label htmlFor="" className="form-label small">
-                        Save Search
-                      </label>
-                      <input
-                        type="text"
-                        id="saveSearchName"
-                        className="form-control"
-                        style={{ width: "200px" }}
-                      />
-                      <p className="small text-muted">
-                        Provide name for this search
-                      </p>
-                    </div>
-                    <button
-                      type="submit"
-                      className="btn btn-primary w-100"
-                      disabled={disSaveBtn && "disabled"}
-                    >
-                      Save Search
-                    </button>
-                  </form>
-                </div>
-              </span>
-              <span className="dropdown">
-                <OverlayTrigger
-                  placement="bottom"
-                  overlay={<Tooltip>Add to List (For sequences)</Tooltip>}
-                >
-                  <button
-                    className="btn btn-sm btn-outline-primary"
-                    type="button"
-                    data-bs-auto-close="false"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <i className="fas fa-plus"></i>
-                  </button>
-                </OverlayTrigger>
-                <div
-                  className="dropdown-menu shadow p-3"
-                  aria-labelledby="addList"
-                >
-                  <h5 className="text-center">Add to List</h5>
-                  <form action="" onSubmit={handleAddList}>
-                    <div className="mb-3">
-                      <label htmlFor="newListName" className="form-label small">
-                        Create New List
-                      </label>
-                      <input
-                        type="text"
-                        name="newListName"
-                        id="newListName"
-                        className="form-control"
-                        style={{ width: "260px" }}
-                        placeholder="Provide name for list"
-                        maxLength="50"
-                      />
-                    </div>
-                    <div className="text-center mb-2">-- or --</div>
-                    <div className="mb-3">
-                      {sequences && (
-                        <Select
-                          defaultValue={[]}
-                          closeMenuOnSelect={false}
-                          value={sequenceListName}
-                          name="listName"
-                          onChange={handleSelectChange}
-                          options={sequences}
-                          className="basic-multi-select"
-                          placeholder="Select List"
-                        />
-                      )}
-                    </div>
-                    <button
-                      type="submit"
-                      className="btn btn-primary w-100"
-                      disabled={disAddBtn && "disabled"}
-                    >
-                      Save &amp; Add
-                    </button>
-                  </form>
-                </div>
-              </span>
+            {/* <div className="btn-group me-2" role="group" aria-label="Menu"> */}
+            <span className="dropdown">
               <OverlayTrigger
                 placement="bottom"
-                overlay={<Tooltip>Refresh</Tooltip>}
+                overlay={<Tooltip>Save Search</Tooltip>}
               >
                 <button
+                  className="btn btn-sm btn-link me-2"
                   type="button"
-                  className="btn btn-sm btn-outline-primary bi-tooltip"
-                  onClick={() => searchPeople()}
+                  id="saveSearch"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
                 >
-                  <i className="fas fa-redo-alt"></i>
+                  <i className="far fa-save"></i>
                 </button>
               </OverlayTrigger>
-            </div>
+              <div
+                className="dropdown-menu shadow p-3"
+                aria-labelledby="saveSearch"
+              >
+                <form action="" onSubmit={saveSearchQuery}>
+                  <div className="mb-3">
+                    <label htmlFor="" className="form-label small">
+                      Save Search
+                    </label>
+                    <input
+                      type="text"
+                      id="saveSearchName"
+                      className="form-control"
+                      style={{ width: "200px" }}
+                    />
+                    <p className="small text-muted">
+                      Provide name for this search
+                    </p>
+                  </div>
+                  <button
+                    type="submit"
+                    className="btn btn-primary w-100"
+                    disabled={disSaveBtn && "disabled"}
+                  >
+                    Save Search
+                  </button>
+                </form>
+              </div>
+            </span>
+            <span className="dropdown">
+              <OverlayTrigger
+                placement="bottom"
+                overlay={<Tooltip>Add to List (For sequences)</Tooltip>}
+              >
+                <button
+                  className="btn btn-sm btn-link me-2"
+                  type="button"
+                  data-bs-auto-close="false"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <i className="fas fa-plus"></i>
+                </button>
+              </OverlayTrigger>
+              <div
+                className="dropdown-menu shadow p-3"
+                aria-labelledby="addList"
+              >
+                <h5 className="text-center">Add to List</h5>
+                <form action="" onSubmit={handleAddList}>
+                  <div className="mb-3">
+                    <label htmlFor="newListName" className="form-label small">
+                      Create New List
+                    </label>
+                    <input
+                      type="text"
+                      name="newListName"
+                      id="newListName"
+                      className="form-control"
+                      style={{ width: "260px" }}
+                      placeholder="Provide name for list"
+                      maxLength="50"
+                    />
+                  </div>
+                  <div className="text-center mb-2">-- or --</div>
+                  <div className="mb-3">
+                    {sequences && (
+                      <Select
+                        defaultValue={[]}
+                        closeMenuOnSelect={false}
+                        value={sequenceListName}
+                        name="listName"
+                        onChange={handleSelectChange}
+                        options={sequences}
+                        className="basic-multi-select"
+                        placeholder="Select List"
+                      />
+                    )}
+                  </div>
+                  <button
+                    type="submit"
+                    className="btn btn-primary w-100"
+                    disabled={disAddBtn && "disabled"}
+                  >
+                    Save &amp; Add
+                  </button>
+                </form>
+              </div>
+            </span>
+            <OverlayTrigger
+              placement="bottom"
+              overlay={<Tooltip>Refresh</Tooltip>}
+            >
+              <button
+                type="button"
+                className="btn btn-sm btn-link me-2"
+                onClick={() => searchPeople()}
+              >
+                <i className="fas fa-redo-alt"></i>
+              </button>
+            </OverlayTrigger>
+            {/* </div> */}
             <button
               type="button"
               className="btn btn-sm btn-danger me-2"
@@ -905,7 +913,7 @@ const Table = (props) => {
                 <option value="25">25 Contact</option>
                 <option
                   value="50"
-                  disabled={userState.plan_id !== 3 ? true : false}
+                  disabled={userState.plan_id === 4 ? true : false}
                 >
                   50 Contact
                 </option>

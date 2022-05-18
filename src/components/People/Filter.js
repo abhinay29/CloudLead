@@ -179,8 +179,7 @@ const Filter = (props) => {
         localStorage.setItem("searchQuery", query);
         setShowFilter(false);
         getPeoples(parsedData);
-        setTotalPeople(parsedData.totalResults);
-        setUniqueComp(parsedData.uniqueCompany);
+        getCounts(query);
         setShowTable(true);
         setSkeletonLoading(false);
         dispatch(progressLoading(100));
@@ -195,6 +194,25 @@ const Filter = (props) => {
     }
 
     setDisSearchBtn(false);
+  };
+
+  const [directDial, setDirectDial] = useState(0);
+
+  const getCounts = async (query) => {
+    const url = `${API_URL}/api/contacts/counts?${query}`;
+    let data = await fetch(url, {
+      method: "GET",
+      headers: {
+        "auth-token": localStorage.getItem("token"),
+        "Content-Type": "application/json"
+      }
+    });
+    let parsedData = await data.json();
+    if (parsedData.status === "success") {
+      setTotalPeople(parsedData.totalResults);
+      setUniqueComp(parsedData.uniqueCompany);
+      setDirectDial(parsedData.directDial);
+    }
   };
 
   const [savedSearches, setsavedSearches] = useState([]);
@@ -958,11 +976,14 @@ const Filter = (props) => {
   };
 
   useEffect(() => {
+    let svd = {};
     if (localStorage.currentQuery) {
-      let svd = {};
       svd.query = JSON.parse(localStorage.getItem("currentQuery"));
       setSavedFilter(svd);
     }
+    return () => {
+      svd.query = {};
+    };
   }, []);
 
   return (

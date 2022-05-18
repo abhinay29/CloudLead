@@ -1,4 +1,5 @@
 import React from "react";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 const Badge = (props) => {
   const { confidence } = props;
@@ -26,7 +27,7 @@ const Badge = (props) => {
 };
 
 const WatchListTableRow = (props) => {
-  const { TableData, showCompanyInfo, selectAll } = props;
+  const { TableData, showCompanyInfo, selectAll, showAllContacts } = props;
 
   const toogleSelectAll = (selectAll) => {
     var checkboxes = document.getElementsByClassName("selectContacts");
@@ -65,46 +66,72 @@ const WatchListTableRow = (props) => {
                     />
                   </span>
                   <span>
-                    <div className="fw-bold text-primary">
+                    <div className="fw-bold text-capitalize">
                       {data.first_name} {data.last_name}
                       <div className="table_social_link ms-2 d-inline">
                         {linkedCorrection(data.linkedin_id)}
                       </div>
                     </div>
-                    <div className="text-muted small">{data.title}</div>
+                    <div className="small text-primary fw-bold">
+                      {data.title}
+                    </div>
                   </span>
                 </div>
               </td>
               <td className="name_of_company align-middle">
-                <strong
-                  className="show_company text-primary"
-                  data-name="21st Century Software Solutions Pvt Ltd"
-                  style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    showCompanyInfo(data.company_id);
-                  }}
-                >
-                  {data.organization.organization_name}
-                </strong>
+                {data.organization.organization_name && (
+                  <strong
+                    className="show_company"
+                    data-name=""
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      showCompanyInfo(data.company_id);
+                    }}
+                  >
+                    {data.organization.organization_name}
+                  </strong>
+                )}
                 <div className="table_social_link mt-1">
                   {websiteCorrection(data.organization.website_link)}
                   {linkedCorrection(data.organization.org_linkedin_url)}
-                  <a
-                    href="#cloud"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      showCompanyInfo(data.company_id);
-                    }}
-                    title="View Company Profile"
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={<Tooltip>View Company Profile</Tooltip>}
                   >
-                    <i className="fas fa-eye small"></i>
-                  </a>
+                    <a
+                      href="#cloud"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        showCompanyInfo(data.company_id);
+                      }}
+                    >
+                      <i className="fas fa-eye small"></i>
+                    </a>
+                  </OverlayTrigger>
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={
+                      <Tooltip>View all contacts from this company</Tooltip>
+                    }
+                  >
+                    <a
+                      href="#cloud"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        // showAllContacts(data.organization.company_id);
+                      }}
+                    >
+                      <i className="fas fa-user"></i>
+                    </a>
+                  </OverlayTrigger>
                   <span className="mx-2">|</span>
-                  <span className="text-capitalize small">
+                  <span className="text-capitalize small text-primary fw-bold">
                     {data.organization.industry}
                   </span>
                   <span className="mx-2">|</span>
-                  <span className="small">{data.organization.size_range}</span>
+                  <span className="small fw-bold">
+                    {data.organization.size_range}
+                  </span>
                 </div>
               </td>
               <td className="align-middle">
@@ -152,16 +179,17 @@ function websiteCorrection(link) {
       c = "http://" + c;
     }
     return (
-      <a
-        href={c}
-        data-bs-toggle="tooltip"
-        data-bs-placement="top"
-        title="Website"
-        target="_blank"
-        rel="noreferrer"
-      >
-        <i className="fas fa-globe"></i>
-      </a>
+      <OverlayTrigger placement="bottom" overlay={<Tooltip>Website</Tooltip>}>
+        <a
+          href={c}
+          data-bs-toggle="tooltip"
+          data-bs-placement="top"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <i className="fas fa-globe"></i>
+        </a>
+      </OverlayTrigger>
     );
   }
   return "";
@@ -176,16 +204,21 @@ function linkedCorrection(link) {
     }
     if (c.match(/linkedin\.com/)) {
       return (
-        <a
-          href={c}
-          data-bs-toggle="tooltip"
-          data-bs-placement="top"
-          title="Linkedin Link"
-          target="_blank"
-          rel="noreferrer"
+        <OverlayTrigger
+          placement="bottom"
+          overlay={<Tooltip>Linkedin Link</Tooltip>}
         >
-          <i className="fab fa-linkedin-in"></i>
-        </a>
+          <a
+            href={c}
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title=""
+            target="_blank"
+            rel="noreferrer"
+          >
+            <i className="fab fa-linkedin-in"></i>
+          </a>
+        </OverlayTrigger>
       );
     }
   }
