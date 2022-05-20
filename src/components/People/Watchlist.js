@@ -100,15 +100,33 @@ const Watchlist = () => {
     setSkeletonLoading(false);
   };
 
+  function objectToQueryString(obj) {
+    var str = [];
+    for (var p in obj)
+      if (obj.hasOwnProperty(p)) {
+        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+      }
+    return str.join("&");
+  }
+
   const getSelection = async (sn) => {
-    let query = {};
+    let query = "";
     if (localStorage.currentWatchlistQuery) {
-      query = JSON.parse(localStorage.getItem("currentWatchlistQuery"));
+      query = objectToQueryString(
+        JSON.parse(localStorage.getItem("currentWatchlistQuery"))
+      );
     }
 
-    query = query.toString();
+    let confidence_checkbox =
+      document.getElementsByClassName("confidence_level");
+    for (var i = 0, n = confidence_checkbox.length; i < n; i++) {
+      if (confidence_checkbox[i].checked) {
+        query += `&email_confidence_level=${confidence_checkbox[i].value}`;
+      }
+    }
+
     dispatch(progressLoading(30));
-    const url = `${API_URL}/api/contacts/watchlist/selection?page=${pageNumber.current}${query}&limit=${pageLimit.current}&select=${selectAll.len}`;
+    const url = `${API_URL}/api/contacts/watchlist/selection?page=${pageNumber.current}&${query}&limit=${pageLimit.current}&select=${selectAll.len}`;
     dispatch(progressLoading(60));
     let data = await fetch(url, {
       method: "GET",
@@ -148,11 +166,17 @@ const Watchlist = () => {
     let confidence_checkbox =
       document.getElementsByClassName("confidence_level");
     let query = "";
+    if (localStorage.currentWatchlistQuery) {
+      query = objectToQueryString(
+        JSON.parse(localStorage.getItem("currentWatchlistQuery"))
+      );
+    }
     for (var i = 0, n = confidence_checkbox.length; i < n; i++) {
       if (confidence_checkbox[i].checked) {
         query += `&email_confidence_level=${confidence_checkbox[i].value}`;
       }
     }
+
     getWatchlist(1, query);
   };
 

@@ -131,8 +131,8 @@ const Table = (props) => {
       setSelectAll(false);
       setSkeletonLoading(false);
       dispatch(setPeopleSearchResults(parsedData));
-      let allSelectorCheckbox = document.getElementById("allSelector");
-      allSelectorCheckbox.checked = false;
+      // let allSelectorCheckbox = document.getElementById("allSelector");
+      // allSelectorCheckbox.checked = false;
     }
     dispatch(progressLoading(100));
   };

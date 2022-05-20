@@ -191,6 +191,8 @@ module.exports = async (req, res) => {
       }
     }
 
+    // console.log(search);
+
     try {
       const list = await Contacts.find(search)
         .limit(selection)
