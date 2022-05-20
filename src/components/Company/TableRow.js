@@ -55,9 +55,9 @@ const TableRow = (props) => {
         </td>
         <td className="head-count align-middle">{data.size_range}</td>
         <td className="align-middle">
-          <strong>{data.country ? data.country : "--"}</strong>
+          <strong>{data.org_country ? data.org_country : "--"}</strong>
           <br />
-          {data.city ? data.city : "--"}
+          {data.org_city ? data.org_city : "--"}
         </td>
       </tr>
     </>

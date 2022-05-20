@@ -336,7 +336,8 @@ const Signup = (props) => {
         className="order-1 order-md-1 signup-content"
         style={{ backgroundImage: "url(/assets/images/slide4.jpg)" }}
       >
-        <h5 className="fw-bold text-warning">Key Features:</h5>
+        <Logo dark={false} bold={false} />
+        <h6 className="fw-bold text-warning">Key Features:</h6>
         <ul className="list-unstyled">
           <li>
             <i className="fas fa-check me-3"></i>

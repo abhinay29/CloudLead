@@ -35,9 +35,8 @@ module.exports = async (req, res) => {
   if (req.query.title && req.query.title !== "") {
     newQuery.title = new Fields(req.query.title).create();
   }
-
   if (req.query.company_type && req.query.company_type !== "") {
-    newQuery["organization.organization_type"] = new Fields(
+    newQuery["organization.company_type"] = new Fields(
       req.query.company_type
     ).create();
   }

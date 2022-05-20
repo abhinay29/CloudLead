@@ -5,6 +5,7 @@ import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Logo from "./Auth/Logo";
 import { OverlayTrigger, Popover, Form } from "react-bootstrap";
+import Terms from "./Terms";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -90,27 +91,27 @@ function SubscribePlan() {
   };
 
   const acceptTerms = () => {
-    var termsCheckbox = document.getElementById("terms");
-    var policyCheckbox = document.getElementById("policy");
-    if (!termsCheckbox.checked) {
-      return toast.error("Please accept the Terms and Conditions");
-    }
-    if (!policyCheckbox.checked) {
-      return toast.error("Please accept the Privacy Policy");
-    }
+    // var termsCheckbox = document.getElementById("terms");
+    // var policyCheckbox = document.getElementById("policy");
+    // if (!termsCheckbox.checked) {
+    //   return toast.error("Please accept the Terms and Conditions");
+    // }
+    // if (!policyCheckbox.checked) {
+    //   return toast.error("Please accept the Privacy Policy");
+    // }
     closeModal("tosModal");
     openModal("orderSummery");
   };
 
   const handleSubscribePlan = async () => {
-    var termsCheckbox = document.getElementById("terms");
-    var policyCheckbox = document.getElementById("policy");
-    if (!termsCheckbox.checked) {
-      return toast.error("Please accept the Terms and Conditions");
-    }
-    if (!policyCheckbox.checked) {
-      return toast.error("Please accept the Privacy Policy");
-    }
+    // var termsCheckbox = document.getElementById("terms");
+    // var policyCheckbox = document.getElementById("policy");
+    // if (!termsCheckbox.checked) {
+    //   return toast.error("Please accept the Terms and Conditions");
+    // }
+    // if (!policyCheckbox.checked) {
+    //   return toast.error("Please accept the Privacy Policy");
+    // }
 
     let Subscribe = await fetch(`${API_URL}/api/user/subscribe`, {
       method: "POST",
@@ -356,6 +357,9 @@ function SubscribePlan() {
                               </tr>
                             </tbody>
                           </table>
+                          <p className="mb-0 text-center">
+                            Direct dial- INR 8 /- per contact
+                          </p>
                         </Popover.Body>
                       </Popover>
                     }
@@ -466,7 +470,7 @@ function SubscribePlan() {
                     onClick={() => subscribe(1)}
                     className="btn btn-primary"
                   >
-                    Choose Plan
+                    Free Trial
                   </button>
                 </td>
                 <td>
@@ -475,7 +479,7 @@ function SubscribePlan() {
                     onClick={() => subscribe(2)}
                     className="btn btn-primary"
                   >
-                    Choose Plan
+                    Signup Now
                   </button>
                 </td>
                 <td>
@@ -484,7 +488,7 @@ function SubscribePlan() {
                     onClick={() => subscribe(3)}
                     className="btn btn-primary"
                   >
-                    Choose Plan
+                    Signup Now
                   </button>
                 </td>
               </tr>
@@ -502,11 +506,11 @@ function SubscribePlan() {
         aria-labelledby="tosLabel"
         aria-hidden="true"
       >
-        <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
           <div className="modal-content">
             <div className="modal-header">
               <h4 className="modal-title" id="tosLabel">
-                Acceptance
+                Terms and Conditions
               </h4>
               <button
                 type="button"
@@ -516,7 +520,7 @@ function SubscribePlan() {
               ></button>
             </div>
             <div className="modal-body">
-              <div className="form-check">
+              {/* <div className="form-check">
                 <input
                   className="form-check-input"
                   type="checkbox"
@@ -551,7 +555,8 @@ function SubscribePlan() {
                     Privacy Policy
                   </a>
                 </label>
-              </div>
+              </div> */}
+              <Terms />
             </div>
             <div className="modal-footer">
               <button

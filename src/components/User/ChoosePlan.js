@@ -9,7 +9,7 @@ import PlanFaq from "./PlanFaq";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-function ChoosePlan() {
+function ChoosePlan(props) {
   let history = useHistory();
   const userState = useSelector((state) => state.setUserData);
   const [annualBill, setAnnualBill] = useState(false);
@@ -315,7 +315,7 @@ function ChoosePlan() {
                   Custom plan <br />
                   <h5 className="fw-bold">(Lets talk)</h5>
                   <OverlayTrigger
-                    trigger="click"
+                    trigger="hover"
                     key="bottom"
                     placement="bottom"
                     className="shadow"
@@ -325,8 +325,8 @@ function ChoosePlan() {
                           <table className="table table-bordered">
                             <thead>
                               <tr>
-                                <th nowrap>Upto contacts</th>
-                                <th nowrap>INR price Per contact</th>
+                                <th nowrap="true">Upto contacts</th>
+                                <th nowrap="true">INR price Per contact</th>
                               </tr>
                             </thead>
                             <tbody className="text-end">
@@ -339,15 +339,15 @@ function ChoosePlan() {
                                 <td>1.75</td>
                               </tr>
                               <tr>
-                                <td nowrap>5001 - 10000</td>
+                                <td nowrap="true">5001 - 10000</td>
                                 <td>1.00</td>
                               </tr>
                               <tr>
-                                <td nowrap>10001 - 20000</td>
+                                <td nowrap="true">10001 - 20000</td>
                                 <td>0.70</td>
                               </tr>
                               <tr>
-                                <td nowrap>20001 - 40000</td>
+                                <td nowrap="true">20001 - 40000</td>
                                 <td>0.50</td>
                               </tr>
                               <tr>
@@ -356,6 +356,9 @@ function ChoosePlan() {
                               </tr>
                             </tbody>
                           </table>
+                          <p className="mb-0 text-center">
+                            Direct dial- INR 8 /- per contact
+                          </p>
                         </Popover.Body>
                       </Popover>
                     }
@@ -467,7 +470,7 @@ function ChoosePlan() {
                     className="btn btn-primary"
                     disabled={userState.plan_id === 1 ? true : false}
                   >
-                    Choose Plan
+                    {props.freeForEverBtn}
                   </button>
                 </td>
                 <td>
@@ -477,7 +480,7 @@ function ChoosePlan() {
                     className="btn btn-primary"
                     disabled={userState.plan_id === 2 ? true : false}
                   >
-                    Choose Plan
+                    {props.basicPlanBtn}
                   </button>
                 </td>
                 <td>
@@ -487,7 +490,7 @@ function ChoosePlan() {
                     className="btn btn-primary"
                     disabled={userState.plan_id === 3 ? true : false}
                   >
-                    Choose Plan
+                    {props.customPlanBtn}
                   </button>
                 </td>
               </tr>
@@ -1005,5 +1008,11 @@ function ChoosePlan() {
     </>
   );
 }
+
+ChoosePlan.defaultProps = {
+  freeForEverBtn: "Choose Plan",
+  basicPlanBtn: "Choose Plan",
+  customPlanBtn: "Choose Plan"
+};
 
 export default ChoosePlan;

@@ -120,6 +120,7 @@ const Filter = (props) => {
 
   const searchPeople = async (e) => {
     e.preventDefault();
+    getPeoples([]);
     let form = document.getElementById("search_form");
     let formData = new FormData(form);
     let params = new URLSearchParams(formData);
@@ -909,7 +910,7 @@ const Filter = (props) => {
     })
   ];
 
-  let industryGroupOptions = [
+  let s = [
     industryGrpOpt.map((indGrp) => {
       return createGroup(indGrp.label, indGrp.options, "industry");
     })
@@ -1619,7 +1620,7 @@ const Filter = (props) => {
                       onChange={handleSelectChange}
                       value={defaultValue.industry}
                       name="industry"
-                      options={industryGroupOptions[0]}
+                      options={s[0]}
                       className="basic-multi-select"
                       placeholder="Select Industry"
                     />
@@ -1746,6 +1747,8 @@ const Filter = (props) => {
                       options={revenueRange}
                       className="basic-multi-select"
                       placeholder="Select Revenue Range"
+                      onChange={handleSelectChange}
+                      value={defaultValue.revenue_range}
                     />
                   </div>
                 </div>

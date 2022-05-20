@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 // import PeopleState from '../Context/People/PeopleState'
 import CreatableSelect from "react-select/creatable";
 import Select from "react-select";
@@ -26,7 +26,7 @@ const WatchFilter = (props) => {
   // const { getPeoples, setTotalPeople, setUniqueComp } = context;
   const { searchWatchList, closeModal, setShowBacktoWatchlist } = props;
   const [disSearchBtn, setDisSearchBtn] = useState(false);
-  const [deptState, setdeptState] = useState({
+  const initalDeptState = {
     finance: false,
     human: false,
     marketing: false,
@@ -35,10 +35,37 @@ const WatchFilter = (props) => {
     corporate: false,
     others: false,
     it: false
-  });
+  };
+  const [deptState, setdeptState] = useState(initalDeptState);
   const [cities, setCities] = useState([]);
   const [states, setStates] = useState([]);
   const [companySuggestions, setCompanySuggestions] = useState([]);
+
+  const initialDefaultValue = {
+    first_name: [],
+    last_name: [],
+    title: [],
+    country: [],
+    state: [],
+    city: [],
+    company_name: [],
+    company_country: [],
+    company_state: [],
+    company_city: [],
+    role_finance: [],
+    role_hr: [],
+    role_marketing: [],
+    role_purchase: [],
+    role_operation: [],
+    role_corporate: [],
+    role_it: [],
+    role_others: [],
+    company_size_range: [],
+    revenue_range: [],
+    industry: [],
+    domain: [],
+    keyword: []
+  };
 
   const handleDepartment = (e) => {
     if (!e.target.checked) {
@@ -148,31 +175,7 @@ const WatchFilter = (props) => {
 
   // const [savedSearches, setsavedSearches] = useState([]);
 
-  const [defaultValue, setDefaultValue] = useState({
-    first_name: [],
-    last_name: [],
-    title: [],
-    country: [],
-    state: [],
-    city: [],
-    company_name: [],
-    company_country: [],
-    company_state: [],
-    company_city: [],
-    role_finance: [],
-    role_hr: [],
-    role_marketing: [],
-    role_purchase: [],
-    role_operation: [],
-    role_corporate: [],
-    role_it: [],
-    role_others: [],
-    company_size_range: [],
-    revenue_range: [],
-    industry: [],
-    domain: [],
-    keyword: []
-  });
+  const [defaultValue, setDefaultValue] = useState(initialDefaultValue);
 
   const handleSelectChange = (inputValue, actionMeta) => {
     setDefaultValue({ ...defaultValue, [actionMeta.name]: inputValue });
@@ -293,38 +296,516 @@ const WatchFilter = (props) => {
     })
   ];
 
+  const setSavedFilter = async (svd) => {
+    let first_name = [];
+    if (svd.query.first_name) {
+      if (svd.query["first_name"] instanceof Array) {
+        svd.query["first_name"].map((v) => {
+          first_name.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        first_name = [
+          {
+            value: svd.query["first_name"],
+            label: svd.query["first_name"]
+          }
+        ];
+      }
+    }
+
+    let last_name = [];
+    if (svd.query["last_name"] !== "") {
+      if (svd.query["last_name"] instanceof Array) {
+        svd.query["last_name"].map((v) => {
+          last_name.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        last_name = [
+          { value: svd.query["last_name"], label: svd.query["last_name"] }
+        ];
+      }
+    }
+
+    let title = [];
+    if (svd.query["title"] !== "") {
+      if (svd.query["title"] instanceof Array) {
+        svd.query["title"].map((v) => {
+          title.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        title = [{ value: svd.query["title"], label: svd.query["title"] }];
+      }
+    }
+
+    let country = [];
+    if (svd.query["country"] !== "") {
+      if (svd.query["country"] instanceof Array) {
+        svd.query["country"].map((v) => {
+          country.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        country = [
+          {
+            value: svd.query["country"],
+            label: svd.query["country"]
+          }
+        ];
+      }
+    }
+
+    let state = [];
+    if (svd.query["state"] !== "") {
+      if (svd.query["state"] instanceof Array) {
+        svd.query["state"].map((v) => {
+          state.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        state = [
+          {
+            value: svd.query["state"],
+            label: svd.query["state"]
+          }
+        ];
+      }
+    }
+
+    let city = [];
+    if (svd.query["city"] !== "") {
+      if (svd.query["city"] instanceof Array) {
+        svd.query["city"].map((v) => {
+          city.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        city = [
+          {
+            value: svd.query["city"],
+            label: svd.query["city"]
+          }
+        ];
+      }
+    }
+
+    let company_name = [];
+    if (svd.query["company_name"] !== "") {
+      if (svd.query["company_name"] instanceof Array) {
+        svd.query["company_name"].map((v) => {
+          company_name.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        company_name = [
+          {
+            value: svd.query["company_name"],
+            label: svd.query["company_name"]
+          }
+        ];
+      }
+    }
+
+    let company_country = [];
+    if (svd.query["company_country"] !== "") {
+      if (svd.query["company_country"] instanceof Array) {
+        svd.query["company_country"].map((v) => {
+          company_country.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        company_country = [
+          {
+            value: svd.query["company_country"],
+            label: svd.query["company_country"]
+          }
+        ];
+      }
+    }
+
+    let company_state = [];
+    if (svd.query["company_state"] !== "") {
+      if (svd.query["company_state"] instanceof Array) {
+        svd.query["company_state"].map((v) => {
+          company_state.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        company_state = [
+          {
+            value: svd.query["company_state"],
+            label: svd.query["company_state"]
+          }
+        ];
+      }
+    }
+
+    let company_city = [];
+    if (svd.query["company_city"] !== "") {
+      if (svd.query["company_city"] instanceof Array) {
+        svd.query["company_city"].map((v) => {
+          company_city.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        company_city = [
+          {
+            value: svd.query["company_city"],
+            label: svd.query["company_city"]
+          }
+        ];
+      }
+    }
+
+    let role_finance = [];
+    if (svd.query["role_finance"] !== "") {
+      if (svd.query["role_finance"] instanceof Array) {
+        svd.query["role_finance"].map((v) => {
+          role_finance.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        role_finance = [
+          {
+            value: svd.query["role_finance"],
+            label: svd.query["role_finance"]
+          }
+        ];
+      }
+    }
+
+    let role_hr = [];
+    if (svd.query["role_hr"] !== "") {
+      if (svd.query["role_hr"] instanceof Array) {
+        svd.query["role_hr"].map((v) => {
+          role_hr.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        role_hr = [
+          { value: svd.query["role_hr"], label: svd.query["role_hr"] }
+        ];
+      }
+    }
+
+    let role_marketing = [];
+    if (svd.query["role_marketing"] !== "") {
+      if (svd.query["role_marketing"] instanceof Array) {
+        svd.query["role_marketing"].map((v) => {
+          role_marketing.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        role_marketing = [
+          {
+            value: svd.query["role_marketing"],
+            label: svd.query["role_marketing"]
+          }
+        ];
+      }
+    }
+
+    let role_purchase = [];
+    if (svd.query["role_purchase"] !== "") {
+      if (svd.query["role_purchase"] instanceof Array) {
+        svd.query["role_purchase"].map((v) => {
+          role_purchase.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        role_purchase = [
+          {
+            value: svd.query["role_purchase"],
+            label: svd.query["role_purchase"]
+          }
+        ];
+      }
+    }
+
+    let role_operation = [];
+    if (svd.query["role_operation"] !== "") {
+      if (svd.query["role_operation"] instanceof Array) {
+        svd.query["role_operation"].map((v) => {
+          role_operation.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        role_operation = [
+          {
+            value: svd.query["role_operation"],
+            label: svd.query["role_operation"]
+          }
+        ];
+      }
+    }
+
+    let role_corporate = [];
+    if (svd.query["role_corporate"] !== "") {
+      if (svd.query["role_corporate"] instanceof Array) {
+        svd.query["role_corporate"].map((v) => {
+          role_corporate.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        role_corporate = [
+          {
+            value: svd.query["role_corporate"],
+            label: svd.query["role_corporate"]
+          }
+        ];
+      }
+    }
+
+    let role_it = [];
+    if (svd.query["role_it"] !== "") {
+      if (svd.query["role_it"] instanceof Array) {
+        svd.query["role_it"].map((v) => {
+          role_it.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        role_it = [
+          { value: svd.query["role_it"], label: svd.query["role_it"] }
+        ];
+      }
+    }
+
+    let role_others = [];
+    if (svd.query["role_others"] !== "") {
+      if (svd.query["role_others"] instanceof Array) {
+        svd.query["role_others"].map((v) => {
+          role_others.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        role_others = [
+          {
+            value: svd.query["role_others"],
+            label: svd.query["role_others"]
+          }
+        ];
+      }
+    }
+
+    let company_size_range = [];
+    if (svd.query["company_size_range"] !== "") {
+      if (svd.query["company_size_range"] instanceof Array) {
+        svd.query["company_size_range"].map((v) => {
+          company_size_range.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        company_size_range = [
+          {
+            value: svd.query["company_size_range"],
+            label: svd.query["company_size_range"]
+          }
+        ];
+      }
+    }
+
+    let revenue_range = [];
+    if (svd.query["revenue_range"] !== "") {
+      if (svd.query["revenue_range"] instanceof Array) {
+        svd.query["revenue_range"].map((v) => {
+          revenue_range.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        revenue_range = [
+          {
+            value: svd.query["revenue_range"],
+            label: svd.query["revenue_range"]
+          }
+        ];
+      }
+    }
+
+    let industry = [];
+    if (svd.query["industry"] !== "") {
+      if (svd.query["industry"] instanceof Array) {
+        svd.query["industry"].map((v) => {
+          industry.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        industry = [
+          { value: svd.query["industry"], label: svd.query["industry"] }
+        ];
+      }
+    }
+
+    let keyword = [];
+    if (svd.query["keyword"] !== "") {
+      if (svd.query["keyword"] instanceof Array) {
+        svd.query["keyword"].map((v) => {
+          keyword.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        keyword = [
+          { value: svd.query["keyword"], label: svd.query["keyword"] }
+        ];
+      }
+    }
+
+    let domain = [];
+    if (svd.query["domain"] !== "") {
+      if (svd.query["domain"] instanceof Array) {
+        svd.query["domain"].map((v) => {
+          domain.push({ value: v, label: v });
+          return true;
+        });
+      } else {
+        domain = [{ value: svd.query["domain"], label: svd.query["domain"] }];
+      }
+    }
+
+    setDefaultValue({
+      ...defaultValue,
+      first_name: first_name,
+      last_name: last_name,
+      title: title,
+      country: country,
+      state: state,
+      city: city,
+      company_name: company_name,
+      company_country: company_country,
+      company_state: company_state,
+      company_city: company_city,
+      role_finance: role_finance,
+      role_hr: role_hr,
+      role_marketing: role_marketing,
+      role_purchase: role_purchase,
+      role_operation: role_operation,
+      role_corporate: role_corporate,
+      role_it: role_it,
+      role_others: role_others,
+      company_size_range: company_size_range,
+      revenue_range: revenue_range,
+      industry: industry,
+      domain: domain,
+      keyword: keyword
+    });
+
+    let x = 0;
+
+    if (svd.query.company_type && svd.query.company_type !== "") {
+      if (svd.query["company_type"] instanceof Array) {
+        let company_type = document.getElementsByName("company_type");
+        svd.query["company_type"].map((v) => {
+          for (x = 0; x < company_type.length; x++) {
+            if (company_type[x].value === v) {
+              company_type[x].checked = true;
+            }
+          }
+          return true;
+        });
+      } else {
+        let company_type = document.getElementsByName("company_type");
+        for (x = 0; x < company_type.length; x++) {
+          if (company_type[x].value === svd.query.company_type) {
+            company_type[x].checked = true;
+          }
+        }
+      }
+    } else {
+      let company_type = document.getElementsByName("company_type");
+      if (company_type) {
+        for (x = 0; x < company_type.length; x++) {
+          company_type[x].checked = false;
+        }
+      }
+    }
+
+    if (svd.query.department && svd.query.department !== "") {
+      if (svd.query["department"] instanceof Array) {
+        let department = document.getElementsByName("department");
+        for (var j = 0; j < department.length; j++) {
+          department[j].checked = false;
+        }
+        svd.query["department"].map((v) => {
+          for (x = 0; x < department.length; x++) {
+            // department[x].checked = false;
+            if (department[x].value === v) {
+              department[x].click();
+            }
+          }
+          return true;
+        });
+      } else {
+        let department = document.getElementsByName("department");
+        for (var j = 0; j < department.length; j++) {
+          department[j].checked = false;
+        }
+        for (x = 0; x < department.length; x++) {
+          if (department[x].value === svd.query.department) {
+            department[x].click();
+          }
+        }
+      }
+    } else {
+      let department = document.getElementsByName("department");
+      if (department) {
+        for (x = 0; x < department.length; x++) {
+          department[x].checked = false;
+        }
+      }
+    }
+
+    if (svd.query.seniority_level && svd.query.seniority_level !== "") {
+      if (svd.query["seniority_level"] instanceof Array) {
+        let seniority_level = document.getElementsByName("seniority_level");
+        svd.query["seniority_level"].map((v) => {
+          for (x = 0; x < seniority_level.length; x++) {
+            if (seniority_level[x].value === v) {
+              seniority_level[x].checked = true;
+            }
+          }
+          return true;
+        });
+      } else {
+        let seniority_level = document.getElementsByName("seniority_level");
+        for (x = 0; x < seniority_level.length; x++) {
+          if (seniority_level[x].value === svd.query.seniority_level) {
+            seniority_level[x].checked = true;
+          }
+        }
+      }
+    } else {
+      let seniority_level = document.getElementsByName("seniority_level");
+      if (seniority_level) {
+        for (x = 0; x < seniority_level.length; x++) {
+          seniority_level[x].checked = false;
+        }
+      }
+    }
+
+    return true;
+  };
+
   const resetFilter = () => {
     let input = document.getElementsByTagName("input");
     for (var i = 0, n = input.length; i < n; i++) {
       input[i].checked = false;
     }
-    setDefaultValue({
-      ...defaultValue,
-      first_name: [],
-      last_name: [],
-      title: [],
-      country: [],
-      state: [],
-      city: [],
-      company_name: [],
-      company_country: [],
-      company_state: [],
-      company_city: [],
-      role_finance: [],
-      role_hr: [],
-      role_marketing: [],
-      role_purchase: [],
-      role_operation: [],
-      role_corporate: [],
-      role_it: [],
-      role_others: [],
-      company_size_range: [],
-      revenue_range: [],
-      industry: [],
-      domain: [],
-      keyword: []
-    });
+    localStorage.removeItem("currentWatchlistQuery");
+    setDefaultValue(initialDefaultValue);
+    setdeptState(initalDeptState);
   };
+
+  useEffect(() => {
+    let svd = {};
+    if (localStorage.currentWatchlistQuery) {
+      svd.query = JSON.parse(localStorage.getItem("currentWatchlistQuery"));
+      setSavedFilter(svd);
+    }
+    return () => {
+      svd.query = {};
+    };
+  }, []);
 
   return (
     <form id="search_form" onSubmit={searchPeople}>
@@ -1013,6 +1494,7 @@ const WatchFilter = (props) => {
                       options={titleOptions}
                       className="basic-multi-select"
                       placeholder="Select Title"
+                      createOptionPosition="first"
                     />
                   </div>
                 </div>
@@ -1079,6 +1561,7 @@ const WatchFilter = (props) => {
                       isMulti
                       className="basic-multi-select"
                       placeholder="Company Name"
+                      createOptionPosition="first"
                     />
                     <p style={{ fontSize: "12px" }} className="mb-0 mt-1">
                       Use tab/enter for multi selection.
@@ -1182,6 +1665,7 @@ const WatchFilter = (props) => {
                       noOptionsMessage={({ inputValue }) => ""}
                       className="basic-multi-select"
                       placeholder="Domain/Website"
+                      createOptionPosition="first"
                     />
                     <p style={{ fontSize: "12px" }} className="mb-0 mt-1">
                       Use tab/enter for multi selection.
@@ -1197,6 +1681,7 @@ const WatchFilter = (props) => {
                       noOptionsMessage={({ inputValue }) => ""}
                       className="basic-multi-select"
                       placeholder="Keyword"
+                      createOptionPosition="first"
                     />
                     <p style={{ fontSize: "12px" }} className="mb-0 mt-1">
                       Use tab/enter for multi selection.

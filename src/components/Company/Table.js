@@ -170,16 +170,32 @@ const Table = (props) => {
     dispatch(progressLoading(50));
     const res = await watchList.json();
     if (res.status === "success") {
-      if (res.totalResults === 0) {
+      if (res.data.contacts.length === 0) {
         toast.error("No result found");
         return;
       }
-      setTotalContacts(res.totalResults);
+      // setTotalContacts(res.totalResults);
+      getCounts(query);
       getPeoples(res.data.contacts);
       // setCompanyName(company_name);
       openModal("showContactModal");
     }
     dispatch(progressLoading(100));
+  };
+
+  const getCounts = async (query) => {
+    const url = `${API_URL}/api/contacts/counts?${query}`;
+    let data = await fetch(url, {
+      method: "GET",
+      headers: {
+        "auth-token": localStorage.getItem("token"),
+        "Content-Type": "application/json"
+      }
+    });
+    let parsedData = await data.json();
+    if (parsedData.status === "success") {
+      setTotalContacts(parsedData.totalResults);
+    }
   };
 
   return (
@@ -368,7 +384,7 @@ const Table = (props) => {
               <div className="row">
                 <div className="col-md-12 col-lg-12">
                   <p className="fw-bold mb-1">Company Description</p>
-                  <p id="ext_description">{company_info.company_description}</p>
+                  <p id="ext_description">{company_info.short_description}</p>
                   <p className="fw-bold mb-1">Location</p>
                   <p id="ext_location">
                     {company_info.org_city},{" "}
@@ -435,8 +451,8 @@ const Table = (props) => {
                       {/* <th>Title</th> */}
                       <th>Company</th>
                       <th>Email</th>
-                      <th>Boardline Numbers</th>
                       <th>Direct Dial</th>
+                      <th>Boardline Numbers</th>
                       <th>Contact Location</th>
                       <th>Company Location</th>
                     </tr>

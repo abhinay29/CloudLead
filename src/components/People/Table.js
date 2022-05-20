@@ -19,6 +19,7 @@ import axios from "axios";
 import { OverlayTrigger, Tooltip, Popover } from "react-bootstrap";
 import FreezeHistoryTable from "./FreezeHistoryTable";
 import SearchStrings from "./SearchStrings";
+// import ShowContactModal from "./ShowContactModal";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -63,11 +64,13 @@ const Table = (props) => {
     dispatch(progressLoading(30));
     getPeoples([]);
     setTotalPeople(0);
+    setUniqueComp(0);
     setShowFilter(true);
     setShowTable(false);
     pageNumber.current = 1;
     setDisSaveBtn(false);
     dispatch(progressLoading(100));
+    dispatch(setPeopleSearchResults([]));
     localStorage.removeItem("searchQuery");
   }
 
@@ -75,12 +78,14 @@ const Table = (props) => {
     dispatch(progressLoading(30));
     getPeoples([]);
     setTotalPeople(0);
+    setUniqueComp(0);
     setShowFilter(true);
     setShowTable(false);
     pageNumber.current = 1;
     setDisSaveBtn(false);
     setSelectAll(false);
     dispatch(progressLoading(100));
+    dispatch(setPeopleSearchResults([]));
     let input = document.getElementById("allSelector");
     input.checked = false;
     localStorage.removeItem("searchQuery");
@@ -540,19 +545,19 @@ const Table = (props) => {
   useEffect(() => {
     getSequenceList();
     if (showFilters !== "yes") {
-      if (peopleSearchResults) {
-        if (peopleSearchResults.totalResults === 0) {
-          searchPeople();
+      if (peopleSearchResults.length > 0) {
+        if (peopleSearchResults.data.contacts.length === 0) {
+          searchPeople(1);
         } else {
           getPeoples(peopleSearchResults);
-          setTotalPeople(peopleSearchResults.totalResults);
+          // setTotalPeople(peopleSearchResults.totalResults);
           pageNumber.current = peopleSearchResults.page;
           setSelectAll(false);
-          setUniqueComp(peopleSearchResults.uniqueCompany);
+          // setUniqueComp(peopleSearchResults.uniqueCompany);
           setSkeletonLoading(false);
         }
       } else {
-        searchPeople();
+        searchPeople(1);
       }
     }
     // eslint-disable-next-line
@@ -573,6 +578,7 @@ const Table = (props) => {
   const showAllContacts = async (company_id) => {
     let query = "company_id=" + company_id;
     let oldQuery = localStorage.getItem("searchQuery");
+    localStorage.setItem("oldPageNumber", pageNumber.current);
     localStorage.setItem("oldQuery", oldQuery);
     localStorage.removeItem("searchQuery");
     localStorage.setItem("searchQuery", query);
@@ -582,10 +588,12 @@ const Table = (props) => {
 
   const backToResult = async () => {
     let oldQuery = localStorage.getItem("oldQuery");
+    let oldPageNumber = localStorage.getItem("oldPageNumber");
     localStorage.removeItem("oldQuery");
     localStorage.removeItem("searchQuery");
     localStorage.setItem("searchQuery", oldQuery);
-    await searchPeople();
+    pageNumber.current = oldPageNumber;
+    await searchPeople(oldPageNumber);
     setBackToResultStatus(false);
   };
 
@@ -887,7 +895,7 @@ const Table = (props) => {
               <tbody id="contactTable">
                 {skeletonLoading ? (
                   <TableSkeleton />
-                ) : peoples.length !== 0 ? (
+                ) : peoples.data.contacts.length !== 0 ? (
                   <TableRow
                     TableData={peoples.data.contacts}
                     showCompanyInfo={getCompanyInfo}
@@ -1318,6 +1326,10 @@ const Table = (props) => {
           </div>
         </div>
       </div>
+
+      {/* <div className="modal" id="showContactModal" tabIndex="-1">
+        <ShowContactModal />
+      </div> */}
 
       <div
         className="modal-backdrop"

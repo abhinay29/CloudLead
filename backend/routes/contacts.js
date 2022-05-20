@@ -19,6 +19,7 @@ const Filter = require("./Contacts/Filter");
 const GetWatchlist = require("./Watchlists/getWatchlist");
 const singleUnlock = require("./Watchlists/singleUnlock");
 const bulkUnlock = require("./Watchlists/bulkUnlock");
+const selections = require("./Watchlists/selections");
 const deleteWatchlist = require("./Watchlists/deleteWatchlist");
 const FilterCounts = require("./Contacts/FilterCounts");
 
@@ -35,5 +36,6 @@ router.get("/watchlist", fetchuser, GetWatchlist);
 router.post("/watchlist/export", fetchuser, require("./Contacts/export"));
 router.get("/watchlist/download", require("./Contacts/downloadcsv"));
 router.delete("/deletewatchlist", fetchuser, deleteWatchlist);
+router.get("/watchlist/selection", fetchuser, selections);
 
 module.exports = router;

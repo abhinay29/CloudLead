@@ -33,9 +33,9 @@ module.exports = async (req, res) => {
       let regexCompSize = new ConvertStringRegex(
         req.query.company_size_range
       ).convertStr();
-      newQuery.employee_range = { $regex: regexCompSize, $options: "i" };
+      newQuery.size_range = { $regex: regexCompSize, $options: "i" };
     } else {
-      newQuery.employee_range = {
+      newQuery.size_range = {
         $regex: req.query.company_size_range,
         $options: "i"
       };
@@ -46,9 +46,9 @@ module.exports = async (req, res) => {
       let regexCompType = new ConvertStringRegex(
         req.query.company_type
       ).convertStr();
-      newQuery.company_type = { $regex: regexCompType, $options: "i" };
+      newQuery.organization_type = { $regex: regexCompType, $options: "i" };
     } else {
-      newQuery.company_type = {
+      newQuery.organization_type = {
         $regex: req.query.company_type,
         $options: "i"
       };
@@ -79,9 +79,9 @@ module.exports = async (req, res) => {
       let regexCompCity = new ConvertStringRegex(
         req.query.company_city
       ).convertStr();
-      newQuery.city = { $regex: regexCompCity, $options: "i" };
+      newQuery.org_city = { $regex: regexCompCity, $options: "i" };
     } else {
-      newQuery.city = { $regex: req.query.company_city, $options: "i" };
+      newQuery.org_city = { $regex: req.query.company_city, $options: "i" };
     }
   }
   if (req.query.company_state && req.query.company_state !== "") {
@@ -89,9 +89,9 @@ module.exports = async (req, res) => {
       let regexCompState = new ConvertStringRegex(
         req.query.company_state
       ).convertStr();
-      newQuery.state = { $regex: regexCompState, $options: "i" };
+      newQuery.org_state = { $regex: regexCompState, $options: "i" };
     } else {
-      newQuery.state = {
+      newQuery.org_state = {
         $regex: req.query.company_state,
         $options: "i"
       };
@@ -102,9 +102,9 @@ module.exports = async (req, res) => {
       let regexCompCountry = new ConvertStringRegex(
         req.query.company_country
       ).convertStr();
-      newQuery.country = { $regex: regexCompCountry, $options: "i" };
+      newQuery.org_country = { $regex: regexCompCountry, $options: "i" };
     } else {
-      newQuery.country = {
+      newQuery.org_country = {
         $regex: req.query.company_country,
         $options: "i"
       };
@@ -116,9 +116,9 @@ module.exports = async (req, res) => {
       let regexRevenueRange = new ConvertStringRegex(
         req.query.revenue_range
       ).convertStr();
-      newQuery.revenue = { $regex: regexRevenueRange, $options: "i" };
+      newQuery.annual_revenue = { $regex: regexRevenueRange, $options: "i" };
     } else {
-      newQuery.revenue = {
+      newQuery.annual_revenue = {
         $regex: req.query.revenue_range,
         $options: "i"
       };
@@ -135,8 +135,8 @@ module.exports = async (req, res) => {
         "_id",
         "company_id",
         "industry",
-        "city",
-        "country",
+        "org_city",
+        "org_country",
         "org_linkedin_url",
         "organization_name",
         "primary_phone_number",

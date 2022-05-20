@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import { progressLoading } from "../../states/action-creator";
 import { Link } from "react-router-dom";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -135,7 +136,7 @@ const Filter = (props) => {
     let parsedData = await data.json();
     if (parsedData.status === "success") {
       if (parsedData.totalResults === 0) {
-        alert("No result found");
+        toast.error("No result found");
         setDisSearchBtn(false);
         return;
       }
@@ -182,12 +183,17 @@ const Filter = (props) => {
     }
   }, [showFilter]);
 
-  const [defaultValue, setDefaultValue] = useState({
+  const initialDefaultValue = {
     company_name: [],
     company_country: [],
     company_state: [],
-    company_city: []
-  });
+    company_city: [],
+    industry: [],
+    revenue_range: [],
+    company_size_range: []
+  };
+
+  const [defaultValue, setDefaultValue] = useState(initialDefaultValue);
 
   const handleSelectChange = (inputValue, actionMeta) => {
     setDefaultValue({ ...defaultValue, [actionMeta.name]: inputValue });
@@ -316,11 +322,70 @@ const Filter = (props) => {
     }
   };
 
+  // const setDefaultValueGroupFunction = (options, name) => {
+  //   setDefaultValue({ ...defaultValue, [name]: options });
+  // };
+
+  // const createGroup = (groupName, options, name) => {
+  //   return {
+  //     label: (() => {
+  //       return (
+  //         <div>
+  //           <input
+  //             type="checkbox"
+  //             className="form-check-input me-2"
+  //             onClick={(e) => {
+  //               if (e.target.checked)
+  //                 setDefaultValueGroupFunction(options, name);
+  //             }}
+  //           />
+  //           {groupName}
+  //         </div>
+  //       );
+  //     })(),
+  //     options: options
+  //   };
+  // };
+
   const setDefaultValueGroupFunction = (options, name) => {
-    setDefaultValue({ ...defaultValue, [name]: options });
+    var opt = [];
+
+    if (name === "country") {
+      if (defaultValue.country.length > 0) {
+        opt = defaultValue.country;
+        options.map((o) => {
+          return opt.push(o);
+        });
+      } else {
+        opt = options;
+      }
+    } else if (name === "industry") {
+      if (defaultValue.industry.length > 0) {
+        opt = defaultValue.industry;
+        options.map((o) => {
+          return opt.push(o);
+        });
+      } else {
+        opt = options;
+      }
+    } else if (name === "company_country") {
+      if (defaultValue.company_country.length > 0) {
+        opt = defaultValue.company_country;
+        options.map((o) => {
+          return opt.push(o);
+        });
+      } else {
+        opt = options;
+      }
+    }
+
+    setDefaultValue({ ...defaultValue, [name]: opt });
   };
 
   const createGroup = (groupName, options, name) => {
+    // if (name === "industry") {
+
+    // }
     return {
       label: (() => {
         return (
@@ -333,11 +398,34 @@ const Filter = (props) => {
                   setDefaultValueGroupFunction(options, name);
               }}
             />
-            {groupName}
+            <span className="fw-bold text-dark" style={{ fontSize: "14px" }}>
+              {groupName}
+            </span>
           </div>
         );
       })(),
-      options: options
+      options: (() => {
+        var opt = [];
+        options.map((option) => {
+          var optPush = {
+            label: (() => {
+              return (
+                <>
+                  <input
+                    type="checkbox"
+                    className="form-check-input mx-2 small "
+                  />
+                  {option.label}
+                </>
+              );
+            })(),
+            value: option.value
+          };
+          opt.push(optPush);
+          return false;
+        });
+        return opt;
+      })()
     };
   };
 
@@ -558,10 +646,12 @@ const Filter = (props) => {
                     defaultValue={[]}
                     closeMenuOnSelect={false}
                     isMulti
-                    name="company_size_range[]"
+                    name="company_size_range"
                     options={compSizeRangeOpt}
                     className="basic-multi-select"
                     placeholder="Select Company Size"
+                    onChange={handleSelectChange}
+                    value={defaultValue.company_size_range}
                   />
                 </div>
                 <div className="col-md-4 col-lg-4 position-relative">
@@ -569,10 +659,12 @@ const Filter = (props) => {
                     defaultValue={[]}
                     closeMenuOnSelect={false}
                     isMulti
-                    name="revenue_range[]"
+                    name="revenue_range"
                     options={revenueRange}
                     className="basic-multi-select"
-                    placeholder="Select Company Size"
+                    placeholder="Select Revenue Range"
+                    onChange={handleSelectChange}
+                    value={defaultValue.revenue_range}
                   />
                 </div>
               </div>
@@ -583,25 +675,13 @@ const Filter = (props) => {
                     defaultValue={[]}
                     isMulti
                     closeMenuOnSelect={false}
-                    name="industry[]"
+                    name="industry"
+                    onChange={handleSelectChange}
+                    value={defaultValue.industry}
                     options={industryGroupOptions[0]}
                     className="basic-multi-select"
                     placeholder="Select Industry"
                   />
-                </div>
-
-                <div className="col-md-4 col-lg-4 position-relative">
-                  <CreatableSelect
-                    defaultValue={[]}
-                    name="services[]"
-                    isMulti
-                    noOptionsMessage={({ inputValue }) => ""}
-                    className="basic-multi-select"
-                    placeholder="Product/Services"
-                  />
-                  <p style={{ fontSize: "12px" }} className="mb-0 mt-1">
-                    Use tab/enter for multi selection.
-                  </p>
                 </div>
               </div>
 
@@ -613,9 +693,11 @@ const Filter = (props) => {
                     closeMenuOnSelect={false}
                     isMulti
                     options={countryOptionsCompany[0]}
-                    name="company_country[]"
+                    name="company_country"
                     className="basic-multi-select"
                     placeholder="Comapany's Country"
+                    onChange={handleSelectChange}
+                    value={defaultValue.company_country}
                   />
                 </div>
                 <div className="col-md-4 col-lg-4 position-relative">
@@ -623,11 +705,13 @@ const Filter = (props) => {
                     defaultValue={[]}
                     closeMenuOnSelect={false}
                     isMulti
-                    name="company_state[]"
+                    name="company_state"
                     options={states}
                     onKeyDown={handleState}
                     className="basic-multi-select"
                     placeholder="Comapany's State"
+                    onChange={handleSelectChange}
+                    value={defaultValue.company_state}
                   />
                 </div>
                 <div className="col-md-4 col-lg-4 position-relative">
@@ -635,11 +719,13 @@ const Filter = (props) => {
                     defaultValue={[]}
                     closeMenuOnSelect={false}
                     isMulti
-                    name="company_city[]"
+                    name="company_city"
                     options={cities}
                     onKeyDown={handleCity}
                     className="basic-multi-select"
                     placeholder="Comapany's City"
+                    onChange={handleSelectChange}
+                    value={defaultValue.company_city}
                   />
                 </div>
               </div>
@@ -703,7 +789,7 @@ const Filter = (props) => {
                 type="reset"
                 id="reset_search"
                 onClick={() => {
-                  window.location.reload(false);
+                  setDefaultValue(initialDefaultValue);
                 }}
                 className="btn btn-secondary"
               >

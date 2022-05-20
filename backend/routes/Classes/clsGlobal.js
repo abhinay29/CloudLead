@@ -85,6 +85,26 @@ class Fields {
   }
 }
 
+// class FieldsObject {
+//   constructor(field) {
+//     this.field = field;
+//   }
+
+//   create() {
+//     if (this.field instanceof Array) {
+//       if (this.field.length > 0) {
+//         let regex = new ConvertStringRegex(this.field).convertStr();
+//         return { $regex: regex, $options: "i" };
+//         {'organization': {$elemMatch: {name: $regex: regex, $options: "i"}}}
+//       } else {
+//         return "";
+//       }
+//     } else {
+//       return { $regex: this.field, $options: "i" };
+//     }
+//   }
+// }
+
 class RoleFields {
   constructor(field) {
     this.field = field;

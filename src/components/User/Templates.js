@@ -205,7 +205,7 @@ function Templates() {
                                 className="text-warning me-3"
                                 onClick={(e) => e.preventDefault()}
                               >
-                                <i className="fas fa-clone"></i>
+                                <i className="far fa-clone"></i>
                               </a>
                             </OverlayTrigger>
                             <OverlayTrigger

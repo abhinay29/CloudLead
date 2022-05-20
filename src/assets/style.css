@@ -692,7 +692,7 @@ table th {
           user-select: none;
 }
 
-.signup-content h5 {
+.signup-content h6 {
   font-size: 1.6rem;
   text-shadow: 1px 0 10px #1c1c1c;
   font-weight: 700;

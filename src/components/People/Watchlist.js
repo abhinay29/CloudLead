@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Pagination from "react-js-pagination";
 import WatchListTableRow from "./WatchListTableRow";
 import { toast } from "react-toastify";
@@ -26,15 +26,17 @@ const Watchlist = () => {
 
   const dispatch = useDispatch();
 
-  const [page, setPage] = useState(1);
   const [people, setPeople] = useState(0);
-  const [selectAll, setSelectAll] = useState({ select: false, len: 100 });
+  const [selectAll, setSelectAll] = useState({ select: false, len: 25 });
   // eslint-disable-next-line
   const [uniqueComp, setUniqueComp] = useState(0);
   const [disAddBtn, setDisAddBtn] = useState(false);
   const [skeletonLoading, setSkeletonLoading] = useState(false);
-  const [limit, setLimit] = useState(25);
   const [showBacktoWatchlist, setShowBacktoWatchlist] = useState(false);
+  const [selectionList, setSelectionList] = useState([]);
+
+  const pageLimit = useRef(25);
+  const pageNumber = useRef(1);
 
   const initiateUserInfo = async () => {
     await axios({
@@ -58,23 +60,23 @@ const Watchlist = () => {
       });
   };
 
-  const handlePageChange = (pageNumber) => {
-    if (pageNumber !== page) {
+  const handlePageChange = (pn) => {
+    if (pn !== pageNumber.current) {
       dispatch(progressLoading(50));
-      getWatchlist(pageNumber);
+      getWatchlist(pn);
       dispatch(progressLoading(100));
     }
   };
 
-  const searchWatchList = (query, pageNumber = 1) => {
+  const searchWatchList = (query, pn = 1) => {
     closeModal("searchModal");
-    getWatchlist(pageNumber, query);
+    getWatchlist(pn, query);
   };
 
-  const getWatchlist = async (pageNumber = 1, query = "") => {
-    setPage(pageNumber);
+  const getWatchlist = async (pn = 1, query = "") => {
+    pageNumber.current = pn;
     dispatch(progressLoading(30));
-    const url = `${API_URL}/api/contacts/watchlist?page=${pageNumber}${query}&limit=${limit}`;
+    const url = `${API_URL}/api/contacts/watchlist?page=${pn}${query}&limit=${pageLimit.current}`;
     let data = await fetch(url, {
       method: "GET",
       headers: {
@@ -96,6 +98,35 @@ const Watchlist = () => {
     }
     dispatch(progressLoading(100));
     setSkeletonLoading(false);
+  };
+
+  const getSelection = async (sn) => {
+    let query = {};
+    if (localStorage.currentWatchlistQuery) {
+      query = JSON.parse(localStorage.getItem("currentWatchlistQuery"));
+    }
+
+    query = query.toString();
+    dispatch(progressLoading(30));
+    const url = `${API_URL}/api/contacts/watchlist/selection?page=${pageNumber.current}${query}&limit=${pageLimit.current}&select=${selectAll.len}`;
+    dispatch(progressLoading(60));
+    let data = await fetch(url, {
+      method: "GET",
+      headers: {
+        "auth-token": localStorage.getItem("token"),
+        "Content-Type": "application/json"
+      }
+    });
+    let res = await data.json();
+    setSelectionList(res.selection);
+    var no_selected_contact = document.getElementById("no_selected_contact");
+    if (res.selection.length > 0) {
+      no_selected_contact.innerHTML = `${res.selection.length} contact selected`;
+    } else {
+      no_selected_contact.innerHTML = "";
+    }
+
+    dispatch(progressLoading(100));
   };
 
   useEffect(() => {
@@ -167,13 +198,18 @@ const Watchlist = () => {
 
   const deleteContact = async () => {
     let selectedId = [];
-    var checkboxes = document.getElementsByClassName("selectContacts");
-    for (var i = 0, n = checkboxes.length; i < n; i++) {
-      if (checkboxes[i].checked) selectedId.push(checkboxes[i].value);
-    }
-    if (selectedId.length === 0) {
-      toast.error("Please select people to delete from watchlist");
-      return false;
+
+    if (selectionList.length === 0) {
+      var checkboxes = document.getElementsByClassName("selectContacts");
+      for (var i = 0, n = checkboxes.length; i < n; i++) {
+        if (checkboxes[i].checked) selectedId.push(checkboxes[i].value);
+      }
+      if (selectedId.length === 0) {
+        toast.error("Please select rows to delete.");
+        return false;
+      }
+    } else {
+      selectedId = selectionList;
     }
     dispatch(progressLoading(30));
     const bulkDelete = await fetch(`${API_URL}/api/contacts/deletewatchlist`, {
@@ -276,13 +312,18 @@ const Watchlist = () => {
 
   const handleExportSelectContact = async () => {
     let selectedId = [];
-    var checkboxes = document.getElementsByClassName("selectContacts");
-    for (var i = 0, n = checkboxes.length; i < n; i++) {
-      if (checkboxes[i].checked) selectedId.push(checkboxes[i].value);
-    }
-    if (selectedId.length === 0) {
-      toast.error("Please select record rows to download.");
-      return false;
+
+    if (selectionList.length === 0) {
+      var checkboxes = document.getElementsByClassName("selectContacts");
+      for (var i = 0, n = checkboxes.length; i < n; i++) {
+        if (checkboxes[i].checked) selectedId.push(checkboxes[i].value);
+      }
+      if (selectedId.length === 0) {
+        toast.error("Please select rows to download.");
+        return false;
+      }
+    } else {
+      selectedId = selectionList;
     }
     dispatch(progressLoading(30));
     const exportCsv = await fetch(`${API_URL}/api/contacts/watchlist/export`, {
@@ -314,7 +355,8 @@ const Watchlist = () => {
   };
 
   const changeViewLimit = (e) => {
-    setLimit(e.target.value);
+    // setLimit(e.target.value);
+    pageLimit.current = e.target.value;
     getWatchlist();
   };
 
@@ -334,6 +376,7 @@ const Watchlist = () => {
       }
     }
     no_selected_contact.innerHTML = `${length} contact selected`;
+    getSelection(selectAll.len);
   }, [selectAll]);
 
   return (
@@ -367,32 +410,6 @@ const Watchlist = () => {
                 <input type="checkbox" className="form-check-input" />
               </button>
               <ul className="dropdown-menu" aria-labelledby="selectDropdown">
-                <li>
-                  <a
-                    className="dropdown-item select_contact"
-                    data-select="25"
-                    href="/"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setSelectAll({ select: true, len: 25 });
-                    }}
-                  >
-                    Select 25
-                  </a>
-                </li>
-                <li>
-                  <a
-                    className="dropdown-item select_contact"
-                    data-select="50"
-                    href="/"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setSelectAll({ select: true, len: 50 });
-                    }}
-                  >
-                    Select 50
-                  </a>
-                </li>
                 <li>
                   <a
                     className="dropdown-item select_contact"
@@ -448,11 +465,50 @@ const Watchlist = () => {
                 <li>
                   <a
                     className="dropdown-item select_contact"
+                    data-select="5000"
+                    href="/"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSelectAll({ select: true, len: 5000 });
+                    }}
+                  >
+                    Select 5000
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item select_contact"
+                    data-select="10000"
+                    href="/"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSelectAll({ select: true, len: 10000 });
+                    }}
+                  >
+                    Select 10000
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item select_contact"
+                    data-select="25000"
+                    href="/"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSelectAll({ select: true, len: 25000 });
+                    }}
+                  >
+                    Select 25000
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item select_contact"
                     data-select="0"
                     href="/"
                     onClick={(e) => {
                       e.preventDefault();
-                      setSelectAll({ select: false, len: 2000 });
+                      setSelectAll({ select: false, len: 0 });
                     }}
                   >
                     Clear Selection
@@ -659,7 +715,10 @@ const Watchlist = () => {
                       type="checkbox"
                       id="selectAllCheckbox"
                       onChange={(e) => {
-                        setSelectAll({ select: e.target.checked, len: limit });
+                        setSelectAll({
+                          select: e.target.checked,
+                          len: pageLimit.current
+                        });
                       }}
                       className="form-check-input mt-0 me-3"
                     />
@@ -697,7 +756,7 @@ const Watchlist = () => {
             <select
               name="no_of_contact"
               id="no_of_contact"
-              value={limit}
+              value={pageLimit.current}
               onChange={(e) => changeViewLimit(e)}
               className="form-select form-control-sm"
             >
@@ -707,8 +766,8 @@ const Watchlist = () => {
           </div>
           <nav className="ms-auto d-flex align-items-center">
             <Pagination
-              activePage={page}
-              itemsCountPerPage={parseInt(limit)}
+              activePage={pageNumber.current}
+              itemsCountPerPage={parseInt(pageLimit.current)}
               totalItemsCount={people}
               pageRangeDisplayed={7}
               onChange={handlePageChange}
@@ -773,10 +832,10 @@ const Watchlist = () => {
               <div className="row">
                 <div className="col-md-12 col-lg-12">
                   <p className="fw-bold mb-1">Company Description</p>
-                  <p id="ext_description">{company_info.company_description}</p>
+                  <p id="ext_description">{company_info.short_description}</p>
                   <p className="fw-bold mb-1">Location</p>
                   <p id="ext_location">
-                    {company_info.org_city},{" "}
+                    {company_info.org_city ? `${company_info.org_city},` : ""}{" "}
                     <strong>{company_info.org_country}</strong>
                   </p>
                 </div>
