@@ -455,6 +455,26 @@ router.delete("/template/:id", fetchuser, async (req, res) => {
   });
 });
 
+router.get("/template/:id", fetchuser, async (req, res) => {
+  let temp_id = req.params.id;
+
+  const getTemplateData = await templates.findOne({
+    _id: temp_id
+  });
+  if (!getTemplateData)
+    return res.status(200).json({
+      status: "error",
+      error: "Cannot show template this time, please try again later."
+    });
+
+  // let data = await getTemplateData.json();
+
+  return res.status(200).json({
+    status: "success",
+    data: getTemplateData
+  });
+});
+
 router.get("/checkphone/:phone", async (req, res) => {
   let user = await User.findOne({ phone: req.params.phone });
   if (user) {

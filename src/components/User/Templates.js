@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { progressLoading } from "../../states/action-creator";
 import { toast } from "react-toastify";
-import { OverlayTrigger, Tooltip, Popover } from "react-bootstrap";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -11,6 +11,16 @@ function Templates() {
   const dispatch = useDispatch();
 
   const [templates, setTemplates] = useState([]);
+
+  const initialPreviewTempData = {
+    temp_name: "",
+    temp_content: "",
+    temp_subject: ""
+  };
+
+  const [previewTempData, setPreviewTempData] = useState(
+    initialPreviewTempData
+  );
 
   const getTemplates = async () => {
     dispatch(progressLoading(30));
@@ -49,6 +59,9 @@ function Templates() {
   };
 
   const deleteTemplate = async (id) => {
+    if (!window.confirm("Do you really want to delete this template?")) {
+      return;
+    }
     dispatch(progressLoading(30));
     const url = `${API_URL}/api/user/template/${id}`;
     let delTemplate = await fetch(url, {
@@ -72,7 +85,31 @@ function Templates() {
   };
 
   const previewTemplate = async (id) => {
-    openModal("previewTemplate");
+    setPreviewTempData(initialPreviewTempData);
+    dispatch(progressLoading(30));
+    const url = `${API_URL}/api/user/template/${id}`;
+    let prevTemp = await fetch(url, {
+      method: "GET",
+      headers: {
+        "auth-token": localStorage.getItem("token"),
+        "Content-Type": "application/json"
+      }
+    });
+    dispatch(progressLoading(50));
+    let res = await prevTemp.json();
+    if (res.status === "success") {
+      setPreviewTempData({
+        temp_name: res.data.template_name,
+        temp_subject: res.data.template_subject,
+        temp_content: res.data.template_content
+      });
+      openModal("previewTemplate");
+    } else if (res.status === "error") {
+      toast.error(res.error);
+    } else {
+      toast.error("Something went wrong, please try again later");
+    }
+    dispatch(progressLoading(100));
   };
 
   const openModal = (modalId) => {
@@ -179,7 +216,10 @@ function Templates() {
                               <a
                                 href="#cloud"
                                 className="text-info me-3"
-                                onClick={() => previewTemplate(temp._id)}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  previewTemplate(temp._id);
+                                }}
                               >
                                 <i className="fas fa-eye"></i>
                               </a>
@@ -234,6 +274,7 @@ function Templates() {
         <div className="modal-dialog modal-xl">
           <div className="modal-content">
             <div className="modal-header">
+              <h5>{previewTempData.temp_name}</h5>
               <button
                 type="button"
                 className="btn-close"
@@ -242,7 +283,24 @@ function Templates() {
                 style={{ zIndex: "1" }}
               ></button>
             </div>
-            <div className="modal-body"></div>
+            <div className="modal-body">
+              <div className="mb-3">
+                <label htmlFor="" className="form-label d-block">
+                  Subject
+                </label>
+                {previewTempData.temp_subject}
+              </div>
+              <div className="mb-3">
+                <label htmlFor="" className="form-label d-block">
+                  Content
+                </label>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: previewTempData.temp_content
+                  }}
+                ></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@ import { Link, useHistory } from "react-router-dom";
 // import { Editor } from "react-draft-wysiwyg";
 // import tinymce from "tinymce/tinymce";
 // import "tinymce/plugins/code";
-import { Editor } from "@tinymce/tinymce-react";
+// import { Editor } from "@tinymce/tinymce-react";
 // import createToolbarPlugin from "draft-js-static-toolbar-plugin";
 // import { EditorState } from "draft-js";
 // import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
@@ -23,11 +23,11 @@ function CreateTemplate() {
   // );
 
   const editorRef = useRef(null);
-  // const log = () => {
-  //   if (editorRef.current) {
-  //     console.log(editorRef.current.getContent());
-  //   }
-  // };
+  const log = () => {
+    if (editorRef.current) {
+      console.log(editorRef.current.value);
+    }
+  };
 
   const [formData, setFormData] = useState({
     name: "",
@@ -50,10 +50,11 @@ function CreateTemplate() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    let textareatContent = document.getElementById("rteEditor");
-    setFormData({ ...formData, content: textareatContent.value });
+    // let textareatContent = document.getElementById("rteEditor");
 
-    if (!formData.content) {
+    setFormData({ ...formData, content: editorRef.current.value });
+
+    if (!editorRef.current.value) {
       return toast.error("Please fill all field, all are required");
     }
 
@@ -65,7 +66,13 @@ function CreateTemplate() {
           "auth-token": localStorage.getItem("token"),
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          name: formData.name,
+          subject: formData.subject,
+          content: editorRef.current.value,
+          type: "rte",
+          design: {}
+        })
       });
       let res = await createTemplate.json();
       if (res.status === "success") {
@@ -185,6 +192,15 @@ function CreateTemplate() {
                   <i className="fas fa-chevron-left me-2"></i>Back to Template
                 </Link> */}
                 <div>
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-sm py-0 me-2"
+                    onClick={() => {
+                      log();
+                    }}
+                  >
+                    Log
+                  </button>
                   <button
                     type="submit"
                     className="btn btn-primary btn-sm py-0 me-2"
@@ -323,6 +339,7 @@ function CreateTemplate() {
                     id="rteEditor"
                     name="content"
                     onChange={handleChange}
+                    ref={editorRef}
                   ></textarea>
                 </div>
               </div>
