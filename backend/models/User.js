@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const UserSchema = new Schema({
+  customer_id: {
+    type: String,
+    required: true,
+    unique: true
+  },
   first_name: {
     type: String,
     required: true
@@ -85,9 +90,20 @@ const UserSchema = new Schema({
     type: String,
     default: null
   },
+  // downloads: {
+  //   type: Number,
+  //   default: 0
+  // },
   downloads: {
-    type: Number,
-    default: 0
+    type: Object,
+    default: {
+      daily: 0,
+      monthly: 0,
+      yearly: 0,
+      date_daily: "",
+      date_monthly: "",
+      date_yearly: ""
+    }
   },
   showGuide: {
     type: Boolean,
@@ -95,6 +111,13 @@ const UserSchema = new Schema({
   },
   unlockHistory: {
     type: Array
+  },
+  notificationSettings: {
+    type: Object,
+    default: {
+      generalEmails: [],
+      adminEmail: []
+    }
   }
 });
 const User = mongoose.model("users", UserSchema);

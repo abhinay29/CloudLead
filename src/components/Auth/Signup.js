@@ -364,6 +364,9 @@ const Signup = (props) => {
             <i className="fas fa-check me-3"></i>Email Verifier
           </li>
           <li>
+            <i className="fas fa-check me-3"></i>CRM Integrations
+          </li>
+          <li>
             <i className="fas fa-check me-3"></i> Track &amp; Analyze campaigns
           </li>
           <li>

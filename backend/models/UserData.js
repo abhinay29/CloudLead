@@ -91,10 +91,7 @@ const Sequences = new Schema({
     type: Object,
     default: {}
   },
-  start_date: {
-    type: String
-  },
-  start_time: {
+  start_datetime: {
     type: String
   },
   emails: {

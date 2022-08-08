@@ -137,7 +137,9 @@ const CockpitDash = () => {
                   <div>
                     <h5 className="text-dark-50 mb-5">Contact Download</h5>
                     <h1 className="text-dark">
-                      {userState.downloads ? userState.downloads : 0}
+                      {userState.downloads.daily
+                        ? userState.downloads.daily
+                        : 10}
                     </h1>
                   </div>
                 </div>
@@ -234,11 +236,24 @@ const CockpitDash = () => {
           <h4>How to use the platform?</h4>
           <ul>
             <li>Apply search filters for people/companies</li>
-            <li>Unlock business Emails as per your preferred selection</li>
+            <li>
+              Unlock business Emails/Direct Dials as per your preferred
+              selection
+            </li>
             <li>Open “My Watchlist” to see unlocked contacts</li>
-            <li>Send email campaigns/Download contacts from MyWatchlist</li>
-            <li>Use “Custom data” if wish to purchase one time Email list</li>
-            <li>Contact sales team for "Direct Dials" or any support query.</li>
+            <li>
+              Send email campaigns/Download contacts/Integrate to your CRM from
+              My Watchlist
+            </li>
+            <li>
+              Use “Custom data” if wish to purchase one time Email/Direct Dial
+              list
+            </li>
+            <li>
+              Use add-on features like Chrome extension, Email Verification, B2C
+              data as & when you need them.
+            </li>
+            <li>Contact sales team/ Schedule a demo for any support query.</li>
           </ul>
         </Modal.Body>
         <Modal.Footer className="justify-content-between align-items-center">
@@ -253,7 +268,7 @@ const CockpitDash = () => {
               handleCloseQuickGuide();
             }}
           >
-            Close
+            I understood
           </Button>
         </Modal.Footer>
       </Modal>

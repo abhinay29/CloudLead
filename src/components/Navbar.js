@@ -426,16 +426,25 @@ const Navbar = () => {
                           style={{
                             width:
                               (userState.downloads
-                                ? (userState.downloads * 100) / 2000
+                                ? (userState.downloads.monthly * 100) / 2000
                                 : 0) + "%"
                           }}
-                          aria-valuenow={userState.downloads}
+                          aria-valuenow={
+                            userState.downloads
+                              ? userState.downloads.monthly
+                              : 0
+                          }
+                          // style={{
+                          //   width: "20%"
+                          // }}
+                          // aria-valuenow={20}
                           aria-valuemin="0"
                           aria-valuemax="2000"
                         ></div>
                       </div>
                       <p className="small mb-2">
-                        {userState.downloads ? userState.downloads : 0} / 2000
+                        {userState.downloads ? userState.downloads.monthly : 0}{" "}
+                        / 2000
                       </p>
                     </div>
                   </div>

@@ -4,7 +4,7 @@ const Plans = require("../models/Plans");
 
 router.get("/", async (req, res) => {
   try {
-    const plans = await Plans.find({});
+    const plans = await Plans.find({}).limit(3).sort({ plan_id: 1 });
     res.json(plans);
   } catch (error) {
     console.error(error.message);

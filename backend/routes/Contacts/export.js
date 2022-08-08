@@ -23,8 +23,10 @@ module.exports = async (req, res) => {
     "-_id",
     "downloads"
   ]);
-  let downloads = user.downloads ? user.downloads : 0;
+  let downloads = user.downloads.daily ? user.downloads.daily : 0;
   downloads = downloads + req.body.ids.length;
+  let downloads_monthly = user.downloads.monthly ? user.downloads.monthly : 0;
+  downloads_monthly = downloads_monthly + req.body.ids.length;
   try {
     let Export = await useExport.create({
       user: req.user.id,
@@ -46,7 +48,12 @@ module.exports = async (req, res) => {
       });
       await User.updateOne(
         { _id: req.user.id },
-        { $set: { downloads: downloads } },
+        {
+          $set: {
+            "downloads.daily": downloads,
+            "downloads.monthly": downloads_monthly
+          }
+        },
         { upsert: true }
       );
       res.status(200).json({ status: "success" });

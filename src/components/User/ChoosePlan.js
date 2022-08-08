@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Logo from "../Auth/Logo";
-import { OverlayTrigger, Popover, Form } from "react-bootstrap";
+import { OverlayTrigger, Tooltip, Popover, Form } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useHistory } from "react-router-dom";
 import PlanFaq from "./PlanFaq";
+import Terms from "../Terms";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 function ChoosePlan(props) {
   let history = useHistory();
   const userState = useSelector((state) => state.setUserData);
-  const [annualBill, setAnnualBill] = useState(false);
+  const [annualBill, setAnnualBill] = useState(true);
   const [plans, setPlans] = useState([]);
   const [usd, setUsd] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState({});
@@ -68,7 +69,7 @@ function ChoosePlan(props) {
 
     const result = await axios.post(`${API_URL}/api/payment/orders`, {
       planId: selectedPlan.plan_id,
-      annualBill: 1
+      annualBill: annualBill ? 1 : 0
     });
 
     if (!result) {
@@ -180,27 +181,27 @@ function ChoosePlan(props) {
   };
 
   const acceptTerms = () => {
-    var termsCheckbox = document.getElementById("terms");
-    var policyCheckbox = document.getElementById("policy");
-    if (!termsCheckbox.checked) {
-      return toast.error("Please accept the Terms and Conditions");
-    }
-    if (!policyCheckbox.checked) {
-      return toast.error("Please accept the Privacy Policy");
-    }
+    // var termsCheckbox = document.getElementById("terms");
+    // var policyCheckbox = document.getElementById("policy");
+    // if (!termsCheckbox.checked) {
+    //   return toast.error("Please accept the Terms and Conditions");
+    // }
+    // if (!policyCheckbox.checked) {
+    //   return toast.error("Please accept the Privacy Policy");
+    // }
     closeModal("tosModal");
     openModal("orderSummery");
   };
 
   const handleSubscribePlan = async () => {
-    var termsCheckbox = document.getElementById("terms");
-    var policyCheckbox = document.getElementById("policy");
-    if (!termsCheckbox.checked) {
-      return toast.error("Please accept the Terms and Conditions");
-    }
-    if (!policyCheckbox.checked) {
-      return toast.error("Please accept the Privacy Policy");
-    }
+    // var termsCheckbox = document.getElementById("terms");
+    // var policyCheckbox = document.getElementById("policy");
+    // if (!termsCheckbox.checked) {
+    //   return toast.error("Please accept the Terms and Conditions");
+    // }
+    // if (!policyCheckbox.checked) {
+    //   return toast.error("Please accept the Privacy Policy");
+    // }
 
     let Subscribe = await fetch(`${API_URL}/api/user/subscribe`, {
       method: "POST",
@@ -281,39 +282,61 @@ function ChoosePlan(props) {
             <thead>
               <tr>
                 <th className="feature-name"></th>
-                <th
-                  colSpan="3"
-                  className="feature-name d-flex justify-content-center"
-                >
-                  {/* <Form.Check
+                <th className="feature-name ps-5">
+                  <Form.Check
                     type="switch"
                     id="custom-switch"
                     label="Monthly/Annually"
                     onChange={() => setAnnualBill(!annualBill)}
-                  /> */}
+                    checked={annualBill}
+                  />
                   <Form.Check
                     type="switch"
                     id="disabled-custom-switch"
                     label="INR/USD"
                     onChange={() => setUsd(!usd)}
+                    checked={usd}
                   />
                 </th>
+                <th className="feature-name"></th>
+                <th className="feature-name"></th>
               </tr>
               <tr>
                 <th></th>
                 <th>Free</th>
                 <th>
                   <h6 className="fw-bold mb-3">
-                    {usd ? "USD 72" : "INR 5500 + GST"} <br />
+                    {plans.map((p) => {
+                      var price =
+                        p.price_inr > 0
+                          ? `${
+                              usd
+                                ? `USD ${p.price_usd}`
+                                : `INR ${p.price_inr} + GST`
+                            }`
+                          : "";
+                      return price;
+                    })}
+                    <br />
                     (per user, per month) <br />
-                    {/* {annualBill ? "Billed Annually" : "Billed Monthly"} */}
-                    Billed Annually
+                    {annualBill ? "Billed Annually" : "Billed Monthly"}
                   </h6>
                   Basic
                 </th>
                 <th>
-                  Custom plan <br />
-                  <h5 className="fw-bold">(Lets talk)</h5>
+                  Custom plan
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={
+                      <Tooltip>
+                        Download Emails/Direct Dials without subscribing to
+                        Monthly/Annual plan.
+                      </Tooltip>
+                    }
+                  >
+                    <i className="fas fa-info-circle small ms-2"></i>
+                  </OverlayTrigger>{" "}
+                  <br />
                   <OverlayTrigger
                     trigger="hover"
                     key="bottom"
@@ -363,7 +386,9 @@ function ChoosePlan(props) {
                       </Popover>
                     }
                   >
-                    <button className="btn btn-link mt-3">Pricing</button>
+                    <button className="btn btn-link text-dark fw-bold mt-3">
+                      Pricing
+                    </button>
                   </OverlayTrigger>
                 </th>
               </tr>
@@ -371,30 +396,51 @@ function ChoosePlan(props) {
             <tbody>
               <tr>
                 <td className="feature-name">
-                  <h6>Direct Dials</h6>
+                  <h6>Direct Dials Unlock</h6>
                   <p></p>
                 </td>
-                <td>&mdash;</td>
-                <td>&mdash;</td>
-                <td>25 Free Samples</td>
+                {/* <td>{plans[0].direct_dial}</td>
+                <td>{plans[1].direct_dial}</td>
+                <td>{plans[2].direct_dial}</td> */}
+                {plans.map((p) => {
+                  return <td>{p.direct_dial}</td>;
+                })}
+              </tr>
+              <tr>
+                <td className="feature-name">
+                  <h6>Direct Dials Download</h6>
+                  <p></p>
+                </td>
+                {/* <td>{plans[0].direct_dial}</td>
+                <td>{plans[1].direct_dial}</td>
+                <td>{plans[2].direct_dial}</td> */}
+                {plans.map((p) => {
+                  return <td>{p.direct_dial}</td>;
+                })}
               </tr>
               <tr>
                 <td className="feature-name">
                   <h6>Email Credits</h6>
                   <p>(Number of contacts you can download per month)</p>
                 </td>
-                <td>50</td>
+                {plans.map((p) => {
+                  return <td>{p.email_credit}</td>;
+                })}
+                {/* <td>50</td>
                 <td>2000</td>
-                <td>Custom Buy</td>
+                <td>Custom Buy</td> */}
               </tr>
               <tr>
                 <td className="feature-name">
                   <h6>Contacts Unlock</h6>
                   <p>(Number of contacts you can unlock)</p>
                 </td>
-                <td>50</td>
+                {/* <td>50</td>
                 <td>Unlimited</td>
-                <td>Not Available</td>
+                <td>Not Available</td> */}
+                {plans.map((p) => {
+                  return <td>{p.unlock_daily ? p.unlock_daily : "-"}</td>;
+                })}
               </tr>
               <tr>
                 <td className="feature-name">
@@ -410,9 +456,18 @@ function ChoosePlan(props) {
                   <h6>Daily Email sending Limit</h6>
                   <p>(via your SMTP server, G-Suite, Microsoft365)</p>
                 </td>
-                <td>Not Available</td>
+                {/* <td>Not Available</td>
                 <td>1000/Day</td>
-                <td>Not Available</td>
+                <td>Not Available</td> */}
+                {plans.map((p) => {
+                  return (
+                    <td>
+                      {p.daily_email_limit > 0
+                        ? p.daily_email_limit + "/day"
+                        : "Not Available"}
+                    </td>
+                  );
+                })}
               </tr>
               <tr>
                 <td className="feature-name">
@@ -428,9 +483,14 @@ function ChoosePlan(props) {
                   <h6>CSV Upload</h6>
                   <p>(Upload your own data for campaigns)</p>
                 </td>
-                <td>Not Available</td>
+                {/* <td>Not Available</td>
                 <td>Available</td>
-                <td>Not Available</td>
+                <td>Not Available</td> */}
+                {plans.map((p) => {
+                  return (
+                    <td>{p.csv_upload > 0 ? p.csv_upload : "Not Available"}</td>
+                  );
+                })}
               </tr>
               <tr>
                 <td className="feature-name">
@@ -509,7 +569,7 @@ function ChoosePlan(props) {
         aria-labelledby="tosLabel"
         aria-hidden="true"
       >
-        <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
           <div className="modal-content">
             <div className="modal-header">
               <h4 className="modal-title" id="tosLabel">
@@ -523,7 +583,7 @@ function ChoosePlan(props) {
               ></button>
             </div>
             <div className="modal-body">
-              <div className="form-check">
+              {/* <div className="form-check">
                 <input
                   className="form-check-input"
                   type="checkbox"
@@ -558,7 +618,8 @@ function ChoosePlan(props) {
                     Privacy Policy
                   </a>
                 </label>
-              </div>
+              </div> */}
+              <Terms />
             </div>
             <div className="modal-footer">
               <button
@@ -905,17 +966,17 @@ function ChoosePlan(props) {
                       </h6>
                     </td>
                     <td className="text-end">
-                      ₹ {selectedPlan.annual_price_inr}
-                      {/* {annualBill
+                      ₹{/* {selectedPlan.annual_price_inr} */}
+                      {annualBill
                         ? selectedPlan.annual_price_inr
-                        : selectedPlan.price_inr} */}
+                        : selectedPlan.price_inr}
                     </td>
                   </tr>
                   <tr className="border-bottom">
                     <td colSpan="2" style={{ width: "70%" }}>
                       <ul>
-                        {/* <li>1 {annualBill ? "Year" : "Month"}</li> */}
-                        <li>1 Year</li>
+                        <li>1 {annualBill ? "Year" : "Month"}</li>
+                        {/* <li>1 Year</li> */}
                         <li>{selectedPlan.unlock_daily} Daily Unlock</li>
                         <li>{selectedPlan.unlock_month} Monthly Unlock</li>
                         <li>{selectedPlan.download} Downloads</li>
@@ -927,10 +988,10 @@ function ChoosePlan(props) {
                       <h6 className="mb-0 fw-bold">SUBTOTAL</h6>
                     </td>
                     <td className="text-end fw-bold">
-                      ₹ {selectedPlan.annual_price_inr}
-                      {/* {annualBill
+                      ₹ {/* {selectedPlan.annual_price_inr} */}
+                      {annualBill
                         ? selectedPlan.annual_price_inr
-                        : selectedPlan.price_inr} */}
+                        : selectedPlan.price_inr}
                     </td>
                   </tr>
                   <tr>
@@ -938,10 +999,10 @@ function ChoosePlan(props) {
                       <h6 className="mb-0">CGST 9%</h6>
                     </td>
                     <td className="text-end">
-                      ₹ {(selectedPlan.annual_price_inr * 9) / 100}
-                      {/* {annualBill
+                      ₹{/* {(selectedPlan.annual_price_inr * 9) / 100} */}
+                      {annualBill
                         ? (selectedPlan.annual_price_inr * 9) / 100
-                        : (selectedPlan.price_inr * 9) / 100} */}
+                        : (selectedPlan.price_inr * 9) / 100}
                     </td>
                   </tr>
                   <tr>
@@ -949,10 +1010,10 @@ function ChoosePlan(props) {
                       <h6 className="mb-0">SGST 9%</h6>
                     </td>
                     <td className="text-end">
-                      ₹ {(selectedPlan.annual_price_inr * 9) / 100}
-                      {/* {annualBill
+                      ₹ {/* {(selectedPlan.annual_price_inr * 9) / 100} */}
+                      {annualBill
                         ? (selectedPlan.annual_price_inr * 9) / 100
-                        : (selectedPlan.price_inr * 9) / 100} */}
+                        : (selectedPlan.price_inr * 9) / 100}
                     </td>
                   </tr>
                   <tr className="border-top">
@@ -961,13 +1022,13 @@ function ChoosePlan(props) {
                     </td>
                     <td className="text-end text-primary fw-bold">
                       ₹{" "}
-                      {parseInt(selectedPlan.annual_price_inr) +
-                        ((selectedPlan.annual_price_inr * 9) / 100) * 2}
-                      {/* {annualBill
+                      {/* {parseInt(selectedPlan.annual_price_inr) +
+                        ((selectedPlan.annual_price_inr * 9) / 100) * 2} */}
+                      {annualBill
                         ? parseInt(selectedPlan.annual_price_inr) +
                           ((selectedPlan.annual_price_inr * 9) / 100) * 2
                         : selectedPlan.price_inr +
-                          ((selectedPlan.price_inr * 9) / 100) * 2} */}
+                          ((selectedPlan.price_inr * 9) / 100) * 2}
                     </td>
                   </tr>
                 </tbody>

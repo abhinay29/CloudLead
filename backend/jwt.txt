@@ -1,0 +1,64 @@
+let jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const JWT_SECRET = "mRMQW4ZnqyTiiN0Ng6RC";
+
+function getUserData(authtoken) {
+  try {
+    const data = jwt.verify(authtoken, JWT_SECRET);
+    console.log("\nUser Data -> ", data);
+  } catch (error) {
+    console.log("\nInvalid auth token");
+  }
+}
+
+// This function encrypt the password
+async function Encrypt(password) {
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const secPass = await bcrypt.hash(password, salt);
+    return secPass;
+  } catch (err) {
+    return err;
+  }
+}
+
+// This function will compare encryptedPassword and text password
+async function generateAuthToken(password, encryptedPassword) {
+  const passwordCompare = await bcrypt.compare(password, encryptedPassword);
+  if (!passwordCompare) {
+    return "Password not matched";
+  }
+
+  const data = {
+    user: {
+      id: "Unique user id"
+    }
+  };
+  const authtoken = jwt.sign(data, JWT_SECRET);
+  return authtoken;
+}
+
+async function print() {
+  var encryptedPassword = await Encrypt("Test@123");
+  console.log('\nEncrypted Password "Test@123" -> ', encryptedPassword);
+}
+
+async function printAuthToken(pass, encryptPass) {
+  var authtoken = await generateAuthToken(pass, encryptPass);
+  console.log("\nAuthToken -> ", authtoken);
+}
+
+print();
+// This will print encrypted password -> $2a$10$aTfGEzWgcpHMRxZGSfZQoeFgGh.Dgv/3fjwXrV5E74Z3PUxkgtPeO
+
+printAuthToken(
+  "Test@123",
+  "$2a$10$aTfGEzWgcpHMRxZGSfZQoeFgGh.Dgv/3fjwXrV5E74Z3PUxkgtPeO"
+);
+// This will print ----- AuthToken ->  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiVW5pcXVlIHVzZXIgaWQifSwiaWF0IjoxNjUzMTMwNDgzfQ.YBuenf9sYV4YxGCgkmSE_1IJxGWFv-yc-EHPyVrXm9g
+
+// By Above authtoken
+getUserData(
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoidW5pcXVlIHVzZXIgaWQifSwiaWF0IjoxNjUzMTMwMTM3fQ.1SAD4EWSIafUweXR22XcsKlWqdfsGb0ucSpgUYcMvW4"
+);
+// This will print ---- User Data ->  { user: { id: 'unique user id' }, iat: 1653130137 }

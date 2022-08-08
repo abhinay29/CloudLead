@@ -47,6 +47,11 @@ function parseName(input) {
   return result;
 }
 
+function genCustomerId(len = 16) {
+  var p = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  return [...Array(len)].reduce((a) => a + p[~~(Math.random() * p.length)], "");
+}
+
 router.post(
   "/signup",
   [
@@ -106,6 +111,7 @@ router.post(
       const secPass = await bcrypt.hash(req.body.password, salt);
 
       let token = getToken(40);
+      let customer_id = genCustomerId(8);
 
       // Create a new user
       user = await User.create({
@@ -116,7 +122,8 @@ router.post(
         country_code: req.body.country_code,
         company: req.body.company,
         phone: req.body.phone,
-        token: token
+        token: token,
+        customer_id: customer_id
       });
 
       let info = await transporter.sendMail({
@@ -181,7 +188,7 @@ router.post(
           from: `"Cloudlead" <${adminEmail}>`,
           to: req.body.email,
           subject: "Confirm your email address", // Subject line
-          html: `<h5>Welcome to Cloudlead</h5>
+          html: `<h5>Welcome to Cloudlead.ai- A lead prospecting platform!</h5>
           <p>Thank you for signing up!</p>
           <p>Please confirm your email address to start using Cloudlead.</p>
           <p><a href="${hostWebsite}/verify/${token}">${hostWebsite}/verify/${token}</a></p>
@@ -265,6 +272,7 @@ router.get("/getuser", fetchuser, async (req, res) => {
 router.post("/googlelogin", async (req, res) => {
   const tokenId = req.body.tokenId;
   let success = false;
+  let customer_id = genCustomerId(8);
   client
     .verifyIdToken({
       idToken: tokenId,
@@ -332,7 +340,8 @@ router.post("/googlelogin", async (req, res) => {
                 password: secPass,
                 email: email,
                 token: "",
-                status: 1
+                status: 1,
+                customer_id: customer_id
               });
               createUser.save((err, result) => {
                 if (err) {

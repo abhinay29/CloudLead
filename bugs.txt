@@ -1,0 +1,18 @@
+System generated customer ID is not getting created at the time of sign up
+GST non Maharashtra is not considered inspite of entering the other state GST number
+
+Company entered in signup page is not captured in DB collection- “users”
+In plans, what is the difference between “email credits” and “download”
+Free forever- multi selection to be greyed out….25/50 are wrongly allowed
+Notification email- whenever plan changed.
+collection- users—login history date-time not getting captured
+collection- transactions- need to add fields- customer ID, company, registered email
+bug in download invoice-
+refresh not happening on billing page
+Pricing plan page values not getting changed when changes made in collection “plans”
+
+
+Collection has FN / LN- sign up page has Full name…how data is flowing?
+
+A - Signup has function which is automatically collection firstname and lastname.
+

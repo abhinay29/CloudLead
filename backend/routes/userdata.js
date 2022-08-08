@@ -25,6 +25,7 @@ const GetFreezeData = require("./UserData/GetFreezedData");
 const RemoveFreezeData = require("./UserData/RemoveFreezeData");
 const GetLists = require("./UserData/Lists/GetLists");
 const GetListDetails = require("./UserData/Lists/GetListDetails");
+const NotifySettings = require("./UserData/NotifySettings");
 
 const CreateSequence = require("./UserData/Sequence/CreateSequence");
 const GetSequence = require("./UserData/Sequence/GetSequence");
@@ -226,17 +227,21 @@ router.get("/list/detailed", fetchuser, GetListDetails);
 
 router.get("/list/view/:id", fetchuser, async (req, res) => {
   let seqId = req.params.id;
-  let lists = await sequenceList
-    .findOne({ _id: seqId })
-    .select(["list_name", "list_data", "-_id"]);
+  let lists = await Lists.findOne({ _id: seqId }).select([
+    "list_name",
+    "list_data",
+    "-_id"
+  ]);
   if (lists) {
     var list = [];
-    list = await Promise.all(
-      lists.list_data.map((l) => {
-        var retVal = new APIPeople(l).getDetails();
-        return retVal;
-      })
-    );
+    if (lists.list_data.length > 0) {
+      list = await Promise.all(
+        lists.list_data.map((l) => {
+          var retVal = new APIPeople(l).getDetails();
+          return retVal;
+        })
+      );
+    }
     res.status(200).json({
       status: "success",
       list: list,
@@ -247,20 +252,18 @@ router.get("/list/view/:id", fetchuser, async (req, res) => {
   }
 });
 
-router.delete("/list/:id", fetchuser, async (req, res) => {
-  let seqId = req.params.id;
+router.get("/list/delete", fetchuser, async (req, res) => {
+  // let seqId = req.params.id;
+  let seqId = req.query.id;
+  console.log("Console: - ", seqId);
   try {
-    let lists = await lists.deleteOne({
+    let lists = await Lists.deleteOne({
       _id: seqId,
       userId: req.user.id
     });
-    if (lists) {
-      res.status(200).json({
-        status: "success"
-      });
-    } else {
-      res.status(200).json({ status: "error" });
-    }
+    res.status(200).json({
+      status: "success"
+    });
   } catch (err) {
     res.status(200).json({ status: "error", msg: err });
   }
@@ -491,9 +494,7 @@ router.post("/subscribe", fetchuser, async (req, res) => {
   User.findByIdAndUpdate(
     { _id: req.user.id },
     {
-      phone: req.body.phone,
-      plan_id: req.body.plan,
-      company: req.body.company
+      plan_id: req.body.plan
     },
     function (err, data) {
       if (err) {
@@ -607,5 +608,7 @@ router.post("/delete-freezelist", fetchuser, RemoveFreezeData);
 
 router.post("/sequence/create", fetchuser, CreateSequence);
 router.get("/sequence", fetchuser, GetSequence);
+
+router.post("/notify-setting", fetchuser, NotifySettings);
 
 module.exports = router;

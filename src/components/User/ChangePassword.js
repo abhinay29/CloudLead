@@ -18,6 +18,8 @@ function ChangePassword() {
     setPassword({ ...password, [e.target.name]: e.target.value });
   };
 
+  let strongPassword = new RegExp("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])");
+
   const changePassword = async (e) => {
     e.preventDefault();
     if (password.newPassword !== password.confirmPassword) {
@@ -28,6 +30,14 @@ function ChangePassword() {
       toast.error("Please fill all fields.");
       return false;
     }
+
+    if (!strongPassword.test(password.newPassword)) {
+      toast.error(
+        "Please enter password with atleast 1 capital letter and 1 Number"
+      );
+      return;
+    }
+
     let url = `${API_URL}/api/user/changepassword`;
     let update = await fetch(url, {
       method: "POST",

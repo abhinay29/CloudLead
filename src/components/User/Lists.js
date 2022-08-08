@@ -82,9 +82,9 @@ function Lists() {
       return;
     }
     dispatch(progressLoading(30));
-    let url = `${API_URL}/api/user/list/${id}`;
+    let url = `${API_URL}/api/user/list/delete?id=${id}`;
     let data = await fetch(url, {
-      method: "DELETE",
+      method: "GET",
       headers: {
         "auth-token": localStorage.getItem("token"),
         "Content-Type": "application/json"
@@ -95,6 +95,8 @@ function Lists() {
     if (parsedData.status === "success") {
       toast.success("List Deleted Successfully");
       getLists();
+    } else {
+      toast.error("Something went wrong, please try again later.");
     }
     dispatch(progressLoading(100));
   };

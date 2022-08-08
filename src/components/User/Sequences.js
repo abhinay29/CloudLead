@@ -60,8 +60,7 @@ function Sequences() {
     sat: 0,
     sun: 0
   });
-  const [seqStartDate, setSeqStartDate] = useState("");
-  const [seqStartTime, setSeqStartTime] = useState("");
+  const [seqStartDateTime, setSeqStartDateTime] = useState("");
 
   const handleDays = (e) => {
     if (e.target.checked) {
@@ -96,8 +95,7 @@ function Sequences() {
         name: sequenceName,
         frequency: seqFeq,
         days: seqDays,
-        sdate: seqStartDate,
-        stime: seqStartTime
+        start_datetime: seqStartDateTime
       })
     });
 
@@ -688,6 +686,10 @@ function Sequences() {
                         name="startDate"
                         id="startDate"
                         className="form-control"
+                        onChange={(e) => {
+                          setSeqStartDateTime(e.target.value);
+                        }}
+                        value={seqStartDateTime}
                       />
                     </div>
                   </>

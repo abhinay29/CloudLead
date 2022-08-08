@@ -99,6 +99,7 @@ function Templates() {
     let res = await prevTemp.json();
     if (res.status === "success") {
       setPreviewTempData({
+        ...previewTempData,
         temp_name: res.data.template_name,
         temp_subject: res.data.template_subject,
         temp_content: res.data.template_content

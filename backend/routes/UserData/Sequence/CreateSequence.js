@@ -21,8 +21,7 @@ module.exports = async (req, res) => {
     name: req.body.name,
     frequency: req.body.frequency,
     days: req.body.days,
-    start_date: req.body.sdate,
-    start_time: req.body.stime,
+    start_datetime: req.body.start_datetime,
     emails: emails
   });
 

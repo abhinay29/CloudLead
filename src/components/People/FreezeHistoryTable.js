@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { useSelector } from "react-redux";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -34,6 +35,8 @@ const API_URL = process.env.REACT_APP_API_URL;
 function FreezeHistoryTable(props) {
   const { freezeHistory, backToSearch, closeHistoryModal, getFreezeHistory } =
     props;
+
+  const userState = useSelector((state) => state.setUserData);
 
   const openModal = (modalId) => {
     document.body.classList.add("modal-open");
@@ -261,8 +264,8 @@ function FreezeHistoryTable(props) {
             return (
               <>
                 <tr key={index} id={fh.search_id}>
-                  <td></td>
-                  <td></td>
+                  <td>{userState.customer_id}</td>
+                  <td>{userState.company}</td>
                   <td>{fh.date}</td>
                   <td>{fh.search_id}</td>
                   <td>{fh.search_name ? fh.search_name : "-"}</td>

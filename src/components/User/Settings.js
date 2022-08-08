@@ -47,7 +47,7 @@ function Settings(props) {
                       >
                         Notifications
                       </button>
-                      <button
+                      {/* <button
                         className="nav-link"
                         id="nav-profile-tab"
                         data-bs-toggle="tab"
@@ -58,7 +58,7 @@ function Settings(props) {
                         aria-selected="false"
                       >
                         Email Setup
-                      </button>
+                      </button> */}
                     </div>
                   </nav>
                   <div className="tab-content" id="nav-tabContent">
@@ -70,14 +70,14 @@ function Settings(props) {
                     >
                       <SettingsNotifications />
                     </div>
-                    <div
+                    {/* <div
                       className="tab-pane fade"
                       id="emailSetup"
                       role="tabpanel"
                       aria-labelledby="emailSetup-tab"
                     >
                       <SettingsEmailSetup />
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>

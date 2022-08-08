@@ -460,9 +460,9 @@ const Table = (props) => {
       ...addToFreezeListTable,
       searchId: CreateSearchId(),
       searchString: JSON.parse(localStorage.getItem("currentQuery")),
-      emailCount: peoples.totalResults,
-      companyCount: peoples.uniqueCompany,
-      direactDial: peoples.directDial
+      emailCount: totalPeople,
+      companyCount: uniqueComp,
+      direactDial: directDial
     });
     openModal("addToFreezeListModal");
   };
